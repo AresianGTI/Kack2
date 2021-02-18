@@ -19,6 +19,15 @@ import { MainComponent } from './main/main/main.component';
 import {MatSliderModule} from '@angular/material/slider';
 import { AdminMainViewComponent } from './_adminView/admin-main-view/admin-main-view.component';
 
+import {MatSidenavModule} from '@angular/material/sidenav';
+import {MatTooltipModule} from '@angular/material/tooltip';
+import {MatSlideToggleModule} from '@angular/material/slide-toggle';
+import {MatSnackBarModule} from '@angular/material/snack-bar';
+import {MatSortModule} from '@angular/material/sort';
+import {MatTableModule} from '@angular/material/table';
+import {MatTabsModule} from '@angular/material/tabs';
+import {MatIconModule} from '@angular/material/icon';
+import {MatListModule} from '@angular/material/list';
 @NgModule({
   declarations: [
     AppComponent,
@@ -41,7 +50,13 @@ import { AdminMainViewComponent } from './_adminView/admin-main-view/admin-main-
     AngularFireModule.initializeApp(environment.firebaseConfig),
    // CrudService muss bei providers rein
    AngularFireAuthModule,
-   MatSliderModule
+   MatSliderModule,
+   MatSidenavModule,
+   MatTooltipModule,
+   MatSlideToggleModule,MatSnackBarModule,
+   MatSortModule, MatTableModule, MatTabsModule,
+   MatIconModule,
+   MatListModule
   ],
   providers: [],
   bootstrap: [AppComponent]

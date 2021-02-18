@@ -3,13 +3,36 @@ import { RouterModule, Routes } from '@angular/router';
 import { LoginViewComponent } from './login/login-view/login-view.component';
 import { AdminMainViewComponent } from './_adminView/admin-main-view/admin-main-view.component';
 import { AngularFireAuthGuard, redirectUnauthorizedTo, canActivate} from '@angular/fire/auth-guard';
-const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo(["loginView"])
-const routes: Routes = [
-  {path: 'loginView', component: LoginViewComponent},
-  {path: 'adminMainView', component: AdminMainViewComponent, ...canActivate(redirectUnauthorizedToLogin)},
- 
-];
+import { MainComponent } from './main/main/main.component';
 
+
+const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo(["loginView"])
+// const loggedIn = () => loggedIn(["login"]);
+// const routes: Routes = [
+//   {path: 'loginView', component: LoginViewComponent},
+//   {path: 'adminMainView', component: AdminMainViewComponent},
+//   {path: 'Main', component: MainComponent}
+//   // , ...canActivate(redirectUnauthorizedToLogin)},
+ 
+// ];
+
+const routes: Routes = [
+  {
+    path: 'Main',
+    component: MainComponent,
+    canActivate:[AngularFireAuthGuard],
+    data: { authGuardPipe: redirectUnauthorizedToLogin },
+    children: [
+        {
+            path: '',
+            component: AdminMainViewComponent,
+        },
+    ],
+  },
+  {path: 'loginView', component: LoginViewComponent},
+  {path: '', redirectTo: "loginView", pathMatch: "full"}
+
+];
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule]

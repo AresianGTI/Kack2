@@ -12,8 +12,9 @@ export class LoginViewComponent implements OnInit {
   loginForm!: FormGroup;
   
   constructor(private fb:FormBuilder, private auth: AngularFireAuth, private router: Router) {
-
-
+    //  if(this.authService.isLoggedIn()) {
+    //     this.router.navigate(['overview']);
+    //   }
     
    }
 
@@ -31,17 +32,15 @@ export class LoginViewComponent implements OnInit {
     const {email, password} = this.loginForm.value;
     this.auth.createUserWithEmailAndPassword(email, password).then(hs =>{
       console.log("RegisterComponent --> createUser", hs);
-      this.router.navigate(["/adminMainView"]);
+      this.router.navigate(["/Main"]);
     });
     console.log(this.loginForm.value);
-    this.router.navigate(["/adminMainView"]);
   }
   signIn(){
-    alert("test");
     const {email, password} = this.loginForm.value;
     this.auth.signInWithEmailAndPassword(email, password).then(hs =>{
       console.log("User Logged In", hs);
-      this.router.navigate(["/adminMainView"]);
+      this.router.navigate(["/Main"]);
     });
     // console.log(this.loginForm.value);
     

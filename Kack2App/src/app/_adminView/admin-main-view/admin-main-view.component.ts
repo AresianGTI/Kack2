@@ -10,25 +10,13 @@ import { Router } from '@angular/router';
 })
 export class AdminMainViewComponent implements OnInit {
 
-  username?: string | null;
-
-  constructor(private router: Router, private auth: AngularFireAuth) { 
 
 
+ngOnInit(){
 
-  }
+}
 
-  logOut() {
-    this.auth.signOut().then(()=> this.router.navigate(["/loginView"]));
-  }
 
-  ngOnInit(): void {
-    let test;
-
-    this.auth.currentUser.then(hs =>{
-      console.log("User Logged In JAJA", hs);
-      this.username = hs?.email;
-})
-    }
+ 
 
 }

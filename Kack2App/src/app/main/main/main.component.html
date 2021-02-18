@@ -1,3 +1,31 @@
+<div class="Hauptcontainer">
+    <div class="toolbarabove">
+        <mat-toolbar style=color:azure>
+            <h1 style=color:black>Mainview</h1>
+            <span class="logout-button"></span>
+            <mat-label style=color:black>Du bist angemeldet als {{username}}</mat-label>
+            <button mat-raised-button (click)="logOut()" color="primary">Logout</button>
+        </mat-toolbar>
+    </div>
+    <div class="mat-toolbar-X">
+        <mat-toolbar>Menu</mat-toolbar>
+        <mat-nav-list>
+            <a mat-list-item matTooltip="Beispieltext" routerLink="#">Link 1</a>
+            <a mat-list-item routerLink="#">Link 2</a>
+            <a mat-list-item routerLink="#">Link 3</a>
+        </mat-nav-list>
+    </div>
+</div>
 
 
-<p>main works!</p>
+
+
+
+<!-- <mat-sidenav-container>
+    <mat-sidenav opened>Sidenav</mat-sidenav>
+    <mat-sidenav-content>MainContent</mat-sidenav-content>
+    <mat-sidenav-content>NextContent</mat-sidenav-content>
+</mat-sidenav-container> -->
+<!-- Sidenav is always hidden by default -->
+<!-- Wichtig für Mobile Mode!!! -->
+

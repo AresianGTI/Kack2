@@ -6,17 +6,32 @@ import { AngularFireAuthGuard, redirectUnauthorizedTo, canActivate} from '@angul
 import { MainComponent } from './main/main/main.component';
 
 const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo(["loginView"])
-const routes: Routes = [
-  {path: 'loginView', component: LoginViewComponent},
-  {path: 'adminMainView', component: AdminMainViewComponent},
-  // , ...canActivate(redirectUnauthorizedToLogin)},
-  {path: 'MainView', component: MainComponent, ...canActivate(redirectUnauthorizedToLogin)},
-  
-  
+// const loggedIn = () => loggedIn(["login"]);
+// const routes: Routes = [
+//   {path: 'loginView', component: LoginViewComponent},
+//   {path: 'adminMainView', component: AdminMainViewComponent},
+//   {path: 'Main', component: MainComponent}
+//   // , ...canActivate(redirectUnauthorizedToLogin)},
  
- 
-];
+// ];
 
+const routes: Routes = [
+  {
+    path: 'Main',
+    component: MainComponent,
+    canActivate:[AngularFireAuthGuard],
+    data: { authGuardPipe: redirectUnauthorizedToLogin },
+    children: [
+        {
+            path: '',
+            component: AdminMainViewComponent,
+        },
+    ],
+  },
+  {path: 'loginView', component: LoginViewComponent},
+  {path: '', redirectTo: "loginView", pathMatch: "full"}
+
+];
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule]

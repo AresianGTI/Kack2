@@ -1,7 +1,5 @@
 import { stringify } from '@angular/compiler/src/util';
 import { Component, OnInit } from '@angular/core';
-import { AngularFireAuth } from '@angular/fire/auth';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-admin-main-view',
@@ -10,6 +8,7 @@ import { Router } from '@angular/router';
 })
 export class AdminMainViewComponent implements OnInit {
 
+<<<<<<< HEAD
 
 
 ngOnInit(){
@@ -19,4 +18,9 @@ ngOnInit(){
 
  
 
+=======
+  ngOnInit(){
+    
+  }
+>>>>>>> 654ec4e2a4fa23e86432ceccefcf128110aa04d5
 }

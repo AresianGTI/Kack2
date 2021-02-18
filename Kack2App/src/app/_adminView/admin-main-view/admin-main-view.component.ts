@@ -1,5 +1,21 @@
 import { stringify } from '@angular/compiler/src/util';
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+
+
+export interface PeriodicElement {
+  name: string;
+  position: number;
+  adress: string;
+  facility_area: string;
+}
+
+const ELEMENT_DATA: PeriodicElement[] = [
+  { position: 1, name: 'Krankenhaus Kirchheim', facility_area: "KS", adress: 'Ling' },
+  { position: 2, name: 'Psychatrie Kirchheim', facility_area: "HS", adress: 'Long' },
+  { position: 3, name: 'Huansohn', facility_area: "Karl_ess", adress: 'Taschang' },
+];
+
 
 @Component({
   selector: 'app-admin-main-view',
@@ -8,19 +24,22 @@ import { Component, OnInit } from '@angular/core';
 })
 export class AdminMainViewComponent implements OnInit {
 
-<<<<<<< HEAD
+  displayedColumns: string[] = ['Position', 'Name', 'Einrichtungsart', 'Adresse'];
+  dataSource = ELEMENT_DATA;
 
+  constructor(private router: Router ){}
 
-ngOnInit(){
-
-}
-
-
- 
-
-=======
-  ngOnInit(){
-    
+  onBtnClick() {
+    this.router.navigate(["/facility-dialog"]);
   }
->>>>>>> 654ec4e2a4fa23e86432ceccefcf128110aa04d5
+
+
+
+  ngOnInit() {
+
+  }
+
+
+
+
 }

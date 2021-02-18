@@ -1,34 +1,37 @@
 .logout-button{
     flex: 1 1 auto; 
 }
+// .sidenav{
+//     height: 100%;
+// }
+
+// .toolbarabove{
+//     display: flex;
+// }
+
+// .main-nav{
+// z-index: 1;
+// }
+
+// mat-sidenav, mat-sidenav-content {
+//     padding: 16px;
+// }
+
 .sidenav{
-    height: 100%;
-}
-
-.toolbarabove{
-    display: flex;
-}
-
-.main-nav{
-z-index: 1;
-}
-
-mat-sidenav, mat-sidenav-content {
-    padding: 16px;
-}
-
-.mat-toolbar-X{
     width: 200px;
+    
     background-color: aliceblue;
-    height: 100%;   //das hier 
-    position: absolute; //UND das hier wird benötigt
+    // height: 100%;   //das hier 
+    // position: absolute; //UND das hier wird benötigt
 }
 
-mat-sidenav{
-    background-color: azure;
-    width: 200px;
-    margin-top: 0px;
-}
 
-// position: absolut  => macht den Container so klein wie möglich 
-// Mit % arbeiten, um auf mehreren verschieden großen Monitoren anzupassen
+
+// mat-sidenav{
+//     background-color: azure;
+//     width: 200px;
+//     margin-top: 0px;
+// }
+
+// // position: absolut  => macht den Container so klein wie möglich 
+// // Mit % arbeiten, um auf mehreren verschieden großen Monitoren anzupassen

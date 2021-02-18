@@ -1,74 +1,24 @@
-<<<<<<< HEAD
-<div class="Hauptcontainer">
-    <div class="toolbarabove">
-        <mat-toolbar style=color:azure>
-            <h1 style=color:black>Mainview</h1>
-            <span class="logout-button"></span>
-            <mat-label style=color:black>Du bist angemeldet als {{username}}</mat-label>
-            <button mat-raised-button (click)="logOut()" color="primary">Logout</button>
-        </mat-toolbar>
-    </div>
-    <div class="mat-toolbar-X">
-        <mat-toolbar>Menu</mat-toolbar>
-        <mat-nav-list>
-            <a mat-list-item matTooltip="Beispieltext" routerLink="#">Link 1</a>
-            <a mat-list-item routerLink="#">Link 2</a>
-            <a mat-list-item routerLink="#">Link 3</a>
-        </mat-nav-list>
-    </div>
-</div>
+<mat-sidenav-container class="sidenav-container">
+  <mat-sidenav #drawer class="sidenav" fixedInViewport mode="side" [opened]="true">
+    <mat-toolbar>Menu</mat-toolbar>
+    <mat-nav-list>
+      <a mat-list-item matTooltip="Beispieltext" routerLink="#">Link 1</a>
+      <a mat-list-item routerLink="#">Link 2</a>
+      <a mat-list-item routerLink="#">Link 3</a>
+    </mat-nav-list>
+  </mat-sidenav>
 
+  <mat-sidenav-content>
+    <mat-toolbar color="primary">
+      <h1 style=color:black>Mainview</h1>
+      <span class="logout-button"> </span>
+      <mat-label style=color:black>Du bist angemeldet als {{username}}</mat-label>
+      <button mat-raised-button (click)="logOut()" color="primary">Logout</button>
+    </mat-toolbar>
+  <router-outlet></router-outlet>
 
+  </mat-sidenav-content>
+</mat-sidenav-container>
 
-
-
-<!-- <mat-sidenav-container>
-    <mat-sidenav opened>Sidenav</mat-sidenav>
-    <mat-sidenav-content>MainContent</mat-sidenav-content>
-    <mat-sidenav-content>NextContent</mat-sidenav-content>
-</mat-sidenav-container> -->
 <!-- Sidenav is always hidden by default -->
 <!-- Wichtig für Mobile Mode!!! -->
-
-=======
-<mat-sidenav-container class="sidenav-container">
-    <mat-sidenav #drawer class="sidenav" fixedInViewport
-        mode= "side"
-        [opened]= "true">
-      <mat-toolbar>Menü</mat-toolbar>
-      <mat-nav-list>
-        <a mat-list-item  matTooltip="Übrrrersicht: Hier ist die Einteilungsplanung zu sehen">
-          <mat-icon class="menu-icon">list</mat-icon> Übersicht
-        </a>
-        <a mat-list-item routerLink="/Main" matTooltip="Stammdaten: Hier werden Stammdaten der Auszubildenden, Schulen und Einrichtungen erstellt, bearbeitet und gelöscht. Diese Funktion steht noch nicht zur Verfügung">
-          <mat-icon class="menu-icon">filter_none</mat-icon> Stammdaten
-        </a>
-        <a mat-list-item matTooltip="Zeitplan: Hier wird ein Zeitplan dargestellt. In einem Kalender werden Urlaubs- und Krankheitstage eines Auszubildenden abgebildet. Diese Funktion steht noch nicht zur Verfügung.">
-          <mat-icon class="menu-icon">access_time</mat-icon> Zeitplan
-        </a>
-        <a mat-list-item matTooltip="Einstellungen: Hier sind verschiedene Einstellungen zu sehen. Zum Beispiel Standardfilter-Setzungen, Farb-Design Auswahl, Account Einstellungen, etc. Diese Funktion steht noch nicht zur Verfügung.">
-          <mat-icon class="menu-icon">settings</mat-icon> Einstellungen
-        </a>
-        <a mat-list-item (click)="logOut()" matTooltip="Abmelden: Hier loggt man sich aus Anwendung aus.">
-          <mat-icon class="menu-icon">exit_to_app</mat-icon> Abmelden
-        </a>
-      </mat-nav-list>
-    </mat-sidenav>
-    <mat-sidenav-content>
-      <mat-toolbar color="primary">
-        <!-- <button
-          type="button"
-          aria-label="Toggle sidenav"
-          mat-icon-button
-          (click)="drawer.toggle()"
-          >
-          <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
-        </button> -->
-        <span>Organice Demo Version</span>
-        <button mat-raised-button (click)="logOut()" color="primary">Logout</button>
-      </mat-toolbar>
-      <router-outlet></router-outlet>
-    </mat-sidenav-content>
-  </mat-sidenav-container>
-  
->>>>>>> 654ec4e2a4fa23e86432ceccefcf128110aa04d5

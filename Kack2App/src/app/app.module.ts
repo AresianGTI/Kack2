@@ -29,6 +29,7 @@ import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {MatSortModule} from '@angular/material/sort';
 import {MatTableModule} from '@angular/material/table';
 import {MatTabsModule} from '@angular/material/tabs';
+import { FacilityDialogComponent } from './_adminView/facility-dialog/facility-dialog.component';
 
 @NgModule({
   declarations: [
@@ -36,6 +37,7 @@ import {MatTabsModule} from '@angular/material/tabs';
     LoginViewComponent,
     MainComponent,
     AdminMainViewComponent,
+    FacilityDialogComponent,
   ],
   imports: [
     BrowserModule,

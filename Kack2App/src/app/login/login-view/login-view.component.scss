@@ -1,0 +1,32 @@
+$bgcolor : #FF6E48;
+
+:host{
+    align-items: center;
+    justify-content: center;
+    display: grid;
+    height: 99vh;
+}
+
+.form{
+    color: rgb(28, 6, 151);
+    width: 30rem;
+    height: 16rem;
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    background-color: white;
+    border-radius: 12px 12px 12px 12px;
+}
+
+button{
+    margin: 8px;
+}
+
+.form-control{
+    display: block;
+}
+
+.form-group{
+    color: primary;
+}

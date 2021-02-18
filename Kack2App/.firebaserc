@@ -1,0 +1,18 @@
+{
+  "targets": {
+    "hackathonangular": {
+      "hosting": {
+        "Kack2App": [
+          "hackathonangular"
+        ]
+      }
+    },
+    "hackathon2-93e07": {
+      "hosting": {
+        "Kack2App": [
+          "hackathon2-93e07"
+        ]
+      }
+    }
+  }
+}

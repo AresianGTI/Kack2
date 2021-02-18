@@ -1,0 +1,46 @@
+
+    <!-- <mat-form-field class = "form-mail">
+        <mat-label>E-Mail angeben:</mat-label>
+        <input placeholder="E-Mail" type="text">
+      </mat-form-field>
+
+      <mat-form-field class = "form-pw">
+        <mat-label>Passwort angeben:</mat-label>
+        <input placeholder="PW" type="text">
+      </mat-form-field> -->
+
+    <div>
+        <mat-card-content>
+            <form class = "form">
+
+                <div class="inhalt">
+                    <h1>Anmelden</h1>
+                </div>
+                <mat-form-field class ="form-control" appearance="outline">
+                    <mat-label> Your email</mat-label>
+                    <div [formGroup] ="loginForm" class ="form-group">
+                        <input formControlName="email" matInput type="text">
+                    </div>
+                    
+                </mat-form-field>
+                <mat-form-field class ="form-control" appearance="outline">
+                    <mat-label> Your password</mat-label>
+                    <div [formGroup] ="loginForm" class ="form-group">
+                        <input matInput type="password" class="form-control" formControlName="password">
+                    </div>
+                </mat-form-field>
+            
+                <div class="form-footer">
+                        <button mat-raised-button (click)= "signIn()" color="primary">
+                            Sign in
+                        </button>
+                        <button mat-raised-button (click) = "createUser()" color="primary"> 
+                            Registrieren</button>          
+                </div>
+            </form>   
+        </mat-card-content>
+        
+    </div>
+
+<router-outlet></router-outlet>
+

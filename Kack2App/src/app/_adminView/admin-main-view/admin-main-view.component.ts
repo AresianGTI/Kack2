@@ -1,6 +1,8 @@
 import { stringify } from '@angular/compiler/src/util';
 import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
+import { FacilityDialogComponent } from '../facility-dialog/facility-dialog.component';
 
 
 export interface PeriodicElement {
@@ -27,12 +29,19 @@ export class AdminMainViewComponent implements OnInit {
   displayedColumns: string[] = ['Position', 'Name', 'Einrichtungsart', 'Adresse'];
   dataSource = ELEMENT_DATA;
 
-  constructor(private router: Router ){}
+  constructor(private router: Router, public dialog: MatDialog ){}
 
   onBtnClick() {
     this.router.navigate(["/facility-dialog"]);
   }
 
+  openDialog() {
+    const dialogRef = this.dialog.open(FacilityDialogComponent);  //Einrichtungsdialog wird geöffnet
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log(`Dialog result: ${result}`);
+    });
+  }
 
 
   ngOnInit() {

@@ -1,15 +1,8 @@
+import { ParseTreeResult, ThrowStmt } from '@angular/compiler';
 import { Component, OnInit } from '@angular/core';
+import { AngularFirestore } from '@angular/fire/firestore';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-
-// export interface TaskDialogData {
-//   task: Partial<Task>;
-//   enableDelete: boolean;
-// }
-
-// export interface TaskDialogResult {
-//   task: Task;
-//   delete?: boolean;
-// }
+import { Facility, IfacilityType } from 'src/app/models/facility';
 
 @Component({
   selector: 'app-facility-dialog',
@@ -18,12 +11,20 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 })
 export class FacilityDialogComponent implements OnInit {
 
-  cedula?:string;
-  // private backupTask: Partial<Task> = { ...this.data.task };
-  // constructor(
-  //   // public dialogRef: MatDialogRef<TaskDialogComponent>,
-  //   // @Inject(MAT_DIALOG_DATA) public data: TaskDialogData
-  // ) {  }
+  facilityX: Facility = new Facility();
+
+  constructor(public firestore: AngularFirestore) {
+
+
+
+  }
+
+  facilityTypes: IfacilityType[] = [
+    { facilitytypeName: "Krankenhaus" },
+    { facilitytypeName: "Psychatrie" },
+    { facilitytypeName: "Pflegeeinrichtung" },
+    { facilitytypeName: "Altersheim" }
+  ];
 
   ngOnInit(): void {
   }
@@ -32,5 +33,29 @@ export class FacilityDialogComponent implements OnInit {
     // this.data.task.description = this.backupTask.description;
     // this.dialogRef.close(this.data);
     // console.log("Test erfolgreich")
+  }
+  createFacility() {
+    let fc =
+      {Adresse: this.facilityX.facilityadress,
+     // Einrichtungsart: this.facilityX.facilitytype,
+     Einrichtungsart: "",
+      Name: this.facilityX.facilityName}
+    ;
+    // SO WIE UNTEN GEHT ES 
+    // let fc =
+    //   {Adresse:"a2",
+    //   Einrichtungsart: "a3",
+    //   Name: "this.facilityX.facilityName"}
+    // ;
+    
+    this.firestore.collection('facilityElementsOnur').add(fc).then(res =>{
+      this.facilityX.facilityName = "";
+      this.facilityX.facilityadress = "";
+      this.facilityX.facilitytype.facilitytypeName = "";
+      console.log("test", res);
+      alert("Der Azubi wurde erstellt!");
+    }).catch(error =>{
+      console.log(error);
+    });
   }
 }

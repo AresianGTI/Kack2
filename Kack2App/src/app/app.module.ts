@@ -29,6 +29,7 @@ import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {MatSortModule} from '@angular/material/sort';
 import {MatTableModule} from '@angular/material/table';
 import {MatTabsModule} from '@angular/material/tabs';
+import {MatSelectModule} from '@angular/material/select'; 
 import { FacilityDialogComponent } from './_adminView/facility-dialog/facility-dialog.component';
 
 @NgModule({
@@ -49,6 +50,7 @@ import { FacilityDialogComponent } from './_adminView/facility-dialog/facility-d
     MatCardModule,
     MatSidenavModule,
     MatTooltipModule,
+    MatSelectModule,
     AppRoutingModule,
     FormsModule,
     ReactiveFormsModule,

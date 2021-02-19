@@ -10,7 +10,9 @@ import { Router } from '@angular/router';
 export class LoginViewComponent implements OnInit {
 
   loginForm!: FormGroup;
-  
+  readonly email = new FormControl('', [Validators.required]);
+  readonly password = new FormControl('', [Validators.required]);
+
   constructor(private fb:FormBuilder, private auth: AngularFireAuth, private router: Router) {
     //  if(this.authService.isLoggedIn()) {
     //     this.router.navigate(['overview']);
@@ -19,14 +21,10 @@ export class LoginViewComponent implements OnInit {
    }
 
   ngOnInit(): void {
-    this.loginForm = this.fb.group(
-      {email: ['', Validators.required],
-      password:['', [
-        Validators.required,
-        Validators.minLength(6)
-      ]]
-    },
-    )
+    this.loginForm = new FormGroup({
+      email: this.email,
+      password: this.password
+    })
   }
   createUser(){
     const {email, password} = this.loginForm.value;
@@ -42,9 +40,6 @@ export class LoginViewComponent implements OnInit {
       console.log("User Logged In", hs);
       this.router.navigate(["/Main"]);
     });
-    // console.log(this.loginForm.value);
-    
-    
   }
 
 }

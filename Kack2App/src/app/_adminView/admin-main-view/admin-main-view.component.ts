@@ -1,21 +1,19 @@
+import { variable } from '@angular/compiler/src/output/output_ast';
 import { stringify } from '@angular/compiler/src/util';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ViewChild } from '@angular/core';
+import { AngularFireAuth } from '@angular/fire/auth';
+import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
+import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
+import { PeriodicElement } from '../someservice.service';
 
 
-export interface PeriodicElement {
-  name: string;
-  position: number;
-  adress: string;
-  facility_area: string;
-}
 
-const ELEMENT_DATA: PeriodicElement[] = [
-  { position: 1, name: 'Krankenhaus Kirchheim', facility_area: "KS", adress: 'Ling' },
-  { position: 2, name: 'Psychatrie Kirchheim', facility_area: "HS", adress: 'Long' },
-  { position: 3, name: 'Huansohn', facility_area: "Karl_ess", adress: 'Taschang' },
+var ELEMENT_DATA: PeriodicElement[] = [
+  // { Position: 1, Name: 'Krankenhaus Kirchheim', Einrichtungsart: "KS", Adresse: 'Ling' },
+  // { Position: 2, Name: 'Psychatrie Kirchheim', Einrichtungsart: "HS", Adresse: 'Long' },
+  // { Position: 3, Name: 'Huansohn', Einrichtungsart: "Karl_ess", Adresse: 'Taschang' },
 ];
-
 
 @Component({
   selector: 'app-admin-main-view',
@@ -25,21 +23,64 @@ const ELEMENT_DATA: PeriodicElement[] = [
 export class AdminMainViewComponent implements OnInit {
 
   displayedColumns: string[] = ['Position', 'Name', 'Einrichtungsart', 'Adresse'];
-  dataSource = ELEMENT_DATA;
 
-  constructor(private router: Router ){}
+  constructor(private router: Router,
+    private store: AngularFirestore,
+    private changeDetectorRefs: ChangeDetectorRef) { }
+
+  dataSource = new MatTableDataSource<PeriodicElement>([]);
+  t1: PeriodicElement = new PeriodicElement()
 
   onBtnClick() {
-    this.router.navigate(["/facility-dialog"]);
+    this.sendData();
+    console.log("Element-Data", ELEMENT_DATA);
+  }
+  sendData() {
+    let item = {Position: 1,
+      Name: 'Krankenhaus Kirchheim',
+      Einrichtungsart: "KS",
+      Adresse: 'Ling'}
+    this.store.collection('facilityElements').add(item
+ )
+      .then(res => {
+        console.log(res);
+      })
+      .catch(e => {
+        console.log(e);
+      })
   }
 
-
-
+  myArray: any[] = []
   ngOnInit() {
+    const collectionRef = this.store.collection('facilityElements');
+    const collectionInstance = collectionRef.valueChanges();
+    collectionInstance.subscribe(ss => {
+      this.myArray = ss;
+      console.log("myArray", this.myArray);
+      ELEMENT_DATA = [];
+      this.myArray.forEach(element => {
+        
+        ELEMENT_DATA.push(element);
+        this.dataSource.data = ELEMENT_DATA;
+      });
+      this.refresh();
 
+    });
   }
-
-
-
-
+  refresh() {
+    this.changeDetectorRefs.detectChanges();
+  }
+  onQuery(p_collection: AngularFirestoreCollection<unknown>) {
+    p_collection
+      // , ref => ref
+      // .where("name", ">=", "")
+      .get()
+      .subscribe(ss => {
+        ss.docs.forEach(doc => {
+          console.log(doc.data());
+          console.log(this.myArray);
+        })
+      }
+      )
+  }
 }

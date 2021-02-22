@@ -4,8 +4,10 @@ import { Component, OnInit, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
 import { MatTableDataSource } from '@angular/material/table';
-import { Router } from '@angular/router';
 import { PeriodicElement } from '../someservice.service';
+import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
+import { FacilityDialogComponent } from '../facility-dialog/facility-dialog.component';
 
 
 
@@ -26,11 +28,11 @@ export class AdminMainViewComponent implements OnInit {
 
   constructor(private router: Router,
     private store: AngularFirestore,
-    private changeDetectorRefs: ChangeDetectorRef) { }
+    private changeDetectorRefs: ChangeDetectorRef,
+    public dialog: MatDialog ) { }
 
   dataSource = new MatTableDataSource<PeriodicElement>([]);
   t1: PeriodicElement = new PeriodicElement()
-
   onBtnClick() {
     this.sendData();
     console.log("Element-Data", ELEMENT_DATA);
@@ -51,6 +53,15 @@ export class AdminMainViewComponent implements OnInit {
   }
 
   myArray: any[] = []
+  openDialog() {
+    const dialogRef = this.dialog.open(FacilityDialogComponent);  //Einrichtungsdialog wird geöffnet
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log(`Dialog result: ${result}`);
+    });
+  }
+
+
   ngOnInit() {
     const collectionRef = this.store.collection('facilityElements');
     const collectionInstance = collectionRef.valueChanges();

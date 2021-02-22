@@ -8,6 +8,7 @@ import { PeriodicElement } from '../someservice.service';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { FacilityDialogComponent } from '../facility-dialog/facility-dialog.component';
+import { TraineeDialogComponent } from '../trainee-dialog/trainee-dialog.component';
 
 
 
@@ -54,7 +55,11 @@ export class AdminMainViewComponent implements OnInit {
 
   myArray: any[] = []
   openDialog() {
-    const dialogRef = this.dialog.open(FacilityDialogComponent);  //Einrichtungsdialog wird geöffnet
+
+    let dialogRef;
+
+    dialogRef = this.dialog.open(FacilityDialogComponent);  //Einrichtungsdialog wird geöffnet
+    dialogRef = this.dialog.open(TraineeDialogComponent);  //Azubidialog wird geöffnet
 
     dialogRef.afterClosed().subscribe(result => {
       console.log(`Dialog result: ${result}`);

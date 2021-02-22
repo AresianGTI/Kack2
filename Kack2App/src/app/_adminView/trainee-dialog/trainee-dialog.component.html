@@ -1,0 +1,34 @@
+<h2 mat-dialog-title>Einrichtung erstellen</h2>
+<mat-dialog-content class="mat-typography">
+  <p>
+    Geben Sie bitte den Namen, den Nachnamen und die Stammeinrichtung des Azubis an.<br />
+  </p>
+  <div class="example-container">
+    <!-- Feld für den Azubinamen -->
+    <mat-form-field hintLabel="Maximal 30 Zeichen" appearance="fill">
+      <mat-label>Name des Azubis</mat-label>
+      <input matInput #input maxlength="30" [(ngModel)]="traineeObj.firstname">
+      <mat-hint align="end">{{input.value?.length || 0}}/30</mat-hint>
+    </mat-form-field>
+    <mat-form-field hintLabel="Maximal 30 Zeichen" appearance="fill">
+        <mat-label>Nachname des Azubis</mat-label>
+        <input matInput #input maxlength="30" [(ngModel)]="traineeObj.name">
+        <mat-hint align="end">{{input.value?.length || 0}}/30</mat-hint>
+      </mat-form-field>
+    <!-- Feld für die Stammeinrichtung -->
+    <mat-form-field appearance="fill">
+      <mat-label>Stammeinrichtung wählen</mat-label>
+      <!-- <mat-select [(ngModel)]="traineeObj.home_facility.facilityName">
+        <mat-option *ngFor="let facilityType of facilityTypes" [value]="facilityType.facilitytypeName">
+          {{facilityType.facilitytypeName}}
+        </mat-option>
+      </mat-select> -->
+      <mat-hint align="end">Wählen Sie eine Einrichtungsart aus</mat-hint>
+    </mat-form-field>
+  </div>
+
+</mat-dialog-content>
+<mat-dialog-actions align="End">
+  <button mat-raised-button color="primary" mat-dialog-close>Abbrechen</button>
+  <button mat-raised-button (click)="createTrainee()" color="primary">Erstellen</button>
+</mat-dialog-actions>

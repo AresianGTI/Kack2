@@ -12,6 +12,8 @@ import { Facility, IfacilityType } from 'src/app/models/facility';
 export class FacilityDialogComponent implements OnInit {
 
   facilityX: Facility = new Facility();
+  ftypeString: string = "";
+
 
   constructor(public firestore: AngularFirestore) {
 
@@ -28,32 +30,27 @@ export class FacilityDialogComponent implements OnInit {
 
   ngOnInit(): void {
   }
-  cancel(): void {
-    // this.data.task.title = this.backupTask.title;
-    // this.data.task.description = this.backupTask.description;
-    // this.dialogRef.close(this.data);
-    // console.log("Test erfolgreich")
-  }
+
+  // cancel(): void {
+  //   // this.data.task.title = this.backupTask.title;
+  //   // this.data.task.description = this.backupTask.description;
+  //   // this.dialogRef.close(this.data);
+  //   // console.log("Test erfolgreich")
+  // }
   createFacility() {
+
     let fc =
       {Adresse: this.facilityX.facilityadress,
-     // Einrichtungsart: this.facilityX.facilitytype,
-     Einrichtungsart: "",
+      Einrichtungsart: this.facilityX.facilitytype.facilitytypeName,
       Name: this.facilityX.facilityName}
     ;
-    // SO WIE UNTEN GEHT ES 
-    // let fc =
-    //   {Adresse:"a2",
-    //   Einrichtungsart: "a3",
-    //   Name: "this.facilityX.facilityName"}
-    // ;
     
-    this.firestore.collection('facilityElementsOnur').add(fc).then(res =>{
+    this.firestore.collection('facilityElementsOnur2').add(fc).then(res =>{
       this.facilityX.facilityName = "";
       this.facilityX.facilityadress = "";
       this.facilityX.facilitytype.facilitytypeName = "";
       console.log("test", res);
-      alert("Der Azubi wurde erstellt!");
+      alert("Die Einrichtung wurde erstellt!");
     }).catch(error =>{
       console.log(error);
     });

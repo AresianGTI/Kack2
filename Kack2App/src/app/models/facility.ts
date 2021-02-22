@@ -6,13 +6,14 @@ export interface IFacility{
 export interface IfacilityType{
     facilitytypeName: string;
 }
-
-
+export class FacilityType implements IfacilityType{
+    facilitytypeName!: string;
+}
 export class Facility implements IFacility{
 
     facilityName!: string;
     facilityadress!: string;
-    facilitytype!: IfacilityType;
+    facilitytype: FacilityType = new FacilityType();
    
     constructor(){
         

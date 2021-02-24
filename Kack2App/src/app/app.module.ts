@@ -31,6 +31,7 @@ import {MatTableModule} from '@angular/material/table';
 import {MatTabsModule} from '@angular/material/tabs';
 import {MatSelectModule} from '@angular/material/select'; 
 import { FacilityDialogComponent } from './_adminView/facility-dialog/facility-dialog.component';
+import { TraineeDialogComponent } from './_adminView/trainee-dialog/trainee-dialog.component';
 
 @NgModule({
   declarations: [
@@ -39,6 +40,7 @@ import { FacilityDialogComponent } from './_adminView/facility-dialog/facility-d
     MainComponent,
     AdminMainViewComponent,
     FacilityDialogComponent,
+    TraineeDialogComponent,
   ],
   imports: [
     BrowserModule,

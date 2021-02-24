@@ -21,10 +21,10 @@ export class MainComponent implements OnInit {
     let test;
     // this.router.navigate(["/adminMainView"]);
 
-    this.auth.currentUser.then(hs => {
-      console.log("User Logged In JAJA", hs);
-      this.username = hs?.email;
-    })
+    // this.auth.currentUser.then(hs => {
+    //   console.log("User Logged In JAJA", hs);
+    //   this.username = hs?.email;
+    // })
   }
 
 }

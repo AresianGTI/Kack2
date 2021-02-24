@@ -11,7 +11,7 @@
             <tr mat-row *matRowDef="let row; columns: displayedColumnsFacility"></tr>
         </table>
         <div class="button-container">
-            <button mat-raised-button color="primary" (click)="onBtnClick()">Erstellen1</button>
+            <button mat-raised-button color="primary" (click)="openDialog()">Erstellen1</button>
           
           </div>
     </mat-tab>
@@ -26,7 +26,7 @@
             <tr mat-row *matRowDef="let row; columns: displayedColumnsTrainee"></tr>
         </table>
         <div class="button-container">
-            <button mat-raised-button color="primary" (click)="sendTraineeData()">Erstellen</button>
+            <button mat-raised-button color="primary" (click)="openDialogTrainee()">Erstellen</button>
           
           </div>
     </mat-tab>

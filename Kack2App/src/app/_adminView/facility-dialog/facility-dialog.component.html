@@ -18,7 +18,7 @@
     <!-- Feld für die Einrichtungsart -->
     <mat-form-field appearance="fill">
       <mat-label>Einrichtungsart</mat-label>
-      <mat-select [(ngModel)]="selectedValue" name="facilityTypes">
+      <mat-select [(ngModel)]="facilityX.facilitytype.facilitytypeName">
         <mat-option *ngFor="let facilityType of facilityTypes" [value]="facilityType.facilitytypeName">
           {{facilityType.facilitytypeName}}
         </mat-option>
@@ -31,7 +31,7 @@
 </mat-dialog-content>
 <mat-dialog-actions align="End">
   <button mat-raised-button color="primary" mat-dialog-close>Abbrechen</button>
-  <button mat-raised-button (click)= "createFacility()" color="primary">Erstellen</button>
+  <button mat-raised-button (click)="createFacility()" color="primary">Erstellen</button>
 </mat-dialog-actions>
 
 

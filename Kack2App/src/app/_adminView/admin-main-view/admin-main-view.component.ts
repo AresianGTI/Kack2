@@ -10,6 +10,7 @@ import { Router } from '@angular/router';
 import { FacilityDialogComponent } from '../facility-dialog/facility-dialog.component';
 import { Trainee } from 'src/app/models/trainee';
 import { MatTabChangeEvent } from '@angular/material/tabs';
+import { TraineeDialogComponent } from '../trainee-dialog/trainee-dialog.component';
 
 
 
@@ -25,35 +26,35 @@ var ELEMENT_DATA: any[] = [
   styleUrls: ['./admin-main-view.component.scss']
 })
 export class AdminMainViewComponent implements OnInit {
-
   displayedColumnsFacility: string[] = ['Position', 'Name', 'Einrichtungsart', 'Adresse'];
-  displayedColumnsTrainee: string[] = ['Position', 'Name', 'Vorname', 'Stammeinrichtung' ];
+  displayedColumnsTrainee: string[] = ['Nachname', 'Vorname', 'Stammeinrichtung'];
   constructor(private router: Router,
     private store: AngularFirestore,
     private changeDetectorRefs: ChangeDetectorRef,
-    public dialog: MatDialog ) { }
-
-
+    public dialog: MatDialog) { }
+  
   dataSource = new MatTableDataSource<PeriodicElement>([]);
   dataTrainee = new MatTableDataSource<Trainee>([]);
   t1: PeriodicElement = new PeriodicElement()
 
   public tabChanged(tabChangeEvent: MatTabChangeEvent): void {
-    console.log(tabChangeEvent);
+    console.log(tabChangeEvent.tab.textLabel);
 
-}
+  }
 
   onBtnClick() {
-    this.sendData();
+    // this.sendData();
     console.log("Element-Data", ELEMENT_DATA);
   }
   sendData() {
-    let item = {Position: 1,
+    let item = {
+      Position: 1,
       Name: 'Krankenhaus Kirchheim',
       Einrichtungsart: "KS",
-      Adresse: 'Ling'}
+      Adresse: 'Ling'
+    }
     this.store.collection('facilityElements').add(item
- )
+    )
       .then(res => {
         console.log(res);
       })
@@ -62,37 +63,41 @@ export class AdminMainViewComponent implements OnInit {
       })
   }
   sendTraineeData() {
-//     let item =
-//      {Position: 1,
-//       Name: 'Holz ',
-//       Vorname: "Kopf aus",
-//       Stammeinrichtung: 'Ling-HS krankenhaus'}
-//     this.store.collection('traineeElements').add(item
-//  )
-//       .then(res => {
-//         console.log(res);
-//       })
-//       .catch(e => {
-//         console.log(e);
-//       })
-      this.onQuery(this.store.collection("facilityElements"));
+    //     let item =
+    //      {Position: 1,
+    //       Name: 'Holz ',
+    //       Vorname: "Kopf aus",
+    //       Stammeinrichtung: 'Ling-HS krankenhaus'}
+    //     this.store.collection('traineeElements').add(item
+    //  )
+    //       .then(res => {
+    //         console.log(res);
+    //       })
+    //       .catch(e => {
+    //         console.log(e);
+    //       })
+    // this.onQuery(this.store.collection("facilityElements"));
   }
   openDialog() {
-    const dialogRef = this.dialog.open(FacilityDialogComponent); 
-     //Einrichtungsdialog wird geöffnet
+    const dialogRef = this.dialog.open(FacilityDialogComponent);
+    //Einrichtungsdialog wird geöffnet
     dialogRef.afterClosed().subscribe(result => {
       console.log(`Dialog result: ${result}`);
     });
-    console.log("your are in Tab", )
   }
-
+  openDialogTrainee() {
+    const dialogRef = this.dialog.open(TraineeDialogComponent);
+    //Einrichtungsdialog wird geöffnet
+    dialogRef.afterClosed().subscribe(result => {
+      console.log(`Dialog result: ${result}`);
+    });
+    console.log("your are in Tab", this.tabChanged)
+  }
   ngOnInit() {
-    this.refreshLists("facilityElements", this.dataSource);
-    this.refreshLists("traineeElements", this.dataTrainee);
-
+    this.refreshLists("facilityCollection", this.dataSource);
+    this.refreshLists("traineeCollection", this.dataTrainee);
   }
-  refreshLists(p_facilityElements: string, p_data: MatTableDataSource<any>)
-  {
+  refreshLists(p_facilityElements: string, p_data: MatTableDataSource<any>) {
     let p_arr: any[] = [];
     const collectionRef = this.store.collection(p_facilityElements);
     const collectionInstance = collectionRef.valueChanges();
@@ -101,7 +106,7 @@ export class AdminMainViewComponent implements OnInit {
       console.log("myArray", p_arr);
       ELEMENT_DATA = [];
       p_arr.forEach(element => {
-        
+
         ELEMENT_DATA.push(element);
         p_data.data = ELEMENT_DATA;
       });
@@ -110,20 +115,5 @@ export class AdminMainViewComponent implements OnInit {
   }
   refresh() {
     this.changeDetectorRefs.detectChanges();
-  }
-  testarr: any[] = []
-  onQuery(p_collection: AngularFirestoreCollection<unknown>) {
-    p_collection
-      // , ref => ref
-      // .where("name", ">=", "")
-      .get()
-      .subscribe(ss => {
-        ss.docs.forEach(doc => {
-          this.testarr.push(doc.get("Name"));
-          console.log("Data FacilityElems", doc.get("Name"));
-        })
-      }
-      )
-     console.log("testarr", this.testarr);
   }
 }

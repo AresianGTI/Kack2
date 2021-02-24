@@ -25,6 +25,7 @@ export class LoginViewComponent implements OnInit {
       email: this.email,
       password: this.password
     })
+    this.auth
   }
   createUser(){
     const {email, password} = this.loginForm.value;
@@ -32,14 +33,16 @@ export class LoginViewComponent implements OnInit {
       console.log("RegisterComponent --> createUser", hs);
       this.router.navigate(["/Main"]);
     });
-    console.log(this.loginForm.value);
+    console.log("loginform Value: ", this.loginForm.value);
   }
   signIn(){
     const {email, password} = this.loginForm.value;
-    this.auth.signInWithEmailAndPassword(email, password).then(hs =>{
+    this.auth.signInWithEmailAndPassword(email, password)
+    .then(hs =>{
       console.log("User Logged In", hs);
       this.router.navigate(["/Main"]);
     });
+    // this.se
   }
 
 }

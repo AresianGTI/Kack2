@@ -9,7 +9,7 @@ export interface ITrainee{
 export class Trainee implements ITrainee{
     private _name!: string; 
     private _firstname!: string;
-    private _home_facility!: Facility;
+    private _home_facility: Facility = new Facility();
 
     public get name(): string {
         return this._name;

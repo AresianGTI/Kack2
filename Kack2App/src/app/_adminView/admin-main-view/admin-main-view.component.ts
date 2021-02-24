@@ -9,6 +9,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { FacilityDialogComponent } from '../facility-dialog/facility-dialog.component';
 import { TraineeDialogComponent } from '../trainee-dialog/trainee-dialog.component';
+import { FormControl } from '@angular/forms';
+import { MatTab, MatTabChangeEvent, MatTabGroup } from '@angular/material/tabs';
 
 
 
@@ -25,12 +27,16 @@ var ELEMENT_DATA: PeriodicElement[] = [
 })
 export class AdminMainViewComponent implements OnInit {
 
+  tab_selection!: string;
+
+
   displayedColumns: string[] = ['Position', 'Name', 'Einrichtungsart', 'Adresse'];
 
   constructor(private router: Router,
     private store: AngularFirestore,
     private changeDetectorRefs: ChangeDetectorRef,
-    public dialog: MatDialog ) { }
+    public dialog: MatDialog,
+    ) { }
 
   dataSource = new MatTableDataSource<PeriodicElement>([]);
   t1: PeriodicElement = new PeriodicElement()
@@ -54,20 +60,46 @@ export class AdminMainViewComponent implements OnInit {
   }
 
   myArray: any[] = []
-  openDialog() {
+
+  setTab(tabChangeEvent: MatTabChangeEvent ){          // Hier wird der Label vom Tab in die Variable zugewiesen!!!
+    this.tab_selection = tabChangeEvent.tab.textLabel;
+  }
+  ChooseDialog() {
 
     let dialogRef;
+    switch(this.tab_selection){
+      case ("Einrichtung"): {
+        dialogRef = this.dialog.open(FacilityDialogComponent);  //Einrichtungsdialog wird geöffnet
+        dialogRef.afterClosed().subscribe(result => {
+          console.log(`Dialog result: ${result}`);
+        });
+        break;
+      }
+      case ("Auszubildender"):{
+        dialogRef = this.dialog.open(TraineeDialogComponent);  //Azubidialog wird geöffnet
+        dialogRef.afterClosed().subscribe(result => {
+          console.log(`Dialog result: ${result}`);
+        });
+        break;
+      }
+      default:{
+        break;
+      }
+    }
 
-    dialogRef = this.dialog.open(FacilityDialogComponent);  //Einrichtungsdialog wird geöffnet
-    dialogRef = this.dialog.open(TraineeDialogComponent);  //Azubidialog wird geöffnet
+  }
 
-    dialogRef.afterClosed().subscribe(result => {
-      console.log(`Dialog result: ${result}`);
-    });
+  openDialog(dialogRef: any, tab: string){
+
+    // dialogRef = this.dialog.open(FacilityDialogComponent);  //Einrichtungsdialog wird geöffnet
+    //     dialogRef.afterClosed().subscribe(result => {
+    //       console.log(`Dialog result: ${result}`);
+    //     });
   }
 
 
   ngOnInit() {
+    this.tab_selection = "Einrichtung";
     const collectionRef = this.store.collection('facilityElements');
     const collectionInstance = collectionRef.valueChanges();
     collectionInstance.subscribe(ss => {

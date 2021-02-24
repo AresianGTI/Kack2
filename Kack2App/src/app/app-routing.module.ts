@@ -5,6 +5,7 @@ import { AdminMainViewComponent } from './_adminView/admin-main-view/admin-main-
 import { AngularFireAuthGuard, redirectUnauthorizedTo, canActivate} from '@angular/fire/auth-guard';
 import { MainComponent } from './main/main/main.component';
 import { FacilityDialogComponent } from './_adminView/facility-dialog/facility-dialog.component';
+import { TraineeDialogComponent } from './_adminView/trainee-dialog/trainee-dialog.component';
 
 const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo(["loginView"])
 // const loggedIn = () => loggedIn(["login"]);
@@ -32,6 +33,7 @@ const routes: Routes = [
   },
   {path: 'loginView', component: LoginViewComponent},
   {path: 'facility-dialog', component: FacilityDialogComponent},
+  {path: 'trainee-dialog', component:TraineeDialogComponent},
   {path: '', redirectTo: "loginView", pathMatch: "full"}
 
 ];

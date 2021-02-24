@@ -1,7 +1,7 @@
 <mat-tab-group mat-align-tabs="center" mat-stretch-tabs class="example-stretched-tabs mat-elevation-z4"
-(selectedTabChange)="tabChanged($event)">
+(selectedTabChange)="setTab($event)">
     
-    <mat-tab label="Einrichtung">
+    <mat-tab label="Einrichtung" textLabel="tab_selection">
         <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
             <ng-container *ngFor="let column of displayedColumnsFacility" [matColumnDef]="column">
                 <th mat-header-cell *matHeaderCellDef> {{column}} </th>
@@ -10,10 +10,6 @@
             <tr mat-header-row *matHeaderRowDef="displayedColumnsFacility"></tr>
             <tr mat-row *matRowDef="let row; columns: displayedColumnsFacility"></tr>
         </table>
-        <div class="button-container">
-            <button mat-raised-button color="primary" (click)="openDialog()">Erstellen1</button>
-          
-          </div>
     </mat-tab>
 
     <mat-tab label="Auszubildender"> Auszubildende 
@@ -25,10 +21,10 @@
             <tr mat-header-row *matHeaderRowDef="displayedColumnsTrainee"></tr>
             <tr mat-row *matRowDef="let row; columns: displayedColumnsTrainee"></tr>
         </table>
-        <div class="button-container">
-            <button mat-raised-button color="primary" (click)="openDialogTrainee()">Erstellen</button>
-          
-          </div>
     </mat-tab>
     
 </mat-tab-group>
+
+<div class="button-container">
+    <button mat-raised-button color="primary" (click)="ChooseDialog()">Create</button>
+</div>

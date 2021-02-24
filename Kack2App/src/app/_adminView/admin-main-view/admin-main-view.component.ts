@@ -11,6 +11,7 @@ import { FacilityDialogComponent } from '../facility-dialog/facility-dialog.comp
 import { Trainee } from 'src/app/models/trainee';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { TraineeDialogComponent } from '../trainee-dialog/trainee-dialog.component';
+import { FormControl } from '@angular/forms';
 
 
 
@@ -26,6 +27,7 @@ var ELEMENT_DATA: any[] = [
   styleUrls: ['./admin-main-view.component.scss']
 })
 export class AdminMainViewComponent implements OnInit {
+  tab_selection!: string;
   displayedColumnsFacility: string[] = ['Position', 'Name', 'Einrichtungsart', 'Adresse'];
   displayedColumnsTrainee: string[] = ['Nachname', 'Vorname', 'Stammeinrichtung'];
   constructor(private router: Router,
@@ -62,28 +64,43 @@ export class AdminMainViewComponent implements OnInit {
         console.log(e);
       })
   }
-  sendTraineeData() {
-    //     let item =
-    //      {Position: 1,
-    //       Name: 'Holz ',
-    //       Vorname: "Kopf aus",
-    //       Stammeinrichtung: 'Ling-HS krankenhaus'}
-    //     this.store.collection('traineeElements').add(item
-    //  )
-    //       .then(res => {
-    //         console.log(res);
-    //       })
-    //       .catch(e => {
-    //         console.log(e);
-    //       })
-    // this.onQuery(this.store.collection("facilityElements"));
+
+  myArray: any[] = []
+
+  setTab(tabChangeEvent: MatTabChangeEvent ){          // Hier wird der Label vom Tab in die Variable zugewiesen!!!
+    this.tab_selection = tabChangeEvent.tab.textLabel;
   }
-  openDialog() {
-    const dialogRef = this.dialog.open(FacilityDialogComponent);
-    //Einrichtungsdialog wird geöffnet
-    dialogRef.afterClosed().subscribe(result => {
-      console.log(`Dialog result: ${result}`);
-    });
+  ChooseDialog() {
+
+    let dialogRef;
+    switch(this.tab_selection){
+      case ("Einrichtung"): {
+        dialogRef = this.dialog.open(FacilityDialogComponent);  //Einrichtungsdialog wird geöffnet
+        dialogRef.afterClosed().subscribe(result => {
+          console.log(`Dialog result: ${result}`);
+        });
+        break;
+      }
+      case ("Auszubildender"):{
+        dialogRef = this.dialog.open(TraineeDialogComponent);  //Azubidialog wird geöffnet
+        dialogRef.afterClosed().subscribe(result => {
+          console.log(`Dialog result: ${result}`);
+        });
+        break;
+      }
+      default:{
+        break;
+      }
+    }
+
+  }
+
+  openDialog(dialogRef: any, tab: string){
+
+    // dialogRef = this.dialog.open(FacilityDialogComponent);  //Einrichtungsdialog wird geöffnet
+    //     dialogRef.afterClosed().subscribe(result => {
+    //       console.log(`Dialog result: ${result}`);
+    //     });
   }
   openDialogTrainee() {
     const dialogRef = this.dialog.open(TraineeDialogComponent);
@@ -94,6 +111,7 @@ export class AdminMainViewComponent implements OnInit {
     console.log("your are in Tab", this.tabChanged)
   }
   ngOnInit() {
+    this.tab_selection = "Einrichtung";
     this.refreshLists("facilityCollection", this.dataSource);
     this.refreshLists("traineeCollection", this.dataTrainee);
   }

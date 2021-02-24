@@ -19,7 +19,7 @@ import { LoginViewComponent } from './login/login-view/login-view.component';
 import { MainComponent } from './main/main/main.component';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatSidenavModule } from '@angular/material/sidenav';
-import { AdminMainViewComponent } from './_adminView/admin-main-view/admin-main-view.component';
+import { AdminMainViewComponent } from './modules/adminView/admin-main-view/admin-main-view.component';
 import { LayoutModule } from '@angular/cdk/layout';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
@@ -30,8 +30,8 @@ import {MatSortModule} from '@angular/material/sort';
 import {MatTableModule} from '@angular/material/table';
 import {MatTabsModule} from '@angular/material/tabs';
 import {MatSelectModule} from '@angular/material/select'; 
-import { FacilityDialogComponent } from './_adminView/facility-dialog/facility-dialog.component';
-import { TraineeDialogComponent } from './_adminView/trainee-dialog/trainee-dialog.component';
+import { FacilityDialogComponent } from './modules/adminView/facility-dialog/facility-dialog.component'
+import { TraineeDialogComponent } from './modules/adminView/trainee-dialog/trainee-dialog.component';
 
 @NgModule({
   declarations: [

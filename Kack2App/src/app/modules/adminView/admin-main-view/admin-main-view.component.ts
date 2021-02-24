@@ -4,7 +4,6 @@ import { Component, OnInit, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
 import { MatTableDataSource } from '@angular/material/table';
-import { PeriodicElement } from '../someservice.service';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { FacilityDialogComponent } from '../facility-dialog/facility-dialog.component';
@@ -12,6 +11,7 @@ import { Trainee } from 'src/app/models/trainee';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { TraineeDialogComponent } from '../trainee-dialog/trainee-dialog.component';
 import { FormControl } from '@angular/forms';
+import { Facility } from 'src/app/models/facility';
 
 
 
@@ -35,9 +35,8 @@ export class AdminMainViewComponent implements OnInit {
     private changeDetectorRefs: ChangeDetectorRef,
     public dialog: MatDialog) { }
   
-  dataSource = new MatTableDataSource<PeriodicElement>([]);
-  dataTrainee = new MatTableDataSource<Trainee>([]);
-  t1: PeriodicElement = new PeriodicElement()
+  dataSource = new MatTableDataSource<Facility>([]);  // Daten für die Einrichtungstabelle
+  dataTrainee = new MatTableDataSource<Trainee>([]);  // Daten für die 1Azubitabelle
 
   public tabChanged(tabChangeEvent: MatTabChangeEvent): void {
     console.log(tabChangeEvent.tab.textLabel);

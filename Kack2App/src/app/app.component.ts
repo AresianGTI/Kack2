@@ -12,7 +12,7 @@ export class AppComponent {
 
   }
   ngOnInit(){
-    this.router.navigate(["/loginView"]);
+    // this.router.navigate(["/loginView"]);
     // {
     //   this.auth.currentUser.then(hs => {
     //     console.log("User Logged In JAJA", hs);

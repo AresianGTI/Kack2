@@ -78,6 +78,7 @@ export class AdminMainViewComponent implements OnInit {
         dialogRef.afterClosed().subscribe(result => {
           console.log(`Dialog result: ${result}`);
         });
+        
         break;
       }
       case ("Auszubildender"):{
@@ -109,28 +110,39 @@ export class AdminMainViewComponent implements OnInit {
     });
     console.log("your are in Tab", this.tabChanged)
   }
+  
   ngOnInit() {
     this.tab_selection = "Einrichtung";
+    console.log("Facility");
     this.refreshLists("facilityCollection", this.dataSource);
-    this.refreshLists("traineeCollection", this.dataTrainee);
+    console.log("Trainee");
+    // this.refreshLists("traineeCollection", this.dataTrainee);
   }
   refreshLists(p_facilityElements: string, p_data: MatTableDataSource<any>) {
     let p_arr: any[] = [];
-    const collectionRef = this.store.collection(p_facilityElements);
-    const collectionInstance = collectionRef.valueChanges();
+    let collectionRef = this.store.collection(p_facilityElements);
+    let collectionInstance = collectionRef.valueChanges();
+    
     collectionInstance.subscribe(ss => {
       p_arr = ss;
-      console.log("myArray", p_arr);
       ELEMENT_DATA = [];
       p_arr.forEach(element => {
 
         ELEMENT_DATA.push(element);
         p_data.data = ELEMENT_DATA;
+        // console.log("myData", p_data.data);
       });
-      this.refresh();
+      
+      console.log("myArray", p_arr);
     });
+    // collectionInstance.
+    // this.refresh();
   }
+  
   refresh() {
-    this.changeDetectorRefs.detectChanges();
+  
+  //   if (!(this.changeDetectorRefs as any).destroyed) {
+  //     this.changeDetectorRefs.detectChanges();
+  // }
   }
 }

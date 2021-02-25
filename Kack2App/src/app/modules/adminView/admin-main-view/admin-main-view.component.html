@@ -12,7 +12,7 @@
         </table>
     </mat-tab>
 
-    <mat-tab label="Auszubildender"> Auszubildende 
+    <mat-tab label="Auszubildender">  
         <table mat-table [dataSource]="dataTrainee" class="mat-elevation-z8">
             <ng-container *ngFor="let column of displayedColumnsTrainee" [matColumnDef]="column">
                 <th mat-header-cell *matHeaderCellDef> {{column}} </th>

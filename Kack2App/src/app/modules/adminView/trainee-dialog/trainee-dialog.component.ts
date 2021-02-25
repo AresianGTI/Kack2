@@ -14,7 +14,7 @@ export class TraineeDialogComponent implements OnInit {
   constructor(public firestore: AngularFirestore) { }
 
   ngOnInit(): void {
-    this.onQuery( this.firestore.collection('facilityElements'));
+    this.onQuery( this.firestore.collection('facilityCollection'));
   }
 
   createTrainee(){

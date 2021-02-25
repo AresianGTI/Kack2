@@ -32,6 +32,8 @@ import {MatTabsModule} from '@angular/material/tabs';
 import {MatSelectModule} from '@angular/material/select'; 
 import { FacilityDialogComponent } from './modules/adminView/facility-dialog/facility-dialog.component'
 import { TraineeDialogComponent } from './modules/adminView/trainee-dialog/trainee-dialog.component';
+// import { Observable } from 'rxjs';
+import { AuthService } from "./core/auth.service";
 
 @NgModule({
   declarations: [
@@ -66,9 +68,10 @@ import { TraineeDialogComponent } from './modules/adminView/trainee-dialog/train
    MatSlideToggleModule,MatSnackBarModule,
    MatSortModule, MatTableModule, MatTabsModule,
    MatIconModule,
-   MatListModule
+   MatListModule,
+  //  Observable
   ],
-  providers: [],
+  providers: [AuthService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

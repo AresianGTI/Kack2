@@ -3,12 +3,15 @@ import { Facility } from "./facility";
 export interface ITrainee{
     name: string;
     firstname: string;
+    email: string;
     home_facility: Facility;
 }
 
 export class Trainee implements ITrainee{
     private _name!: string; 
     private _firstname!: string;
+    private _email!: string;
+   
     private _home_facility: Facility = new Facility();
 
     public get name(): string {
@@ -22,6 +25,12 @@ export class Trainee implements ITrainee{
     }
     public set firstname(value: string) {
         this._firstname = value;
+    }
+    public get email(): string {
+        return this._email;
+    }
+    public set email(value: string) {
+        this._email = value;
     }
     public get home_facility(): Facility {
         return this._home_facility;

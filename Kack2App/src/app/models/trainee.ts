@@ -1,12 +1,17 @@
 import { Facility } from "./facility";
+import { Roles, User } from './user';
 
 export interface ITrainee{
-    name: string;
-    firstname: string;
     home_facility: Facility;
 }
 
-export class Trainee implements ITrainee{
+export class Trainee implements ITrainee, User{
+    uid!: string;
+    email!: string;
+    roles!: Roles;
+    displayName!: string;
+    test!: string;
+    emailVerified!: boolean;
     private _name!: string; 
     private _firstname!: string;
     private _home_facility: Facility = new Facility();

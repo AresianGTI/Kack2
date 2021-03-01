@@ -34,6 +34,7 @@ import { FacilityDialogComponent } from './modules/adminView/facility-dialog/fac
 import { TraineeDialogComponent } from './modules/adminView/trainee-dialog/trainee-dialog.component';
 // import { Observable } from 'rxjs';
 import { AuthService } from "./core/auth.service";
+import { TraineeInformationComponent } from './modules/trainee-Info/trainee-information/trainee-information.component';
 
 @NgModule({
   declarations: [
@@ -43,6 +44,7 @@ import { AuthService } from "./core/auth.service";
     AdminMainViewComponent,
     FacilityDialogComponent,
     TraineeDialogComponent,
+    TraineeInformationComponent,
   ],
   imports: [
     BrowserModule,

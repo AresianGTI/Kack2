@@ -1,6 +1,6 @@
 import { variable } from '@angular/compiler/src/output/output_ast';
 import { stringify } from '@angular/compiler/src/util';
-import { Component, OnInit, ChangeDetectorRef, ViewChild } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, OnDestroy, ViewChild } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
 import { MatTableDataSource } from '@angular/material/table';
@@ -12,6 +12,7 @@ import { MatTabChangeEvent } from '@angular/material/tabs';
 import { TraineeDialogComponent } from '../trainee-dialog/trainee-dialog.component';
 import { FormControl } from '@angular/forms';
 import { Facility } from 'src/app/models/facility';
+import { element } from 'protractor';
 
 
 
@@ -26,7 +27,7 @@ var ELEMENT_DATA: any[] = [
   templateUrl: './admin-main-view.component.html',
   styleUrls: ['./admin-main-view.component.scss']
 })
-export class AdminMainViewComponent implements OnInit {
+export class AdminMainViewComponent implements OnInit, OnDestroy {
   tab_selection!: string;
   displayedColumnsFacility: string[] = ['Position', 'Name', 'Einrichtungsart', 'Adresse'];
   displayedColumnsTrainee: string[] = ['Nachname', 'Vorname', 'Stammeinrichtung'];
@@ -34,6 +35,11 @@ export class AdminMainViewComponent implements OnInit {
     private store: AngularFirestore,
     private changeDetectorRefs: ChangeDetectorRef,
     public dialog: MatDialog) { }
+  ngOnDestroy(): void {
+    console.log("onDestroyCalled");
+    this.subFacility.unsubscribe();
+    this.subTrainee.unsubscribe();
+  }
   
   dataSource = new MatTableDataSource<Facility>([]);  // Daten für die Einrichtungstabelle
   dataTrainee = new MatTableDataSource<Trainee>([]);  // Daten für die 1Azubitabelle
@@ -114,35 +120,50 @@ export class AdminMainViewComponent implements OnInit {
   ngOnInit() {
     this.tab_selection = "Einrichtung";
     console.log("Facility");
-    this.refreshLists("facilityCollection", this.dataSource);
+    this.refreshFacilities(this.subFacility, "facilityCollection", this.dataSource);
     console.log("Trainee");
-    // this.refreshLists("traineeCollection", this.dataTrainee);
+    this.refreshTrainees(this.subTrainee,"traineeCollection", this.dataTrainee);
   }
-  refreshLists(p_facilityElements: string, p_data: MatTableDataSource<any>) {
-    let p_arr: any[] = [];
-    let collectionRef = this.store.collection(p_facilityElements);
-    let collectionInstance = collectionRef.valueChanges();
-    
-    collectionInstance.subscribe(ss => {
-      p_arr = ss;
-      ELEMENT_DATA = [];
-      p_arr.forEach(element => {
+  subFacility: any;
+  subTrainee:any;
+  refreshFacilities(sub: any, p_facilityElements: string, p_data: MatTableDataSource<any>) {
+    this.subFacility = this.store.collection(p_facilityElements).valueChanges()
 
-        ELEMENT_DATA.push(element);
-        p_data.data = ELEMENT_DATA;
-        // console.log("myData", p_data.data);
-      });
-      
-      console.log("myArray", p_arr);
+   .pipe()
+    .subscribe(ss =>{
+      let arr: any[] = [];
+      let elemData: any[] = [];
+      arr = ss;
+      arr.forEach(element =>
+        {
+          elemData.push(element);
+        })
+      p_data.data = elemData;
+      console.log("TestAusgabe fac", elemData);
     });
-    // collectionInstance.
-    // this.refresh();
+
   }
-  
-  refresh() {
+  refreshTrainees(sub: any, p_facilityElements: string, p_data: MatTableDataSource<any>) {
+    this.subTrainee = this.store.collection(p_facilityElements).valueChanges()
+
+   .pipe()
+    .subscribe(ss =>{
+      let arr: any[] = [];
+      let elemData: any[] = [];
+      arr = ss;
+      arr.forEach(element =>
+        {
+          elemData.push(element);
+        })
+      p_data.data = elemData;
+      console.log("TestAusgabe train", elemData);
+    });
+
+  }
+  // refresh() {
   
   //   if (!(this.changeDetectorRefs as any).destroyed) {
   //     this.changeDetectorRefs.detectChanges();
   // }
-  }
+  // }
 }

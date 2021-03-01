@@ -31,7 +31,9 @@
 </mat-dialog-content>
 <mat-dialog-actions align="End">
   <button mat-raised-button color="primary" mat-dialog-close>Abbrechen</button>
-  <button mat-raised-button (click)="createFacility()" color="primary">Erstellen</button>
+  <button mat-raised-button (click)="createFacility()" color="primary" [disabled]=
+  "!facilityX.facilityName || !facilityX.facilityadress || 
+   !facilityX.facilitytype.facilitytypeName">Erstellen</button>
 </mat-dialog-actions>
 
 

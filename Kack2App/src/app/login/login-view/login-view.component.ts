@@ -13,6 +13,10 @@ export class LoginViewComponent implements OnInit {
   // loginForm!: FormGroup;
   // readonly email = new FormControl('', [Validators.required]);
   // readonly password = new FormControl('', [Validators.required]);
+  loginForm!: FormGroup;
+  // errorMessage!: String;
+  readonly email = new FormControl('', [Validators.required]);
+  readonly password = new FormControl('', [Validators.required]);
 
   constructor(
     private fb:FormBuilder, 
@@ -24,13 +28,38 @@ export class LoginViewComponent implements OnInit {
     //   }
     
    }
-
-  ngOnInit(): void {
-    // this.loginForm = new FormGroup({
-    //   email: this.email,
-    //   password: this.password
-    // })
-  }
+ngOnInit(): void{
+  
+}
+  // ngOnInit(): void {
+  //   // this.loginForm = new FormGroup({
+  //   //   email: this.email,
+  //   //   password: this.password
+  //   // })
+  //   this.loginForm = new FormGroup({
+  //     email: this.email,
+  //     password: this.password
+  //   })
+  //   this.auth
+  // }
+  // createUser(){
+  //   const {email, password} = this.loginForm.value;
+  //   this.auth.createUserWithEmailAndPassword(email, password).then(hs =>{
+  //     console.log("RegisterComponent --> createUser", hs);
+  //     this.router.navigate(["/Main"]);
+  //   })
+  //   .catch(e => this.errorMessage = e.message);
+  //   console.log("loginform Value: ", this.loginForm.value);
+  // }
+  // signIn(){
+  //   const {email, password} = this.loginForm.value; //Destructuring
+  //   this.auth.signInWithEmailAndPassword(email, password)
+  //   .then(hs =>{
+  //     console.log("User Logged In", hs);
+  //     this.router.navigate(["/Main"]);
+  //   }).catch(e => this.errorMessage = e.message);
+  //   // this.se
+  // }
 
 
 }

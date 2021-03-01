@@ -10,9 +10,16 @@
       <input matInput #input maxlength="30" [(ngModel)]="traineeObj.firstname">
       <mat-hint align="end">{{input.value?.length || 0}}/30</mat-hint>
     </mat-form-field>
+    <!-- Feld für den Nachnamn des Azubis -->
     <mat-form-field hintLabel="Maximal 30 Zeichen" appearance="fill">
         <mat-label>Nachname des Azubis</mat-label>
         <input matInput #input maxlength="30" [(ngModel)]="traineeObj.name">
+        <mat-hint align="end">{{input.value?.length || 0}}/30</mat-hint>
+      </mat-form-field>
+      <!-- Feld für die E-Mail Adresse des Azubis -->
+      <mat-form-field hintLabel="Maximal 30 Zeichen" appearance="fill">
+        <mat-label>E-Mail Adresse des Azubis</mat-label>
+        <input matInput #input maxlength="30" [(ngModel)]="traineeObj.email">
         <mat-hint align="end">{{input.value?.length || 0}}/30</mat-hint>
       </mat-form-field>
     <!-- Feld für die Stammeinrichtung -->
@@ -30,5 +37,7 @@
 </mat-dialog-content>
 <mat-dialog-actions align="End">
   <button mat-raised-button color="primary" mat-dialog-close>Abbrechen</button>
-  <button mat-raised-button (click)="createTrainee()" color="primary">Erstellen</button>
+  <button mat-raised-button (click)="createTrainee()" color="primary"
+  [disabled]="!traineeObj.firstname || !traineeObj.name || !traineeObj.email ||
+  !traineeObj.home_facility.facilityName">Erstellen</button>
 </mat-dialog-actions>

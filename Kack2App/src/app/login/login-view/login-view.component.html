@@ -29,10 +29,11 @@
                         <input matInput type="password" class="form-control" formControlName="password">
                     </div>
                 </mat-form-field>
+                <mat-label style="color:crimson">{{errorMessage}}</mat-label>
             
                 <div class="form-footer">
                         <button mat-raised-button (click)= "signIn()" color="primary">
-                            Sign in
+                            Anmelden
                         </button>
                         <button mat-raised-button (click) = "createUser()" color="primary"> 
                             Registrieren</button>          

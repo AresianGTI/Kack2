@@ -10,6 +10,7 @@ import { Trainee } from '../models/trainee';
 })
 
 export class AuthService {
+  errorMessage!: String;
   userData: any; 
   testData!: User;// Save logged in user data
   traineData!: Trainee;
@@ -47,9 +48,8 @@ export class AuthService {
         });
         this.SetUserData(result.user!);
         console.log(this.SetUserData(result.user!));
-      }).catch((error) => {
-        window.alert(error.message)
       })
+      .catch(e => this.errorMessage = e.message);
       
 
       // const {email, password} = this.loginForm.value;
@@ -68,9 +68,8 @@ export class AuthService {
         up and returns promise */
         this.SendVerificationMail();
         this.SetUserData(result.user!);
-      }).catch((error) => {
-        window.alert(error.message)
       })
+      .catch(e => this.errorMessage = e.message);
     //   const {email, password} = this.loginForm.value;
     // this.auth.createUserWithEmailAndPassword(email, password).then(hs =>{
     //   console.log("RegisterComponent --> createUser", hs);

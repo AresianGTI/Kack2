@@ -34,11 +34,12 @@
             
                 <div class="form-footer">
                         <button mat-raised-button 
-                        (click)= "authService.SignIn(userName.value, userPassword.value)" color="primary">
+                        (click)= "SignIn(userName.value, userPassword.value)" color="primary">
                             Anmelden
                         </button>
                         <button mat-raised-button 
-                        (click) = "authService.SignUp(userName.value, userPassword.value)" color="primary"> 
+                        (click) = "createCoordinator(userName.value,userPassword.value)"  color="primary"
+                        > 
                             Registrieren
                         </button>                 
                 </div>

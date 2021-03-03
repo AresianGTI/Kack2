@@ -13,6 +13,8 @@ import { TraineeDialogComponent } from '../trainee-dialog/trainee-dialog.compone
 import { FormControl } from '@angular/forms';
 import { Facility } from 'src/app/models/facility';
 import { element } from 'protractor';
+import { Coordinators } from 'src/app/models/coordinators';
+import { table } from 'console';
 
 
 
@@ -31,22 +33,26 @@ export class AdminMainViewComponent implements OnInit, OnDestroy {
   tab_selection!: string;
   displayedColumnsFacility: string[] = ['Position', 'Name', 'Einrichtungsart', 'Adresse'];
   displayedColumnsTrainee: string[] = ['Nachname', 'Vorname', 'Stammeinrichtung'];
+  displayedColumnsCoordinators: string[] = ['Nachname', 'Vorname', 'test'];
+  isHidden = false;
   constructor(private router: Router,
     private store: AngularFirestore,
     private changeDetectorRefs: ChangeDetectorRef,
     public dialog: MatDialog) { }
   ngOnDestroy(): void {
     console.log("onDestroyCalled");
+    if(!(this.subCoordinators === undefined))  this.subCoordinators.unsubscribe();
     this.subFacility.unsubscribe();
     this.subTrainee.unsubscribe();
+   
   }
   
   dataSource = new MatTableDataSource<Facility>([]);  // Daten für die Einrichtungstabelle
   dataTrainee = new MatTableDataSource<Trainee>([]);  // Daten für die 1Azubitabelle
-
+  dataCoordinators = new MatTableDataSource<Coordinators>([]);
   public tabChanged(tabChangeEvent: MatTabChangeEvent): void {
     console.log(tabChangeEvent.tab.textLabel);
-
+   
   }
 
   onBtnClick() {
@@ -74,6 +80,9 @@ export class AdminMainViewComponent implements OnInit, OnDestroy {
 
   setTab(tabChangeEvent: MatTabChangeEvent ){          // Hier wird der Label vom Tab in die Variable zugewiesen!!!
     this.tab_selection = tabChangeEvent.tab.textLabel;
+     if(this.tab_selection =="Koordinatoren") this.isHidden = true
+     else this.isHidden = false;
+
   }
   ChooseDialog() {
 
@@ -122,10 +131,30 @@ export class AdminMainViewComponent implements OnInit, OnDestroy {
     console.log("Facility");
     this.refreshFacilities(this.subFacility, "facilityCollection", this.dataSource);
     console.log("Trainee");
-    this.refreshTrainees(this.subTrainee,"traineeCollection", this.dataTrainee);
+    this.refreshTrainees(this.subTrainee,"users", this.dataTrainee);
+    this.refreshCoordinators(this.subCoordinators,"users", this.dataCoordinators);
   }
   subFacility: any;
   subTrainee:any;
+  subCoordinators: any;
+  refreshCoordinators(sub: any, p_facilityElements: string, p_data: MatTableDataSource<any>) {
+    this.subCoordinators = this.store.collection(p_facilityElements, ref => ref
+      .where("roles.coordinator", "==", true)).valueChanges()
+
+   .pipe()
+    .subscribe(ss =>{
+      let arr: any[] = [];
+      let elemData: any[] = [];
+      arr = ss;
+      arr.forEach(element =>
+        {
+          elemData.push(element);
+        })
+      p_data.data = elemData;
+      console.log("TestAusgabe Coors", elemData);
+    });
+
+  }
   refreshFacilities(sub: any, p_facilityElements: string, p_data: MatTableDataSource<any>) {
     this.subFacility = this.store.collection(p_facilityElements).valueChanges()
 
@@ -139,12 +168,12 @@ export class AdminMainViewComponent implements OnInit, OnDestroy {
           elemData.push(element);
         })
       p_data.data = elemData;
-      console.log("TestAusgabe fac", elemData);
+      console.log("TestAusgabe FAc", elemData);
     });
 
   }
   refreshTrainees(sub: any, p_facilityElements: string, p_data: MatTableDataSource<any>) {
-    this.subTrainee = this.store.collection(p_facilityElements).valueChanges()
+    this.subTrainee = this.store.collection(p_facilityElements, ref => ref.where("roles.trainee", "==", true )).valueChanges()
 
    .pipe()
     .subscribe(ss =>{

@@ -8,7 +8,7 @@ import { FacilityDialogComponent } from './modules/adminView/facility-dialog/fac
 import { TraineeDialogComponent } from './modules/adminView/trainee-dialog/trainee-dialog.component';
 
 // Verstehe ich nicht richtig!!!!
-import { AuthGuard } from "./shared/guard/auth.guard";
+// import { AuthGuard } from "./shared/guard/auth.guard";
 import { TraineeInformationComponent } from './modules/trainee-Info/trainee-information/trainee-information.component';
 
 const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo(["loginView"])

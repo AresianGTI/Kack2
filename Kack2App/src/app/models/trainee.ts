@@ -1,19 +1,26 @@
 import { Facility } from "./facility";
-import { Roles, User } from './user';
+import { IUser, Roles } from './user';
 
 export interface ITrainee{
-    home_facility: Facility;
+    
 }
 
-export class Trainee implements ITrainee, User{
+export class Trainee implements ITrainee, IUser{
     uid!: string;
     roles!: Roles;
+    rolesobj : Roles = {trainee : true, admin : false, coordinator :false};  
     displayName!: string;
     test!: string;
     emailVerified!: boolean;
     private _name!: string; 
     private _firstname!: string;
     private _email!: string;
+    // constructor(){
+    //     this.roles.admin = true;
+    //     this.roles.coordinator = true;
+    //     this.roles.trainee = true;
+
+    // }
    
     private _home_facility: Facility = new Facility();
 

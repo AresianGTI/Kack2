@@ -3,6 +3,7 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import{AngularFireAuth} from '@angular/fire/auth';
 import { Router } from '@angular/router';
 import {AuthService} from '../../core/auth.service'
+import { Coordinators } from 'src/app/models/coordinators';
 @Component({
   selector: 'app-register',
   templateUrl: './login-View.component.html',
@@ -28,8 +29,20 @@ export class LoginViewComponent implements OnInit {
     //   }
     
    }
-ngOnInit(): void{
-  
+  //  coorindator = new Coordinators();
+ngOnInit(): void{}
+
+createCoordinator(email: string, pw: string){
+  let coorindator = new Coordinators();
+  // coorindator.rolesobj.coordinator = true;
+  this.authService.SignUp(email,  pw, coorindator);
+}
+SignIn(email: string, pw: string){
+  let coorindator = new Coordinators();
+  //Create User Object
+  // this.authService.SignIn(email,  pw, this.userObj, "coordinators");
+  // coorindator.rolesobj.coordinator = true;
+  this.authService.SignIn(email,  pw);
 }
   // ngOnInit(): void {
   //   // this.loginForm = new FormGroup({

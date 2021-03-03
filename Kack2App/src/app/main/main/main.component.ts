@@ -19,12 +19,10 @@ export class MainComponent implements OnInit {
 
   ngOnInit(): void {
     let test;
-    // this.router.navigate(["/adminMainView"]);
-
-    // this.auth.currentUser.then(hs => {
-    //   console.log("User Logged In JAJA", hs);
-    //   this.username = hs?.email;
-    // })
+    // Wenn User == Admin
+    //Navigate to --> Admin
+    //Wenn User == Trainee
+    //Wenn User == Coordinator
   }
 
 }

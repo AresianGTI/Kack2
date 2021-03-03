@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
+import { AuthService } from 'src/app/core/auth.service';
 import { Trainee } from 'src/app/models/trainee';
 
 @Component({
@@ -14,50 +15,43 @@ export class TraineeDialogComponent implements OnInit {
   facilityList: any[] = []
   errorMessage!: string;
 
-  constructor(public firestore: AngularFirestore, private auth: AngularFireAuth) { }
+  constructor(public firestore: AngularFirestore, 
+    private auth: AngularFireAuth,
+    public authService: AuthService) { }
 
   ngOnInit(): void {
-    this.onQuery( this.firestore.collection('facilityCollection'));
+    // this.onQuery( this.firestore.collection('facilityCollection'));
+    this.onQuery( this.firestore.collection('users', ref => ref
+    .where("roles.trainee", "==", true)));
+    console.log("Admin", this.traineeObj.rolesobj.admin);
+    console.log("Trainee", this.traineeObj.rolesobj.trainee);
+    console.log("Coordinator", this.traineeObj.rolesobj.coordinator);
   }
 
   createTrainee() {
-
-    let traineeData =
-    {
-      Nachname: this.traineeObj.name,
-      Vorname: this.traineeObj.firstname,
-      Email: this.traineeObj.email,
-      Stammeinrichtung: this.traineeObj.home_facility.facilityName
-    };
-
-    //Regist User for Authentication
-      this.auth.createUserWithEmailAndPassword(traineeData.Email, "hund111").then(hs => {
-        console.log("RegisterComponent --> createUser", hs)}).catch(err => console.log(err.message));
-
-    // Save inside the TraineeCollection for data-use
-      this.firestore.collection('traineeCollection').add(traineeData).then(res => {
+   this.traineeObj.rolesobj.trainee = true;
+    this.authService.SignUpTrainees(this.traineeObj.email, "hund111", this.traineeObj).then(() => {
+        console.log("RegisterComponent --> createUser");
         this.traineeObj.name = "";
         this.traineeObj.firstname = "";
         this.traineeObj.email = "";
         this.traineeObj.home_facility.facilityName = "";
-        console.log("test", res);
-        alert("Der Azubi wurde erstellt!");
-      });
-
-
+        alert("Der Azubi wurde erstellt!");}
+        )
+        // this.authService.SignOutCreatedUser();
+    // Save inside the TraineeCollection for data-use
+    // this.firestore.collection('trainees').add(traineeData).the
   }
 
 
   onQuery(p_collection: AngularFirestoreCollection<unknown>) {
     this.facilityList = [];
-    p_collection
-      // , ref => ref
-      // .where("name", ">=", "")
+    p_collection 
       .get()
       .subscribe(ss => {
         ss.docs.forEach(doc => {
-          this.facilityList.push(doc.get("Name"));
-          console.log("Data FacilityElems", doc.get("Name"));
+          this.facilityList.push(doc.get("Nachname"));
+          console.log("Data FacilityElems", doc.get("Nachname"));
         })
       }
       )

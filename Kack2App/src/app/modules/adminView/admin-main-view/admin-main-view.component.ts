@@ -108,10 +108,7 @@ export class AdminMainViewComponent implements OnInit {
         ELEMENT_DATA.push(element);
         p_data.data = ELEMENT_DATA;
       });
-      this.refresh();
     });
   }
-  refresh() {
-    this.changeDetectorRefs.detectChanges();
-  }
+
 }

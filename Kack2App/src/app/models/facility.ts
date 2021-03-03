@@ -3,6 +3,7 @@ export interface IFacility{
     facilityadress: string;
     facilitytype: IfacilityType;
     capacity: number;
+    usedCapacity: number;
 }
 export interface IfacilityType{
     facilitytypeName: string;
@@ -16,6 +17,7 @@ export class Facility implements IFacility{
     facilityadress!: string;
     facilitytype: FacilityType = new FacilityType();
     capacity!: number;
+    usedCapacity: number = 0;
    
     constructor(){
         

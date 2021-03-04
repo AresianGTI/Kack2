@@ -62,6 +62,7 @@ export class GoogleChartViewComponent implements OnInit {
         this.facilityArray.push(fclty);
        }
        );
+       this.calculateUsedFacility();
      });
 
     //  this.convertingArray.length = 0; // Array leeren, ohne es zu verändern

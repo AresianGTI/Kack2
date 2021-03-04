@@ -14,7 +14,7 @@ import { Facility, FacilityType } from 'src/app/models/facility';
 export class GoogleChartViewComponent implements OnInit {
   
   mode: ProgressBarMode = 'determinate';
-
+  subscription!: Subscription;
   convertingArray!: any[];
 
   facilityArray: Array<{
@@ -28,7 +28,6 @@ export class GoogleChartViewComponent implements OnInit {
 //Wenn die Buchstaben gleich sind, kann man hier ein Facility-Array verwenden.
 
   usedFacilities: Array<{}> = [];
-  subscription!: Subscription; 
   constructor(private store: AngularFirestore,
     private changeDetectorRefs: ChangeDetectorRef) { }
 
@@ -46,7 +45,7 @@ export class GoogleChartViewComponent implements OnInit {
           this.usedFacilities.push(element.get("Stammeinrichtung"));
         });
         console.log(this.usedFacilities); // Array mit den Stammdaten
-        // this.calculateUsedFacility();
+       // unsubscribe = false;
      });
 
 

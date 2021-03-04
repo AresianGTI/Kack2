@@ -3,7 +3,7 @@ import { ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
 import { MatProgressBar, ProgressBarMode } from '@angular/material/progress-bar';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { Facility, FacilityType } from 'src/app/models/facility';
 
 @Component({
@@ -14,7 +14,7 @@ import { Facility, FacilityType } from 'src/app/models/facility';
 export class GoogleChartViewComponent implements OnInit {
   
   mode: ProgressBarMode = 'determinate';
-
+  subscription!: Subscription;
   convertingArray!: any[];
 
   facilityArray: Array<{
@@ -40,13 +40,14 @@ export class GoogleChartViewComponent implements OnInit {
 //KANN MAN DEN CONVERT SCHRITT ÜBERSPRINGEN?
 
      //Get the seperate mainfacilities of all trainees
-     const traineeCol = this.store.collection("traineeCollection")
+     this.subscription = this.store.collection("traineeCollection")
       .get()
       .subscribe( trainee => {
         trainee.docs.forEach(element => {
           this.usedFacilities.push(element.get("Stammeinrichtung"));
         });
         console.log(this.usedFacilities); // Array mit den Stammdaten
+       // unsubscribe = false;
      });
 
 
@@ -55,7 +56,7 @@ export class GoogleChartViewComponent implements OnInit {
     const facilityCol = this.store.collection("facilityCollection");
     const facilityObservableArray =  facilityCol.valueChanges(); //.get()?
 
-    facilityObservableArray.subscribe(facility => {  //converting in array
+    this.subscription = facilityObservableArray.subscribe(facility => {  //converting in array
        this.convertingArray = facility;
 
        this.convertingArray.forEach(fclty => {  //push into Array for Progressbar
@@ -80,6 +81,7 @@ export class GoogleChartViewComponent implements OnInit {
             console.log(facility.VerwendeteKapazitaet);
           }
         });
+        this.subscription.unsubscribe();
       });
   }
 

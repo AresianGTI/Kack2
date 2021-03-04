@@ -1,6 +1,6 @@
 import { variable } from '@angular/compiler/src/output/output_ast';
 import { stringify } from '@angular/compiler/src/util';
-import { Component, OnInit, ChangeDetectorRef, ViewChild } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ViewChild, OnDestroy } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
 import { MatTableDataSource } from '@angular/material/table';
@@ -12,6 +12,7 @@ import { MatTabChangeEvent } from '@angular/material/tabs';
 import { TraineeDialogComponent } from '../trainee-dialog/trainee-dialog.component';
 import { FormControl } from '@angular/forms';
 import { Facility } from 'src/app/models/facility';
+import { Subscription } from 'rxjs';
 
 
 
@@ -22,14 +23,20 @@ var ELEMENT_DATA: any[] = [];
   templateUrl: './admin-main-view.component.html',
   styleUrls: ['./admin-main-view.component.scss']
 })
-export class AdminMainViewComponent implements OnInit {
+export class AdminMainViewComponent implements OnInit, OnDestroy {
   tab_selection!: string;
+  subscription: Subscription[] = [];
   displayedColumnsFacility: string[] = ['Position', 'Name', 'Einrichtungsart', 'Adresse'];
   displayedColumnsTrainee: string[] = ['Nachname', 'Vorname', 'Stammeinrichtung'];
   constructor(private router: Router,
     private store: AngularFirestore,
     private changeDetectorRefs: ChangeDetectorRef,
     public dialog: MatDialog) { }
+
+  ngOnDestroy(): void {
+    this.subscription.forEach(sub => sub.unsubscribe());
+    console.log("ondestroy aufgerufen");
+  }
   
   dataSource = new MatTableDataSource<Facility>([]);  // Daten für die Einrichtungstabelle
   dataTrainee = new MatTableDataSource<Trainee>([]);  // Daten für die 1Azubitabelle
@@ -90,16 +97,22 @@ export class AdminMainViewComponent implements OnInit {
     });
     console.log("your are in Tab", this.tabChanged)
   }
+
   ngOnInit() {
     this.tab_selection = "Einrichtung";
-    this.refreshLists("facilityCollection", this.dataSource);
     this.refreshLists("traineeCollection", this.dataTrainee);
+    this.refreshLists("facilityCollection", this.dataSource);
+
   }
   refreshLists(p_facilityElements: string, p_data: MatTableDataSource<any>) {
     let p_arr: any[] = [];
     const collectionRef = this.store.collection(p_facilityElements);
     const collectionInstance = collectionRef.valueChanges();
-    collectionInstance.subscribe(ss => {
+
+
+
+    this.subscription.push(collectionInstance
+      .subscribe(ss => {
       p_arr = ss;
       console.log("myArray", p_arr);
       ELEMENT_DATA = [];
@@ -108,7 +121,8 @@ export class AdminMainViewComponent implements OnInit {
         ELEMENT_DATA.push(element);
         p_data.data = ELEMENT_DATA;
       });
-    });
+    })) 
+
   }
 
 }

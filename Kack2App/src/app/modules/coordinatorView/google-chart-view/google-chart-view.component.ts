@@ -35,10 +35,7 @@ export class GoogleChartViewComponent implements OnInit {
 
   ngOnInit(): void {
 
-//KANN MAN DEN CONVERT SCHRITT ÜBERSPRINGEN?
-
-     //Get the seperate mainfacilities of all trainees
-     this.subscription = this.store.collection("traineeCollection")
+     this.subscription = this.store.collection("users")
       .get()
       .subscribe( trainee => {
         trainee.docs.forEach(element => {
@@ -75,8 +72,9 @@ export class GoogleChartViewComponent implements OnInit {
         this.usedFacilities.forEach(uF =>{
           if(uF == facility.Name){
             facility.VerwendeteKapazitaet++;
-            console.log("Einrichtung:",facility.Name, "hat: ", facility.VerwendeteKapazitaet);
-          }
+            
+          };
+          console.log("Einrichtung:",facility.Name, "hat: ", facility.VerwendeteKapazitaet);
         });
         console.log("unsubscribed");
         this.subscription.unsubscribe();

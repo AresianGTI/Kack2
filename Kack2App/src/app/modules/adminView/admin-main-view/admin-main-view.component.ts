@@ -85,7 +85,7 @@ export class AdminMainViewComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.tab_selection = "Einrichtung";
-    this.refreshLists("traineeCollection", this.dataTrainee);
+    this.refreshLists("users", this.dataTrainee);
     this.refreshLists("facilityCollection", this.dataSource);
 
   }

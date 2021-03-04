@@ -1,6 +1,7 @@
 import { ParseTreeResult, ThrowStmt } from '@angular/compiler';
 import { Component, OnInit } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
+import { FormControl } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Facility, IfacilityType } from 'src/app/models/facility';
 
@@ -14,6 +15,7 @@ import { Facility, IfacilityType } from 'src/app/models/facility';
 export class FacilityDialogComponent implements OnInit {
   selectedValue:string = "";
   facilityX: Facility = new Facility();
+  selected = new FormControl(0);
   
   constructor(public firestore: AngularFirestore) {
     
@@ -38,16 +40,19 @@ export class FacilityDialogComponent implements OnInit {
   // }
   createFacility() {
 
-    let fc =
-      {Adresse: this.facilityX.facilityadress,
+    let facilityObj =
+      {Name: this.facilityX.facilityName,
+      Adresse: this.facilityX.facilityadress,
       Einrichtungsart: this.facilityX.facilitytype.facilitytypeName,
-      Name: this.facilityX.facilityName}
+      Kapazitaet: this.facilityX.capacity
+      }
     ;
     
-    this.firestore.collection('facilityCollection').add(fc).then(res =>{
+    this.firestore.collection('facilityCollection').add(facilityObj).then(res =>{
       this.facilityX.facilityName = "";
       this.facilityX.facilityadress = "";
-      // this.facilityX.facilitytype.facilitytypeName = "";
+      this.facilityX.facilitytype.facilitytypeName = "";
+      // this.facilityX.capacity == undefined;  // funktioniert nicht
       console.log("test", res);
       alert("Die Einrichtung wurde erstellt!");
     }).catch(error =>{

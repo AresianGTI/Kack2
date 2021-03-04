@@ -15,11 +15,7 @@ import { Facility } from 'src/app/models/facility';
 
 
 
-var ELEMENT_DATA: any[] = [
-  // { Position: 1, Name: 'Krankenhaus Kirchheim', Einrichtungsart: "KS", Adresse: 'Ling' },
-  // { Position: 2, Name: 'Psychatrie Kirchheim', Einrichtungsart: "HS", Adresse: 'Long' },
-  // { Position: 3, Name: 'Huansohn', Einrichtungsart: "Karl_ess", Adresse: 'Taschang' },
-];
+var ELEMENT_DATA: any[] = [];
 
 @Component({
   selector: 'app-admin-main-view',
@@ -47,28 +43,13 @@ export class AdminMainViewComponent implements OnInit {
     // this.sendData();
     console.log("Element-Data", ELEMENT_DATA);
   }
-  sendData() {
-    let item = {
-      Position: 1,
-      Name: 'Krankenhaus Kirchheim',
-      Einrichtungsart: "KS",
-      Adresse: 'Ling'
-    }
-    this.store.collection('facilityElements').add(item
-    )
-      .then(res => {
-        console.log(res);
-      })
-      .catch(e => {
-        console.log(e);
-      })
-  }
 
   myArray: any[] = []
 
   setTab(tabChangeEvent: MatTabChangeEvent ){          // Hier wird der Label vom Tab in die Variable zugewiesen!!!
     this.tab_selection = tabChangeEvent.tab.textLabel;
   }
+
   ChooseDialog() {
 
     let dialogRef;
@@ -93,7 +74,7 @@ export class AdminMainViewComponent implements OnInit {
     }
 
   }
-
+//aktuell ohne Funktion. Soll bei Choose Dialog ausgeführt werden
   openDialog(dialogRef: any, tab: string){
 
     // dialogRef = this.dialog.open(FacilityDialogComponent);  //Einrichtungsdialog wird geöffnet
@@ -127,10 +108,7 @@ export class AdminMainViewComponent implements OnInit {
         ELEMENT_DATA.push(element);
         p_data.data = ELEMENT_DATA;
       });
-      this.refresh();
     });
   }
-  refresh() {
-    this.changeDetectorRefs.detectChanges();
-  }
+
 }

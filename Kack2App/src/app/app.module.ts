@@ -9,6 +9,7 @@ import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { AngularFireModule } from '@angular/fire';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AngularFireAuthModule } from '@angular/fire/auth';
+import { GoogleChartsModule } from 'angular-google-charts';
 
 
 import { AppComponent } from './app.component';
@@ -30,8 +31,10 @@ import {MatSortModule} from '@angular/material/sort';
 import {MatTableModule} from '@angular/material/table';
 import {MatTabsModule} from '@angular/material/tabs';
 import {MatSelectModule} from '@angular/material/select'; 
+import {MatProgressBarModule} from '@angular/material/progress-bar'; 
 import { FacilityDialogComponent } from './modules/adminView/facility-dialog/facility-dialog.component'
 import { TraineeDialogComponent } from './modules/adminView/trainee-dialog/trainee-dialog.component';
+import { GoogleChartViewComponent } from './modules/coordinatorView/google-chart-view/google-chart-view.component';
 
 @NgModule({
   declarations: [
@@ -41,6 +44,7 @@ import { TraineeDialogComponent } from './modules/adminView/trainee-dialog/train
     AdminMainViewComponent,
     FacilityDialogComponent,
     TraineeDialogComponent,
+    GoogleChartViewComponent,
   ],
   imports: [
     BrowserModule,
@@ -63,10 +67,13 @@ import { TraineeDialogComponent } from './modules/adminView/trainee-dialog/train
    MatSliderModule,
    MatSidenavModule,
    MatTooltipModule,
-   MatSlideToggleModule,MatSnackBarModule,
+   MatProgressBarModule,
+   MatSlideToggleModule,
+   MatSnackBarModule,
    MatSortModule, MatTableModule, MatTabsModule,
    MatIconModule,
-   MatListModule
+   MatListModule,
+   GoogleChartsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

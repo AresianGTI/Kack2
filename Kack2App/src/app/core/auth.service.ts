@@ -37,15 +37,7 @@ export class AuthService {
     /* Saving user data in localstorage when 
     logged in and setting up null when logged out */
 
-    this.afAuth.authState.subscribe(user => {
-      // this.user$ = this.afAuth.authState.pipe()
-      // .switchMap(user => {
-      //   if (user) {
-      //     return this.afs.doc<User>(`users/${user.uid}`).valueChanges()
-      //   } else {
-      //     return Observable.of(null)
-      //   }
-      // })
+    let sub = this.afAuth.authState.subscribe(user => {
       if (user) {
          this.getUserData(user);
          this.loggedInData = user;
@@ -66,7 +58,7 @@ export class AuthService {
         this.ngZone.run(() => {
           this.router.navigate(['Stammdaten']);
         });
-        this.SetUserData(result.user!);
+        // this.SetUserData(result.user!);
       })
       .then(() => {
         console.log("Meine UserDataa in SignIn: " );
@@ -97,22 +89,22 @@ export class AuthService {
   }
 
   // Send email verfificaiton when new user sign up
-  async SendVerificationMail() {
-    return (await this.afAuth.currentUser)?.sendEmailVerification()
-      .then(() => {
-        console.log('email sent');
-      })
-  }
+  // async SendVerificationMail() {
+  //   return (await this.afAuth.currentUser)?.sendEmailVerification()
+  //     .then(() => {
+  //       console.log('email sent');
+  //     })
+  // }
 
-  // Reset Forggot password
-  ForgotPassword(passwordResetEmail: any) {
-    return this.afAuth.sendPasswordResetEmail(passwordResetEmail)
-      .then(() => {
-        window.alert('Password reset email sent, check your inbox.');
-      }).catch((error) => {
-        window.alert(error)
-      })
-  }
+  // // Reset Forggot password
+  // ForgotPassword(passwordResetEmail: any) {
+  //   return this.afAuth.sendPasswordResetEmail(passwordResetEmail)
+  //     .then(() => {
+  //       window.alert('Password reset email sent, check your inbox.');
+  //     }).catch((error) => {
+  //       window.alert(error)
+  //     })
+  // }
 
   // Returns true when user is looged in and email is verified
   get isLoggedIn(): boolean {

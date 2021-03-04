@@ -3,7 +3,7 @@ import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
 import { AuthService } from 'src/app/core/auth.service';
 import { Trainee } from 'src/app/models/trainee';
-
+import { take } from 'rxjs/operators';
 @Component({
   selector: 'app-trainee-dialog',
   templateUrl: './trainee-dialog.component.html',
@@ -20,7 +20,7 @@ export class TraineeDialogComponent implements OnInit {
     public authService: AuthService) { }
 
   ngOnInit(): void {
-    // this.onQuery( this.firestore.collection('facilityCollection'));
+    this.onQuery( this.firestore.collection('facilityCollection'));
     this.onQuery( this.firestore.collection('users', ref => ref
     .where("roles.trainee", "==", true)));
     console.log("Admin", this.traineeObj.rolesobj.admin);

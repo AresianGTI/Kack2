@@ -3,7 +3,7 @@ import { ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
 import { MatProgressBar, ProgressBarMode } from '@angular/material/progress-bar';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { Facility, FacilityType } from 'src/app/models/facility';
 
 @Component({
@@ -28,26 +28,25 @@ export class GoogleChartViewComponent implements OnInit {
 //Wenn die Buchstaben gleich sind, kann man hier ein Facility-Array verwenden.
 
   usedFacilities: Array<{}> = [];
-
+  subscription!: Subscription; 
   constructor(private store: AngularFirestore,
     private changeDetectorRefs: ChangeDetectorRef) { }
 
-  // ngOnDestroy(): void {
-  // }
+
 
   ngOnInit(): void {
 
 //KANN MAN DEN CONVERT SCHRITT ÜBERSPRINGEN?
 
      //Get the seperate mainfacilities of all trainees
-     const traineeCol = this.store.collection("traineeCollection")
+     this.subscription = this.store.collection("traineeCollection")
       .get()
       .subscribe( trainee => {
         trainee.docs.forEach(element => {
           this.usedFacilities.push(element.get("Stammeinrichtung"));
         });
         console.log(this.usedFacilities); // Array mit den Stammdaten
-        this.calculateUsedFacility();
+        // this.calculateUsedFacility();
      });
 
 
@@ -56,13 +55,12 @@ export class GoogleChartViewComponent implements OnInit {
     const facilityCol = this.store.collection("facilityCollection");
     const facilityObservableArray =  facilityCol.valueChanges(); //.get()?
 
-    facilityObservableArray.subscribe(facility => {  //converting in array
+    this.subscription = facilityObservableArray.subscribe(facility => {  //converting in array
        this.convertingArray = facility;
-
        this.convertingArray.forEach(fclty => {  //push into Array for Progressbar
         this.facilityArray.push(fclty);
        })
-      //  this.calculateUsedFacility();
+       this.calculateUsedFacility();
        
      });
 
@@ -81,6 +79,8 @@ export class GoogleChartViewComponent implements OnInit {
             console.log("Einrichtung:",facility.Name, "hat: ", facility.VerwendeteKapazitaet);
           }
         });
+        console.log("unsubscribed");
+        this.subscription.unsubscribe();
       });
   }
 

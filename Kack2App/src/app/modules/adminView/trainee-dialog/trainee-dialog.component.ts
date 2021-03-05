@@ -21,8 +21,8 @@ export class TraineeDialogComponent implements OnInit {
 
   ngOnInit(): void {
     this.onQuery( this.firestore.collection('facilityCollection'));
-    this.onQuery( this.firestore.collection('users', ref => ref
-    .where("roles.trainee", "==", true)));
+    // this.onQuery( this.firestore.collection('users', ref => ref
+    // .where("roles.trainee", "==", true)));
     console.log("Admin", this.traineeObj.rolesobj.admin);
     console.log("Trainee", this.traineeObj.rolesobj.trainee);
     console.log("Coordinator", this.traineeObj.rolesobj.coordinator);
@@ -50,8 +50,8 @@ export class TraineeDialogComponent implements OnInit {
       .get()
       .subscribe(ss => {
         ss.docs.forEach(doc => {
-          this.facilityList.push(doc.get("Nachname"));
-          console.log("Data FacilityElems", doc.get("Nachname"));
+          this.facilityList.push(doc.get("Name"));
+          console.log("Data FacilityElems", doc.get("Name"));
         })
       }
       )

@@ -7,7 +7,7 @@ import firebase from 'firebase';
 import { Trainee } from '../models/trainee';
 import { Facility } from '../models/facility';
 import { Coordinators } from '../models/coordinators';
-import { Observable, of } from 'rxjs';
+import { Observable, of, Subscription } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { switchMap } from 'rxjs/operators';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
@@ -25,6 +25,7 @@ export class AuthService {
   testData: any;// Save logged in user data
   traineData!: Trainee;
   loggedInData:any;
+  loginSubscriptions: Subscription[] = [];
   // Save logged in user data
   // Save logged in user data
   
@@ -32,12 +33,13 @@ export class AuthService {
     public afs: AngularFirestore,   // Inject Firestore service
     public afAuth: AngularFireAuth, // Inject Firebase auth service
     public router: Router,
-    public ngZone: NgZone // NgZone service to remove outside scope warning
+    public ngZone: NgZone, // NgZone service to remove outside scope warning
+
   ) {
     /* Saving user data in localstorage when 
     logged in and setting up null when logged out */
 
-    let sub = this.afAuth.authState.subscribe(user => {
+    this.loginSubscriptions.push(this.afAuth.authState.subscribe(user => {
       if (user) {
          this.getUserData(user);
          this.loggedInData = user;
@@ -49,8 +51,15 @@ export class AuthService {
         // console.log(localStorage);
         localStorage.getItem('user');
       }
-    })
+    }));
   }
+
+  DestroySubscriptions(){
+    this.loginSubscriptions.forEach(sub =>
+      sub.unsubscribe());
+      
+  }
+
   // Sign in with email/password
   SignIn(email: string, password: string) {
     return this.afAuth.signInWithEmailAndPassword(email, password)
@@ -58,7 +67,7 @@ export class AuthService {
         this.ngZone.run(() => {
           this.router.navigate(['Stammdaten']);
         });
-        // this.SetUserData(result.user!);
+        this.getUserData(result.user!);
       })
       .then(() => {
         console.log("Meine UserDataa in SignIn: " );
@@ -134,13 +143,15 @@ export class AuthService {
     // let result: any = this.afs.collection("coordinators").doc(user.uid).valueChanges()
     // let collection = "coordinators";
    
-    const result = this.afs.collection("users").doc(`/${user.uid}`).valueChanges()
-    .subscribe(value =>
-      {
-        //Subscription muss stoppen
-        this.currentData = value;
-        console.log("RESULT", value);
-      });
+    this.loginSubscriptions.push(
+      this.afs.collection("users").doc(`/${user.uid}`).valueChanges()
+      .subscribe(value =>
+        {
+          //Subscription muss stoppen
+          this.currentData = value;
+          console.log("RESULT", value);
+        })
+    );
 
 
 //  console.log("RESULT", result);
@@ -187,8 +198,9 @@ export class AuthService {
   // Sign out 
   SignOut() {
     return this.afAuth.signOut().then(() => {
+      this.DestroySubscriptions();
       localStorage.removeItem('user');
-      this.router.navigate(['login-view']);
+      this.router.navigate(['loginView']);
     })
   }
   private checkAuthorization(user: IUser, allowedRoles: string[]): boolean {

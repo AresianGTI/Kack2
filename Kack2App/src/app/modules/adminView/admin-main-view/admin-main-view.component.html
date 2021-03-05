@@ -12,7 +12,7 @@
         </table>
     </mat-tab>
 
-    <mat-tab label="Auszubildender"> Auszubildende 
+    <mat-tab label="Auszubildender">  
         <table mat-table [dataSource]="dataTrainee" class="mat-elevation-z8">
             <ng-container *ngFor="let column of displayedColumnsTrainee" [matColumnDef]="column">
                 <th mat-header-cell *matHeaderCellDef> {{column}} </th>
@@ -22,9 +22,19 @@
             <tr mat-row *matRowDef="let row; columns: displayedColumnsTrainee"></tr>
         </table>
     </mat-tab>
+    <mat-tab label="Koordinatoren" >  
+        <table mat-table [dataSource]="dataCoordinators" class="mat-elevation-z8">
+            <ng-container *ngFor="let column of displayedColumnsCoordinators" [matColumnDef]="column">
+                <th mat-header-cell *matHeaderCellDef> {{column}} </th>
+                <td mat-cell *matCellDef="let element"> {{element[column]}} </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="displayedColumnsCoordinators"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumnsCoordinators"></tr>
+        </table>
+    </mat-tab>
     
 </mat-tab-group>
 
-<div class="button-container">
+<div class="button-container" [hidden] = "isHidden">
     <button mat-raised-button color="primary" (click)="ChooseDialog()">Create</button>
 </div>

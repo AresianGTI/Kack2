@@ -28,19 +28,14 @@ export class GoogleChartViewComponent implements OnInit {
 //Wenn die Buchstaben gleich sind, kann man hier ein Facility-Array verwenden.
 
   usedFacilities: Array<{}> = [];
-
   constructor(private store: AngularFirestore,
     private changeDetectorRefs: ChangeDetectorRef) { }
 
-  // ngOnDestroy(): void {
-  // }
+
 
   ngOnInit(): void {
 
-//KANN MAN DEN CONVERT SCHRITT ÜBERSPRINGEN?
-
-     //Get the seperate mainfacilities of all trainees
-     this.subscription = this.store.collection("traineeCollection")
+     this.subscription = this.store.collection("users")
       .get()
       .subscribe( trainee => {
         trainee.docs.forEach(element => {
@@ -58,12 +53,11 @@ export class GoogleChartViewComponent implements OnInit {
 
     this.subscription = facilityObservableArray.subscribe(facility => {  //converting in array
        this.convertingArray = facility;
-
        this.convertingArray.forEach(fclty => {  //push into Array for Progressbar
         this.facilityArray.push(fclty);
-       }
-       );
+       })
        this.calculateUsedFacility();
+       
      });
 
     //  this.convertingArray.length = 0; // Array leeren, ohne es zu verändern
@@ -78,9 +72,11 @@ export class GoogleChartViewComponent implements OnInit {
         this.usedFacilities.forEach(uF =>{
           if(uF == facility.Name){
             facility.VerwendeteKapazitaet++;
-            console.log(facility.VerwendeteKapazitaet);
-          }
+            
+          };
+          console.log("Einrichtung:",facility.Name, "hat: ", facility.VerwendeteKapazitaet);
         });
+        console.log("unsubscribed");
         this.subscription.unsubscribe();
       });
   }

@@ -8,7 +8,7 @@
         <mat-label>Passwort angeben:</mat-label>
         <input placeholder="PW" type="text">
       </mat-form-field> -->
-
+      <link rel="shortcut icon" href="favicon.ico">
     <div>
         <mat-card-content>
             <form class = "form">
@@ -18,25 +18,30 @@
                 </div>
                 <mat-form-field class ="form-control" appearance="outline">
                     <mat-label> Your email</mat-label>
-                    <div [formGroup] ="loginForm" class ="form-group">
-                        <input formControlName="email" matInput type="text">
+                    <div class ="form-group">
+                        <input matInput type="text" #userName required>
                     </div>
                     
                 </mat-form-field>
                 <mat-form-field class ="form-control" appearance="outline">
                     <mat-label> Your password</mat-label>
-                    <div [formGroup] ="loginForm" class ="form-group">
-                        <input matInput type="password" class="form-control" formControlName="password">
+                    <div class ="form-group">
+                        <input matInput type="password" class="form-control" 
+                        #userPassword required>
                     </div>
                 </mat-form-field>
-                <mat-label style="color:crimson">{{errorMessage}}</mat-label>
+                <mat-label style="color:crimson">{{authService.errorMessage}}</mat-label>
             
                 <div class="form-footer">
-                        <button mat-raised-button (click)= "signIn()" color="primary">
+                        <button mat-raised-button 
+                        (click)= "SignIn(userName.value, userPassword.value)" color="primary">
                             Anmelden
                         </button>
-                        <button mat-raised-button (click) = "createUser()" color="primary"> 
-                            Registrieren</button>          
+                        <button mat-raised-button 
+                        (click) = "createCoordinator(userName.value,userPassword.value)"  color="primary"
+                        > 
+                            Registrieren
+                        </button>                 
                 </div>
             </form>   
         </mat-card-content>

@@ -1,0 +1,18 @@
+<div class="row" *ngIf="authService.currentData as user">
+    <div class="col-md-12">
+      <div class="media">
+        <div class="media-body">
+          <h1>Hello: <strong>{{(user.Vorname) ? user.Vorname : 'User'}}</strong></h1>
+          <p>User ID: <strong>{{user.uid}}</strong></p>
+          <p>Email: <strong>{{user.email}}</strong></p>
+          <p>Email Verified: <strong>{{user.emailVerified}}</strong></p>
+          <!-- <p>Role: <strong> {{u}}</strong></p>  -->
+          <p>Stammeinrichtung: <strong> {{user.Stammeinrichtung}}</strong></p> 
+
+          <p *ngIf = "user.roles.trainee">Trainee: <strong>{{user.roles.trainee}}</strong></p>
+          <p *ngIf = "user.roles.coordinator">Coordinator: <strong>{{user.roles.coordinator}}</strong></p>
+          <p *ngIf = "user.roles.admin">Admin: <strong>{{user.roles.admin}}</strong></p>
+        </div>
+      </div>
+    </div>
+  </div>

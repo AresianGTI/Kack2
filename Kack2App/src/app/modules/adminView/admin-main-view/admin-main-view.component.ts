@@ -12,6 +12,9 @@ import { MatTabChangeEvent } from '@angular/material/tabs';
 import { TraineeDialogComponent } from '../trainee-dialog/trainee-dialog.component';
 import { FormControl } from '@angular/forms';
 import { Facility } from 'src/app/models/facility';
+import { element } from 'protractor';
+import { Coordinators } from 'src/app/models/coordinators';
+import { table } from 'console';
 import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -32,6 +35,8 @@ export class AdminMainViewComponent implements OnInit, OnDestroy {
 
   displayedColumnsFacility: string[] = ['Position', 'Name', 'Einrichtungsart', 'Adresse'];
   displayedColumnsTrainee: string[] = ['Nachname', 'Vorname', 'Stammeinrichtung'];
+  displayedColumnsCoordinators: string[] = ['Nachname', 'Vorname', 'test'];
+  isHidden = false;
   constructor(private router: Router,
     private store: AngularFirestore,
     public dialog: MatDialog) { }
@@ -45,14 +50,18 @@ export class AdminMainViewComponent implements OnInit, OnDestroy {
 
   dataSource = new MatTableDataSource<Facility>([]);  // Daten für die Einrichtungstabelle
   dataTrainee = new MatTableDataSource<Trainee>([]);  // Daten für die Azubitabelle
+  dataCoordinators = new MatTableDataSource<Coordinators>([]);
 
   public tabChanged(tabChangeEvent: MatTabChangeEvent): void {
     console.log(tabChangeEvent.tab.textLabel);
-
+   
   }
 
   setTab(tabChangeEvent: MatTabChangeEvent) {          // Hier wird der Label vom Tab in die Variable zugewiesen!!!
     this.tab_selection = tabChangeEvent.tab.textLabel;
+     if(this.tab_selection =="Koordinatoren") this.isHidden = true
+     else this.isHidden = false;
+
   }
 
   ChooseDialog() {
@@ -76,10 +85,17 @@ export class AdminMainViewComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.tab_selection = "Einrichtung";
-    this.refreshLists("traineeCollection", this.dataTrainee);
+    this.refreshLists("users", this.dataTrainee);
     this.refreshLists("facilityCollection", this.dataSource);
 
   }
+
+  // public subCoordinators: any;
+  // this.refreshCoordinators(this.subCoordinators,"users", this.dataCoordinators);
+  // refreshCoordinators(sub: any, p_facilityElements: string, p_data: MatTableDataSource<any>) {
+  //   this.subCoordinators = this.store.collection(p_facilityElements, ref => ref
+  //     .where("roles.coordinator", "==", true)).valueChanges()
+
   refreshLists(p_facilityElements: string, p_data: MatTableDataSource<any>) {
     let p_arr: any[] = [];
     const collectionRef = this.store.collection(p_facilityElements);
@@ -100,5 +116,4 @@ export class AdminMainViewComponent implements OnInit, OnDestroy {
         }));
 
   }
-
 }

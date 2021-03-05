@@ -6,6 +6,10 @@ import { AngularFireAuthGuard, redirectUnauthorizedTo, canActivate } from '@angu
 import { MainComponent } from './main/main/main.component';
 import { FacilityDialogComponent } from './modules/adminView/facility-dialog/facility-dialog.component'
 import { TraineeDialogComponent } from './modules/adminView/trainee-dialog/trainee-dialog.component';
+
+// Verstehe ich nicht richtig!!!!
+// import { AuthGuard } from "./shared/guard/auth.guard";
+import { TraineeInformationComponent } from './modules/trainee-Info/trainee-information/trainee-information.component';
 import { GoogleChartViewComponent } from './modules/coordinatorView/google-chart-view/google-chart-view.component';
 const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo(["loginView"])
 // const loggedIn = () => loggedIn(["login"]);
@@ -24,10 +28,13 @@ const routes: Routes = [
     canActivate: [AngularFireAuthGuard],
     data: { authGuardPipe: redirectUnauthorizedToLogin },
     children: [
-      {
-        path: 'Stammdaten',
-        component: AdminMainViewComponent,
-
+        {
+            path: 'Stammdaten',
+            component: AdminMainViewComponent,  
+        },
+        {
+          path: 'trainee',
+          component: TraineeInformationComponent,  
       },
       {
         path: 'GoogleCharts',
@@ -36,20 +43,14 @@ const routes: Routes = [
       }
     ],
   },
-
-  { path: 'loginView', component: LoginViewComponent },
-
-  {
-    path: 'facility-dialog', component: FacilityDialogComponent,
-    canActivate: [AngularFireAuthGuard],
-    data: { authGuardPipe: redirectUnauthorizedToLogin }
-  },
-
-  {
-    path: 'trainee-dialog', component: TraineeDialogComponent,
-    canActivate: [AngularFireAuthGuard],
-    data: { authGuardPipe: redirectUnauthorizedToLogin }
-  },
+  {path: 'loginView', component: LoginViewComponent},
+  {path: 'facility-dialog', component: FacilityDialogComponent,
+  canActivate:[AngularFireAuthGuard],
+  data: { authGuardPipe: redirectUnauthorizedToLogin }},
+  {path: 'trainee-dialog', component: TraineeDialogComponent,
+  canActivate:[AngularFireAuthGuard],
+  data: { authGuardPipe: redirectUnauthorizedToLogin }},
+  // {path: '', redirectTo: "loginView", pathMatch: "full"}
 
 ];
 @NgModule({

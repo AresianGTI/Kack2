@@ -20,6 +20,9 @@ export class Facility implements IFacility{
     usedCapacity: number = 0;
    
     constructor(){
-        
+        this.facilityName ="Facname";
+        this.facilityadress ="facadress";
+        this.facilitytype.facilitytypeName =" facType --> FactypeName";
+        console.log("Ich bin die FacilityKlasse", this.facilityName, this.facilityadress, this.facilitytype);
     }
 }

@@ -17,7 +17,7 @@ import { CanReadGuard } from './core/can-read.guard';
 import { SingleTraineeChartComponent } from './modules/coordinatorView/single-trainee-chart/single-trainee-chart/single-trainee-chart.component';
 import { SingleFacilityChartComponent } from './modules/coordinatorView/single-facility-chart/single-facility-chart/single-facility-chart.component';
 const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo(["loginView"]);
-const dd = () =>  redirectLoggedInTo(["single-trainee"]);
+const dd = () => redirectUnauthorizedTo(["single-trainee"]);
 // const loggedIn = () => loggedIn(["login"]);
 // const routes: Routes = [
 //   {path: 'loginView', component: LoginViewComponent},
@@ -33,39 +33,51 @@ const routes: Routes = [
     component: MainComponent,
     canActivate: [AngularFireAuthGuard],
     // An dieser Stelle funktioniert es
-    // data: { authGuardPipe: dd },
+    data: { authGuardPipe: redirectUnauthorizedToLogin },
     children: [
-        {
-            path: 'Stammdaten',
-            // canActivate:[CanReadGuard],
-            // data: { authGuardPipe: dd },
-            component: AdminMainViewComponent,  
-        },
-        {
-          path: 'trainee',
-          component: TraineeInformationComponent,  
+      {
+        path: 'Stammdaten',
+        // canActivate:[CanReadGuard],
+        // data: { authGuardPipe: dd },
+        component: AdminMainViewComponent,
+      },
+      {
+        path: 'trainee',
+        component: TraineeInformationComponent,
       },
       {
         path: 'GoogleCharts',
         component: GoogleChartViewComponent,
+        canActivate: [AngularFireAuthGuard, CanReadGuard]},
+        // data: { authGuardPipe: dd },
+          {
+            path: 'single-trainee',
+            component: SingleTraineeChartComponent,
+            canActivate: [AngularFireAuthGuard],
+          },
+          {
+            path: 'single-facility', 
+            component: SingleFacilityChartComponent,
+            canActivate: [AngularFireAuthGuard],
+            // data: { authGuardPipe: dd },
+          },
 
-      }
     ],
   },
-  {path: 'loginView', component: LoginViewComponent},
-  {path: 'facility-dialog', component: FacilityDialogComponent,
-  // canActivate:[CanReadGuard],
-  data: { authGuardPipe: redirectUnauthorizedToLogin }},
-  {path: 'trainee-dialog', component: TraineeDialogComponent,
-  canActivate:[AngularFireAuthGuard],
-  data: { authGuardPipe: redirectUnauthorizedToLogin }},
-  {path: 'single-trainee', component: SingleTraineeChartComponent,
-  canActivate:[AngularFireAuthGuard],
-  data: { authGuardPipe: redirectUnauthorizedToLogin }},
-  {path: 'single-facility', component: SingleFacilityChartComponent,
-  canActivate:[AngularFireAuthGuard],
-  data: { authGuardPipe: redirectUnauthorizedToLogin }},
-  // {path: '', redirectTo: "loginView", pathMatch: "full"}
+  { path: 'loginView', 
+  component: LoginViewComponent },
+  {
+    path: 'facility-dialog', component: FacilityDialogComponent,
+    // canActivate:[CanReadGuard],
+    data: { authGuardPipe: redirectUnauthorizedToLogin }
+  },
+  {
+    path: 'trainee-dialog', component: TraineeDialogComponent,
+    canActivate: [AngularFireAuthGuard],
+    data: { authGuardPipe: redirectUnauthorizedToLogin }
+  },
+
+  {path: '', redirectTo: "/loginView", pathMatch: "full"}
 
 ];
 @NgModule({

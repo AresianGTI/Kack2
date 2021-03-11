@@ -27,4 +27,9 @@ export class CanReadGuard implements CanActivate {
       );
 
     }
+    canActivateChild(
+      next: ActivatedRouteSnapshot,
+      state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
+      return true;
+    }
   }

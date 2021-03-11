@@ -19,6 +19,7 @@ export class MainComponent implements OnInit {
 
   ngOnInit(): void {
     let test;
+    this.router.navigate(["/trainee"]);
     // Wenn User == Admin
     //Navigate to --> Admin
     //Wenn User == Trainee

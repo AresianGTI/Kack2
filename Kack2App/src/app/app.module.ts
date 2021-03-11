@@ -38,6 +38,8 @@ import { TraineeDialogComponent } from './modules/adminView/trainee-dialog/train
 import { AuthService } from "./core/auth.service";
 import { TraineeInformationComponent } from './modules/trainee-Info/trainee-information/trainee-information.component';
 import { GoogleChartViewComponent } from './modules/coordinatorView/google-chart-view/google-chart-view.component';
+import { SingleFacilityChartComponent } from './modules/coordinatorView/single-facility-chart/single-facility-chart/single-facility-chart.component';
+import { SingleTraineeChartComponent } from './modules/coordinatorView/single-trainee-chart/single-trainee-chart/single-trainee-chart.component';
 
 @NgModule({
   declarations: [
@@ -49,6 +51,8 @@ import { GoogleChartViewComponent } from './modules/coordinatorView/google-chart
     TraineeDialogComponent,
     TraineeInformationComponent,
     GoogleChartViewComponent,
+    SingleFacilityChartComponent,
+    SingleTraineeChartComponent,
   ],
   imports: [
     BrowserModule,

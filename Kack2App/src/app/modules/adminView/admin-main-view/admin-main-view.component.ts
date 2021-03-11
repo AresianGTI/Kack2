@@ -17,6 +17,7 @@ import { Coordinators } from 'src/app/models/coordinators';
 import { table } from 'console';
 import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { AuthService } from 'src/app/core/auth.service';
 
 
 var ELEMENT_DATA: any[] = [];
@@ -28,7 +29,7 @@ var ELEMENT_DATA: any[] = [];
 })
 export class AdminMainViewComponent implements OnInit, OnDestroy {
   tab_selection!: string;
-
+  user: any;
   //for subscriptions and unsubscriptions
   private destroyed$: Subject<boolean> = new Subject<boolean>();
   subscriptions: Subscription[] = [];
@@ -39,7 +40,10 @@ export class AdminMainViewComponent implements OnInit, OnDestroy {
   isHidden = false;
   constructor(private router: Router,
     private store: AngularFirestore,
-    public dialog: MatDialog) { }
+    public dialog: MatDialog,
+    public authService: AuthService) {
+      // this.authService.user$.subscribe(user => this.user = user)
+     }
 
   ngOnDestroy(): void {
     this.subscriptions.forEach(sub => sub.unsubscribe());

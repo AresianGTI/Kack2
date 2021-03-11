@@ -9,7 +9,7 @@ import { Facility } from '../models/facility';
 import { Coordinators } from '../models/coordinators';
 import { Observable, of, Subscription } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { switchMap } from 'rxjs/operators';
+import { switchMap } from 'rxjs/operators/';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 
 const secondaryApp = firebase.initializeApp(environment.firebaseConfig, 'Secondary');
@@ -18,16 +18,17 @@ const secondaryApp = firebase.initializeApp(environment.firebaseConfig, 'Seconda
 })
 
 export class AuthService {
-
   errorMessage!: String;
   currentData: any;
   userData: any;
   testData: any;// Save logged in user data
   traineData!: Trainee;
   loggedInData:any;
+  userMuser: any;
   loginSubscriptions: Subscription[] = [];
   // Save logged in user data
   // Save logged in user data
+  user$: Observable<any>;
   
   constructor(
     public afs: AngularFirestore,   // Inject Firestore service
@@ -38,26 +39,45 @@ export class AuthService {
   ) {
     /* Saving user data in localstorage when 
     logged in and setting up null when logged out */
-
-    this.loginSubscriptions.push(this.afAuth.authState.subscribe(user => {
+    // this.user$ = this.afAuth.authState.pipe(switchMap(user => {
+    //   if (user) {
+    //     this.getUserData(user);
+    //     this.currentData 
+    //     return this.afs.doc<any>(`users/${user.uid}`).valueChanges()
+    //   } else {
+    //     return of(null);
+    //   }
+    // }))   
+        this.user$ = this.afAuth.authState.pipe(switchMap(user => {
       if (user) {
-         this.getUserData(user);
-         this.loggedInData = user;
-        localStorage.setItem('user', JSON.stringify(user));
-        JSON.parse(localStorage.getItem('user')!);
-        // console.log("User vorhanden", user);
+        this.getUserData(user);
+        this.loggedInData = user;
+        return this.afs.doc<any>(`users/${user.uid}`).valueChanges()
       } else {
-        localStorage.setItem('user', this.currentData);
-        // console.log(localStorage);
-        localStorage.getItem('user');
+        return of(null);
       }
-    }));
+    }))  
+    //    this.loginSubscriptions.push(this.afAuth.authState.subscribe(user => {
+    //   if (user) {
+    //      this.getUserData(user);
+    //      this.loggedInData = user;
+       
+    //     localStorage.setItem('user', JSON.stringify(user));
+    //     JSON.parse(localStorage.getItem('user')!);
+    //     return this.afs.doc<any>(`users/${user.uid}`).valueChanges()
+    //     // console.log("User vorhanden", user);
+    //   } else {
+    //     localStorage.setItem('user', this.currentData);
+    //     // console.log(localStorage);
+    //     localStorage.getItem('user');
+    //     return 0;
+    //   }
+    // }));
   }
 
   DestroySubscriptions(){
     this.loginSubscriptions.forEach(sub =>
       sub.unsubscribe());
-      
   }
 
   // Sign in with email/password
@@ -142,18 +162,22 @@ export class AuthService {
     // const userRef: AngularFirestoreDocument<any> = this.afs.doc<any>("coordinators" +`/${user.uid}`);
     // let result: any = this.afs.collection("coordinators").doc(user.uid).valueChanges()
     // let collection = "coordinators";
-   
-    this.loginSubscriptions.push(
-      this.afs.collection("users").doc(`/${user.uid}`).valueChanges()
-      .subscribe(value =>
-        {
-          //Subscription muss stoppen
-          this.currentData = value;
-          console.log("RESULT", value);
-        })
-    );
-
-
+      this.loginSubscriptions.push(
+        this.afs.collection("users").doc(`/${user.uid}`).valueChanges()
+        .subscribe(value =>
+          {
+            //Subscription muss stoppen
+            this.currentData = value;
+            console.log("RESULT",  this.currentData);
+            for(const sub in this.loginSubscriptions){
+              console.log("ICh bin ein SUBMARINA");
+            }
+            // this.currentData = user;
+          })
+          
+      );
+    // }
+  
 //  console.log("RESULT", result);
 //     console.log("UID", user.uid);
 
@@ -196,34 +220,33 @@ export class AuthService {
     })
   }
   // Sign out 
-  SignOut() {
-    return this.afAuth.signOut().then(() => {
+ async SignOut() {
+   await this.afAuth.signOut().then(() => {
       this.DestroySubscriptions();
       localStorage.removeItem('user');
       this.router.navigate(['loginView']);
     })
   }
-  private checkAuthorization(user: IUser, allowedRoles: string[]): boolean {
+  // private checkAuthorization(user: any, allowedRoles: string[]): boolean {
+  private checkAuthorization(user: any, allowedRoles: string[]): boolean {
     if (!user) return false
-    if (user.roles.admin) {
-      return true;
-    }
-    else if (user.roles.coordinator) {
-      return true;
-    }
-    else if (user.roles.trainee) {
-      return true;
-    }
-    return false;
+
+    let saf = false;
+    allowedRoles.forEach(role => {
+      if(user.roles[role])
+      {
+        console.log("UserRole[role]",user.roles[role])
+        saf = true;
+      }
+    });
+    return saf;
   }
-  canRead(user: IUser): boolean {
-    const allowed = ["admin", "trainee", "coordinator"];
+  canRead(user: any): boolean {
+    const allowed = ["admin", "hehe", "coordinator"];
     return this.checkAuthorization(user, allowed)
   }
-  canEdit(user: IUser): boolean {
+  canEdit(user: any): boolean {
     const allowed = ["admin", "coordinator"];
     return this.checkAuthorization(user, allowed)
   }
-
-
 }

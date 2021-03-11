@@ -1,4 +1,4 @@
-<mat-tab-group mat-align-tabs="center" mat-stretch-tabs class="example-stretched-tabs mat-elevation-z4"
+<mat-tab-group  mat-align-tabs="center" mat-stretch-tabs class="example-stretched-tabs mat-elevation-z4"
 (selectedTabChange)="setTab($event)">
     
     <mat-tab label="Einrichtung" textLabel="tab_selection">
@@ -35,6 +35,6 @@
     
 </mat-tab-group>
 
-<div class="button-container" [hidden] = "isHidden">
+<div class="button-container"  [hidden] = "isHidden">
     <button mat-raised-button color="primary" (click)="ChooseDialog()">Create</button>
 </div>

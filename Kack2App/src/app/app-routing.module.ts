@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { LoginViewComponent } from './login/login-view/login-view.component';
 import { AdminMainViewComponent } from './modules/adminView/admin-main-view/admin-main-view.component';
-import { AngularFireAuthGuard, redirectUnauthorizedTo, canActivate } from '@angular/fire/auth-guard';
+import { AngularFireAuthGuard, redirectUnauthorizedTo, canActivate, redirectLoggedInTo } from '@angular/fire/auth-guard';
 import { MainComponent } from './main/main/main.component';
 import { FacilityDialogComponent } from './modules/adminView/facility-dialog/facility-dialog.component'
 import { TraineeDialogComponent } from './modules/adminView/trainee-dialog/trainee-dialog.component';
@@ -11,7 +11,13 @@ import { TraineeDialogComponent } from './modules/adminView/trainee-dialog/train
 // import { AuthGuard } from "./shared/guard/auth.guard";
 import { TraineeInformationComponent } from './modules/trainee-Info/trainee-information/trainee-information.component';
 import { GoogleChartViewComponent } from './modules/coordinatorView/google-chart-view/google-chart-view.component';
-const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo(["loginView"])
+// import { CanReadGuard } from './core/can-read.guard';
+import { AdminGuard } from './core/admin.guard';
+import { CanReadGuard } from './core/can-read.guard';
+import { SingleTraineeChartComponent } from './modules/coordinatorView/single-trainee-chart/single-trainee-chart/single-trainee-chart.component';
+import { SingleFacilityChartComponent } from './modules/coordinatorView/single-facility-chart/single-facility-chart/single-facility-chart.component';
+const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo(["loginView"]);
+const dd = () =>  redirectLoggedInTo(["single-trainee"]);
 // const loggedIn = () => loggedIn(["login"]);
 // const routes: Routes = [
 //   {path: 'loginView', component: LoginViewComponent},
@@ -26,10 +32,13 @@ const routes: Routes = [
     path: '',
     component: MainComponent,
     canActivate: [AngularFireAuthGuard],
-    data: { authGuardPipe: redirectUnauthorizedToLogin },
+    // An dieser Stelle funktioniert es
+    // data: { authGuardPipe: dd },
     children: [
         {
             path: 'Stammdaten',
+            // canActivate:[CanReadGuard],
+            // data: { authGuardPipe: dd },
             component: AdminMainViewComponent,  
         },
         {
@@ -45,9 +54,15 @@ const routes: Routes = [
   },
   {path: 'loginView', component: LoginViewComponent},
   {path: 'facility-dialog', component: FacilityDialogComponent,
-  canActivate:[AngularFireAuthGuard],
+  // canActivate:[CanReadGuard],
   data: { authGuardPipe: redirectUnauthorizedToLogin }},
   {path: 'trainee-dialog', component: TraineeDialogComponent,
+  canActivate:[AngularFireAuthGuard],
+  data: { authGuardPipe: redirectUnauthorizedToLogin }},
+  {path: 'single-trainee', component: SingleTraineeChartComponent,
+  canActivate:[AngularFireAuthGuard],
+  data: { authGuardPipe: redirectUnauthorizedToLogin }},
+  {path: 'single-facility', component: SingleFacilityChartComponent,
   canActivate:[AngularFireAuthGuard],
   data: { authGuardPipe: redirectUnauthorizedToLogin }},
   // {path: '', redirectTo: "loginView", pathMatch: "full"}

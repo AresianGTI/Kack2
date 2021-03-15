@@ -16,6 +16,7 @@ import { AdminGuard } from './core/admin.guard';
 import { CanReadGuard } from './core/can-read.guard';
 import { SingleTraineeChartComponent } from './modules/coordinatorView/single-trainee-chart/single-trainee-chart/single-trainee-chart.component';
 import { SingleFacilityChartComponent } from './modules/coordinatorView/single-facility-chart/single-facility-chart/single-facility-chart.component';
+import { CalendarComponent } from './modules/calendar/calendar.component';
 const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo(["loginView"]);
 const dd = () => redirectUnauthorizedTo(["single-trainee"]);
 // const loggedIn = () => loggedIn(["login"]);
@@ -48,6 +49,11 @@ const routes: Routes = [
       {
         path: 'GoogleCharts',
         component: GoogleChartViewComponent,
+        canActivate: [AngularFireAuthGuard]
+      },
+      {
+        path: 'Calendar',
+        component: CalendarComponent,
         canActivate: [AngularFireAuthGuard]
       },
       {

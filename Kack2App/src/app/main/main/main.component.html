@@ -1,11 +1,13 @@
-<mat-sidenav-container class="sidenav-container">
+<mat-sidenav-container class="sidenav-container" *ngIf="authService.currentData as user">
   <mat-sidenav #drawer class="sidenav" fixedInViewport mode="side" [opened]="true">
     <mat-toolbar>Menü</mat-toolbar>
     <mat-nav-list>
       <a mat-list-item matTooltip="Hier finden Sie die Übersicht" routerLink="/trainee">Übersicht</a>
       <a mat-list-item matTooltip="Hier finden Sie die Stammdaten" routerLink="/Stammdaten">Stammdaten</a>
       <a mat-list-item matTooltip="Hier finden Sie die Zeitplan" routerLink="#">Zeitplan</a>
-      <a mat-list-item matTooltip="Hier finden Sie eine die verfügbaren Kapazitaeten der Einrichtungen" routerLink="/GoogleCharts">Kapazitäten</a>
+      <a mat-list-item matTooltip="Hier finden Sie Ihre Einsatzplanung" *ngIf="user.roles.trainee" routerLink="/GoogleCharts/single-facility/single-trainee">Einsatzplanung</a>
+      <a mat-list-item matTooltip="Hier finden Sie eine die verfügbaren Kapazitaeten der Einrichtungen" *ngIf="user.roles.coordinator"  router-link="/GoogleCharts">Kapazitäten</a>
+    
       <a mat-list-item matTooltip="Hier finden Sie die Einstellungen" routerLink="#">Einstellungen</a>
     </mat-nav-list>
   </mat-sidenav>

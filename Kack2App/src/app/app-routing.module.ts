@@ -48,24 +48,28 @@ const routes: Routes = [
       {
         path: 'GoogleCharts',
         component: GoogleChartViewComponent,
-        canActivate: [AngularFireAuthGuard, CanReadGuard]},
+        canActivate: [AngularFireAuthGuard, CanReadGuard]
+      },
+      {
+        path: 'GoogleCharts/single-facility',
+        component: SingleFacilityChartComponent,
+        canActivate: [AngularFireAuthGuard],
         // data: { authGuardPipe: dd },
-          {
-            path: 'single-trainee',
-            component: SingleTraineeChartComponent,
-            canActivate: [AngularFireAuthGuard],
-          },
-          {
-            path: 'single-facility', 
-            component: SingleFacilityChartComponent,
-            canActivate: [AngularFireAuthGuard],
-            // data: { authGuardPipe: dd },
-          },
+      },
+      // data: { authGuardPipe: dd },
+      {
+        path: 'GoogleCharts/single-facility/single-trainee',
+        component: SingleTraineeChartComponent,
+        canActivate: [AngularFireAuthGuard],
+      }
+    
 
     ],
   },
-  { path: 'loginView', 
-  component: LoginViewComponent },
+  {
+    path: 'loginView',
+    component: LoginViewComponent
+  },
   {
     path: 'facility-dialog', component: FacilityDialogComponent,
     // canActivate:[CanReadGuard],
@@ -77,7 +81,7 @@ const routes: Routes = [
     data: { authGuardPipe: redirectUnauthorizedToLogin }
   },
 
-  {path: '', redirectTo: "/loginView", pathMatch: "full"}
+  // { path: '**', redirectTo: "/loginView", pathMatch: "full" }
 
 ];
 @NgModule({

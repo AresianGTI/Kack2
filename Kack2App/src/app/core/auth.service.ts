@@ -56,7 +56,7 @@ export class AuthService {
       } else {
         return of(null);
       }
-    }))  
+    }))
     //    this.loginSubscriptions.push(this.afAuth.authState.subscribe(user => {
     //   if (user) {
     //      this.getUserData(user);

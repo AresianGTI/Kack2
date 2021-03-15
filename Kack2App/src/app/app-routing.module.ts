@@ -33,7 +33,7 @@ const routes: Routes = [
     component: MainComponent,
     canActivate: [AngularFireAuthGuard],
     // An dieser Stelle funktioniert es
-    data: { authGuardPipe: redirectUnauthorizedToLogin },
+    // data: { authGuardPipe: redirectUnauthorizedToLogin },
     children: [
       {
         path: 'Stammdaten',
@@ -48,7 +48,7 @@ const routes: Routes = [
       {
         path: 'GoogleCharts',
         component: GoogleChartViewComponent,
-        canActivate: [AngularFireAuthGuard, CanReadGuard]
+        canActivate: [AngularFireAuthGuard]
       },
       {
         path: 'GoogleCharts/single-facility',
@@ -62,8 +62,6 @@ const routes: Routes = [
         component: SingleTraineeChartComponent,
         canActivate: [AngularFireAuthGuard],
       }
-    
-
     ],
   },
   {
@@ -81,7 +79,7 @@ const routes: Routes = [
     data: { authGuardPipe: redirectUnauthorizedToLogin }
   },
 
-  // { path: '**', redirectTo: "/loginView", pathMatch: "full" }
+  { path: '**', redirectTo: "/loginView", pathMatch: "full" }
 
 ];
 @NgModule({

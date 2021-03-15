@@ -19,6 +19,8 @@ export class MainComponent implements OnInit {
 
   ngOnInit(): void {
     let test;
+    this.authService.user$.subscribe();
+
     this.router.navigate(["/trainee"]);
     // Wenn User == Admin
     //Navigate to --> Admin

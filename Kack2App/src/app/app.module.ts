@@ -9,7 +9,7 @@ import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { AngularFireModule } from '@angular/fire';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AngularFireAuthModule } from '@angular/fire/auth';
-// import { GoogleChartsModule } from 'angular-google-charts';
+import { GoogleChartsModule } from 'angular-google-charts';
 
 
 import { AppComponent } from './app.component';
@@ -40,6 +40,10 @@ import { TraineeInformationComponent } from './modules/trainee-Info/trainee-info
 import { GoogleChartViewComponent } from './modules/coordinatorView/google-chart-view/google-chart-view.component';
 import { SingleFacilityChartComponent } from './modules/coordinatorView/single-facility-chart/single-facility-chart/single-facility-chart.component';
 import { SingleTraineeChartComponent } from './modules/coordinatorView/single-trainee-chart/single-trainee-chart/single-trainee-chart.component';
+import { CalendarComponent } from './modules/calendar/calendar.component';
+import { CalendarModule, DateAdapter } from 'angular-calendar';
+import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
   declarations: [
@@ -53,6 +57,7 @@ import { SingleTraineeChartComponent } from './modules/coordinatorView/single-tr
     GoogleChartViewComponent,
     SingleFacilityChartComponent,
     SingleTraineeChartComponent,
+    CalendarComponent,
   ],
   imports: [
     BrowserModule,
@@ -69,6 +74,7 @@ import { SingleTraineeChartComponent } from './modules/coordinatorView/single-tr
     FormsModule,
     ReactiveFormsModule,
     AngularFirestoreModule,
+    NgbModal,
     AngularFireModule.initializeApp(environment.firebaseConfig),
    // CrudService muss bei providers rein
    AngularFireAuthModule,
@@ -81,6 +87,8 @@ import { SingleTraineeChartComponent } from './modules/coordinatorView/single-tr
    MatSortModule, MatTableModule, MatTabsModule,
    MatIconModule,
    MatListModule,
+   CalendarModule.forRoot({ provide: DateAdapter, useFactory: adapterFactory }),
+   CalendarComponent
   //  Observable
   //  GoogleChartsModule
   ],

@@ -43,7 +43,7 @@ import { SingleTraineeChartComponent } from './modules/coordinatorView/single-tr
 import { CalendarComponent } from './modules/calendar/calendar.component';
 import { CalendarModule, DateAdapter } from 'angular-calendar';
 import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
   declarations: [
@@ -58,6 +58,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
     SingleFacilityChartComponent,
     SingleTraineeChartComponent,
     CalendarComponent,
+    
   ],
   imports: [
     BrowserModule,
@@ -74,7 +75,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
     FormsModule,
     ReactiveFormsModule,
     AngularFirestoreModule,
-    NgbModal,
+  
     AngularFireModule.initializeApp(environment.firebaseConfig),
    // CrudService muss bei providers rein
    AngularFireAuthModule,
@@ -88,9 +89,8 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
    MatIconModule,
    MatListModule,
    CalendarModule.forRoot({ provide: DateAdapter, useFactory: adapterFactory }),
-   CalendarComponent
-  //  Observable
-  //  GoogleChartsModule
+  //  CalendarComponent,
+
   ],
   providers: [AuthService],
   bootstrap: [AppComponent]

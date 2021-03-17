@@ -27,9 +27,6 @@ import {
 } from "@angular/animations";
 
 
-var ELEMENT_DATA: Array<any> = [];
-var data: Array<any> = [];
-
 
 
 @Component({
@@ -63,13 +60,13 @@ expandedElement!: IFacility;
   //for subscriptions and unsubscriptions
   subscriptions: Subscription[] = [];
 
-  displayedColumnsFacility: string[] = ['Name', 'Einrichtungsart', 'Adresse'];
+  displayedColumnsFacility: string[] = ['Position', 'Name', 'Einrichtungsart', 'Adresse'];
   displayedColumnsTrainee: string[] = ['Nachname', 'Vorname', 'Stammeinrichtung'];
   displayedColumnsCoordinators: string[] = ['Nachname', 'Vorname', 'test'];
   isHidden = false;
 
-facilityCollection!: Array<Facility>;  // Elemente für die Einrichtungstabelle
-traineeCollection! : Array<Trainee>;  // Elemente für die Azubitabelle
+facilityCollection = new MatTableDataSource<Facility>([]);  // Elemente für die Einrichtungstabelle
+traineeCollection = new MatTableDataSource<Trainee>([]);  // Elemente für die Azubitabelle
 CoordinatorCollection = new MatTableDataSource<Coordinators>([]);
  
 
@@ -124,91 +121,28 @@ CoordinatorCollection = new MatTableDataSource<Coordinators>([]);
 
   ngOnInit() {
     this.tab_selection = "Einrichtung";
-    this.refreshFacility("facilityCollection", this.facilityCollection);
-    this.refreshLists("users", this.traineeCollection, 'isUserList');
+    this.refreshList("facilityCollection", this.facilityCollection);
+    this.refreshList("users", this.traineeCollection);
   }
 
-  // public subCoordinators: any;
-  // this.refreshCoordinators(this.subCoordinators,"users", this.dataCoordinators);
-  // refreshCoordinators(sub: any, p_facilityElements: string, p_data: MatTableDataSource<any>) {
-  //   this.subCoordinators = this.store.collection(p_facilityElements, ref => ref
-  //     .where("roles.coordinator", "==", true)).valueChanges()
 
-
-  refreshFacility(p_facilityElements: string, collection: Array<any>){
-    
+  refreshList(p_facilityElements: string, collection: MatTableDataSource<any>) {
+    let p_arr: any[] = [];
     const collectionRef = this.store.collection(p_facilityElements);
     const collectionInstance = collectionRef.valueChanges();
 
-      this.subscriptions.push(
-        collectionInstance
-          // .pipe(takeUntil(this.destroyed$))
-          .subscribe(ss => {
-            collection = ss;
-            console.log("myTestArray",collection);
-
-            collection.forEach(element => {
-  
-              data.push(element);
-              this.facilityCollection = data;
-              facCollection = this.facilityCollection;
-  
-            });
-            console.log('expandedElement: ', this.expandedElement);
-          }));
-  }
-
-  showTest(){
-    console.log('expandedElement: ' , this.expandedElement);
-    console.log('facilityCollection: ' , this.facilityCollection);
-    console.log('facCollection: ', facCollection);
-  }
-
-  refreshLists(p_facilityElements: string, collection: Array<any>, collectionCheck: String) {
-
-    const collectionRef = this.store.collection(p_facilityElements);
-    const collectionInstance = collectionRef.valueChanges();
-
-    //Entweder in dieser Form mit eventuell richtiger Syntax komplette Funktion zurückgeben
-    // return ((coll: Array<any>) => {
-    //   coll = ELEMENT_DATA;
-    // });
-
-
-      this.subscriptions.push(
-        collectionInstance
-          // .pipe(takeUntil(this.destroyed$))
-          .subscribe(ss => {
-            collection = ss;
-            console.log("myTestArray",collection);
-
-            collection.forEach(element => {
-  
-              ELEMENT_DATA.push(element);
-  
-              //provisorische Übergabe...
-              if (collectionCheck === 'isFacilityList'){
-                this.facilityCollection = ELEMENT_DATA;
-                
-              }
-              else if(collectionCheck === 'isUserList')
-              this.traineeCollection = ELEMENT_DATA;
-  
-              //wenn Promise funktioniert
-              //facCollection = ELEMENT_DATA;
-  
-            });
-          }));
-
-
-      //oder mit promise zurückgeben
-      // return collection;
-
-      
+    this.subscriptions.push(
+      collectionInstance
+        // .pipe(takeUntil(this.destroyed$))
+        .subscribe(ss => {
+          let ELEMENT_DATA: any[] = [];
+          ss.forEach(element => {
+            ELEMENT_DATA.push(element);
+            collection.data = ELEMENT_DATA;
+          });
+        }));
 
   }
-
-  
 
   DeleteChoice() {
 
@@ -216,7 +150,7 @@ CoordinatorCollection = new MatTableDataSource<Coordinators>([]);
       .get()
       .toPromise()
       .then(querySnapshot => {
-        this.facilityCollection.length = 0;
+        this.facilityCollection.data.length = 0;
         querySnapshot.forEach((doc) => this.store.collection("facilityCollection").doc(doc.id).delete())
         console.log("Es hat funktioniert");
       })
@@ -224,7 +158,7 @@ CoordinatorCollection = new MatTableDataSource<Coordinators>([]);
       );
 
       facCollection.then(prom =>
-        console.log("Refreshe die Seite hier, um den Fehler zu umgehen?")
+        console.log("Refreshe die Seite hier, um den Fehler zu umgehen? DIESE FUNKTION IST NICHT FERTIG!")
       );
 
   }

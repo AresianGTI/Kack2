@@ -45,6 +45,7 @@
             <tr mat-row *matRowDef="let row; columns: displayedColumnsTrainee"></tr>
         </table>
     </mat-tab>
+
     <mat-tab label="Koordinatoren">
         <table mat-table [dataSource]="CoordinatorCollection" class="mat-elevation-z8">
             <ng-container *ngFor="let column of displayedColumnsCoordinators" [matColumnDef]="column">

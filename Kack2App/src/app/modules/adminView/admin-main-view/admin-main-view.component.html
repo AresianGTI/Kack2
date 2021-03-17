@@ -1,8 +1,6 @@
-<mat-tab-group mat-align-tabs="center" mat-stretch-tabs class="example-stretched-tabs mat-elevation-z4"
-    (selectedTabChange)="setTab($event)">
-
-
-
+<mat-tab-group  mat-align-tabs="center" mat-stretch-tabs class="example-stretched-tabs mat-elevation-z4"
+(selectedTabChange)="setTab($event)">
+    
     <mat-tab label="Einrichtung" textLabel="tab_selection">
         <table mat-table [dataSource]="facilityCollection" multiTemplateDataRows class="mat-elevation-z8">
             <ng-container matColumnDef="{{column}}" *ngFor="let column of displayedColumnsFacility">

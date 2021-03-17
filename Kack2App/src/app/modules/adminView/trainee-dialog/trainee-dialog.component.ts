@@ -26,6 +26,7 @@ export class TraineeDialogComponent implements OnInit {
     console.log("Admin", this.traineeObj.rolesobj.admin);
     console.log("Trainee", this.traineeObj.rolesobj.trainee);
     console.log("Coordinator", this.traineeObj.rolesobj.coordinator);
+    console.log("User MUSER in traineeDialog:  ", this.authService.userMuser);
   }
 
   createTrainee() {

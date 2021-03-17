@@ -23,7 +23,7 @@ export class AppComponent {
     //   this.router.navigate(["/loginView"]);
     // }
   
-    // this.router.navigate(["/loginView"]);
+    this.router.navigate(["/loginView"]);
   }
 
   title = 'Kack2App';

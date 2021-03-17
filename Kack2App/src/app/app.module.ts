@@ -9,7 +9,7 @@ import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { AngularFireModule } from '@angular/fire';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AngularFireAuthModule } from '@angular/fire/auth';
-// import { GoogleChartsModule } from 'angular-google-charts';
+import { GoogleChartsModule } from 'angular-google-charts';
 
 
 import { AppComponent } from './app.component';
@@ -39,6 +39,12 @@ import { TraineeDialogComponent } from './modules/adminView/trainee-dialog/train
 import { AuthService } from "./core/auth.service";
 import { TraineeInformationComponent } from './modules/trainee-Info/trainee-information/trainee-information.component';
 import { GoogleChartViewComponent } from './modules/coordinatorView/google-chart-view/google-chart-view.component';
+import { SingleFacilityChartComponent } from './modules/coordinatorView/single-facility-chart/single-facility-chart/single-facility-chart.component';
+import { SingleTraineeChartComponent } from './modules/coordinatorView/single-trainee-chart/single-trainee-chart/single-trainee-chart.component';
+import { CalendarComponent } from './modules/calendar/calendar.component';
+import { CalendarModule, DateAdapter } from 'angular-calendar';
+import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
+import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
   declarations: [
@@ -50,6 +56,10 @@ import { GoogleChartViewComponent } from './modules/coordinatorView/google-chart
     TraineeDialogComponent,
     TraineeInformationComponent,
     GoogleChartViewComponent,
+    SingleFacilityChartComponent,
+    SingleTraineeChartComponent,
+    CalendarComponent,
+    
   ],
   imports: [
     BrowserModule,
@@ -66,6 +76,7 @@ import { GoogleChartViewComponent } from './modules/coordinatorView/google-chart
     FormsModule,
     ReactiveFormsModule,
     AngularFirestoreModule,
+  
     AngularFireModule.initializeApp(environment.firebaseConfig),
    // CrudService muss bei providers rein
    AngularFireAuthModule,
@@ -78,9 +89,12 @@ import { GoogleChartViewComponent } from './modules/coordinatorView/google-chart
    MatSortModule, MatTableModule, MatTabsModule,
    MatIconModule,
    MatListModule,
-   MatCheckboxModule
+   MatCheckboxModule,
   //  Observable
   //  GoogleChartsModule
+   CalendarModule.forRoot({ provide: DateAdapter, useFactory: adapterFactory }),
+  //  CalendarComponent,
+
   ],
   providers: [AuthService],
   bootstrap: [AppComponent]

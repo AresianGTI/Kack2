@@ -26,6 +26,7 @@ import {
   trigger
 } from "@angular/animations";
 
+import { AuthService } from 'src/app/core/auth.service';
 
 
 
@@ -56,7 +57,7 @@ expandedElement!: IFacility;
 
 
   tab_selection!: string;
-
+  user: any;
   //for subscriptions and unsubscriptions
   subscriptions: Subscription[] = [];
 
@@ -74,7 +75,10 @@ CoordinatorCollection = new MatTableDataSource<Coordinators>([]);
   
   constructor(private router: Router,
     private store: AngularFirestore,
-    public dialog: MatDialog) { }
+    public dialog: MatDialog,
+    public authService: AuthService) {
+      // this.authService.user$.subscribe(user => this.user = user)
+     }
 
   ngOnDestroy(): void {
     this.subscriptions.forEach(sub => sub.unsubscribe());

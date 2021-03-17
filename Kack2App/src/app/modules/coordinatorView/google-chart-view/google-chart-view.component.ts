@@ -3,6 +3,7 @@ import { ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
 import { MatProgressBar, ProgressBarMode } from '@angular/material/progress-bar';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, Subscription } from 'rxjs';
 import { Facility, FacilityType } from 'src/app/models/facility';
 
@@ -29,7 +30,8 @@ export class GoogleChartViewComponent implements OnInit {
 
   usedFacilities: Array<{}> = [];
   constructor(private store: AngularFirestore,
-    private changeDetectorRefs: ChangeDetectorRef) { }
+    private changeDetectorRefs: ChangeDetectorRef, private router: Router,
+    private route: ActivatedRoute) { }
 
 
 
@@ -77,11 +79,15 @@ export class GoogleChartViewComponent implements OnInit {
           console.log("Einrichtung:",facility.Name, "hat: ", facility.VerwendeteKapazitaet);
         });
         console.log("unsubscribed");
+        
         this.subscription.unsubscribe();
       });
   }
 
-
+  goToFacility(){
+    // console.log(this.router.navigate(["single-facility"], {relativeTo: this.route}));
+    // this.router.navigate(["single-facility"], {relativeTo: this.route})
+  }
 
 
 }

@@ -12,13 +12,16 @@ export class MainComponent implements OnInit {
 
   username?: string | null;
 
-  constructor(private router: Router, private auth: AuthService) {
+  constructor(private router: Router, public authService: AuthService) {
   }
 
-  logOut() { this.auth.SignOut(); }
+  logOut() { this.authService.SignOut(); }
 
   ngOnInit(): void {
     let test;
+    this.authService.user$.subscribe();
+
+    this.router.navigate(["/trainee"]);
     // Wenn User == Admin
     //Navigate to --> Admin
     //Wenn User == Trainee

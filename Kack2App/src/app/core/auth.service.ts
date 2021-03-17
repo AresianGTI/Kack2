@@ -9,7 +9,7 @@ import { Facility } from '../models/facility';
 import { Coordinators } from '../models/coordinators';
 import { Observable, of, Subscription } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { switchMap } from 'rxjs/operators/';
+import { switchMap, take } from 'rxjs/operators/';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
 import { loggedIn } from '@angular/fire/auth-guard';
 
@@ -39,26 +39,19 @@ export class AuthService {
 
   ) {
     // Authentifizierung wird beim Laden der Seite nicht gespeichert
-    this.isLoggedIn;
-    console.log("Ist logged in: ",this.isLoggedIn)
-        this.user$ = this.afAuth.authState.pipe(switchMap(user => {
+    // this.isLoggedIn;
+    // console.log("Ist logged in: ",this.isLoggedIn)
+        this.user$ = this.afAuth.authState.pipe(take(1),switchMap(user => {
       if (user) {
-        this.getUserData(user);
-        this.loggedInData = user;
-        this.isLoggedIn
-        // this.isLoggedIn.next(user)
-        //  this.loggedInData.next(user);
+             this.getUserData(user);
+
+         this.loggedInData = user;
         localStorage.setItem('user', JSON.stringify(user));
         JSON.parse(localStorage.getItem('user')!);
-        console.log("Local Sotrage", localStorage);
-        console.log("Ist logged in: ",this.isLoggedIn)
-        
         return this.afs.doc<any>(`users/${user.uid}`).valueChanges()
       } else {
         localStorage.setItem('user', this.currentData);
         localStorage.getItem('user');
-        console.log("Local Sotrage else", localStorage);
-        console.log("Local Sotrage user", user);
         return of(user);
       }
     }))
@@ -82,7 +75,13 @@ export class AuthService {
 
   DestroySubscriptions(){
     this.loginSubscriptions.forEach(sub =>
-      sub.unsubscribe());
+     
+      sub.unsubscribe(),
+      console.log("Sub unsubscribed"));
+      for(let sub in this.loginSubscriptions){
+        console.log("ICh bin ein SUBMARINA weniger", sub);
+      }
+      
   }
 
   // Sign in with email/password
@@ -174,8 +173,8 @@ export class AuthService {
             //Subscription muss stoppen
             this.currentData = value;
             console.log("RESULT",  this.currentData);
-            for(const sub in this.loginSubscriptions){
-              console.log("ICh bin ein SUBMARINA");
+            for(let sub in this.loginSubscriptions){
+              console.log("ICh bin ein SUBMARINA", sub);
             }
             // this.currentData = user;
           })
@@ -229,7 +228,8 @@ export class AuthService {
    await this.afAuth.signOut().then(() => {
       this.DestroySubscriptions();
       localStorage.removeItem('user');
-      this.router.navigate(['loginView']);
+      this.router.navigate(['/loginView']);
+      console.log("ganze SCHEODE WEG!!");
     })
   }
   // private checkAuthorization(user: any, allowedRoles: string[]): boolean {

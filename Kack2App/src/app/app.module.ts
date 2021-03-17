@@ -32,6 +32,7 @@ import {MatTableModule} from '@angular/material/table';
 import {MatTabsModule} from '@angular/material/tabs';
 import {MatSelectModule} from '@angular/material/select'; 
 import {MatProgressBarModule} from '@angular/material/progress-bar'; 
+import {MatCheckboxModule} from '@angular/material/checkbox'; 
 import { FacilityDialogComponent } from './modules/adminView/facility-dialog/facility-dialog.component'
 import { TraineeDialogComponent } from './modules/adminView/trainee-dialog/trainee-dialog.component';
 // import { Observable } from 'rxjs';
@@ -77,6 +78,7 @@ import { GoogleChartViewComponent } from './modules/coordinatorView/google-chart
    MatSortModule, MatTableModule, MatTabsModule,
    MatIconModule,
    MatListModule,
+   MatCheckboxModule
   //  Observable
   //  GoogleChartsModule
   ],

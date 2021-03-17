@@ -11,16 +11,24 @@ import { Trainee } from 'src/app/models/trainee';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { TraineeDialogComponent } from '../trainee-dialog/trainee-dialog.component';
 import { FormControl } from '@angular/forms';
-import { Facility } from 'src/app/models/facility';
+import { Facility, IFacility, IfacilityType } from 'src/app/models/facility';
 import { element } from 'protractor';
 import { Coordinators } from 'src/app/models/coordinators';
 import { table } from 'console';
-import { Subject, Subscription } from 'rxjs';
+import { Observable, of, Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import {DataSource, SelectionModel} from '@angular/cdk/collections';
+import {
+  animate,
+  state,
+  style,
+  transition,
+  trigger
+} from "@angular/animations";
+
 import { AuthService } from 'src/app/core/auth.service';
 import { DialogBoxComponent } from '../../../modules/dialog-box/dialog-box.component';
 
-var ELEMENT_DATA: any[] = [];
 
 
 export interface UsersData {
@@ -31,13 +39,29 @@ export interface UsersData {
 @Component({
   selector: 'app-admin-main-view',
   templateUrl: './admin-main-view.component.html',
-  styleUrls: ['./admin-main-view.component.scss']
+  styleUrls: ['./admin-main-view.component.scss'],
+  // animations: [
+  //   trigger('detailExpand', [
+  //     state('collapsed', style({ height: '0px', minHeight: '0', visibility: 'hidden' })),
+  //     state('expanded', style({ height: '*', visibility: 'visible' })),
+  //     transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
+  //   ]),
+  // ],
+  animations: [
+    trigger('detailExpand', [
+      state('collapsed', style({height: '0px', minHeight: '0', display: 'none'})),
+      state('expanded', style({height: '*'})),
+      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
+    ]),
+  ],
 })
 export class AdminMainViewComponent implements OnInit, OnDestroy {
+
+expandedElement!: IFacility;
+
   tab_selection!: string;
   user: any;
   //for subscriptions and unsubscriptions
-  private destroyed$: Subject<boolean> = new Subject<boolean>();
   subscriptions: Subscription[] = [];
   // displayedColumns: string[] = ['id', 'name', 'action'];
   displayedColumnsFacility: string[] = ['Einrichtungsart','Name', 'action', ];
@@ -46,6 +70,14 @@ export class AdminMainViewComponent implements OnInit, OnDestroy {
   isHidden = false;
   dataSourceTest: any[]=[];
   // @ViewChild(MatTable,{static:true}) table: MatTable<any>;
+
+facilityCollection = new MatTableDataSource<Facility>([]);  // Elemente für die Einrichtungstabelle
+traineeCollection = new MatTableDataSource<Trainee>([]);  // Elemente für die Azubitabelle
+CoordinatorCollection = new MatTableDataSource<Coordinators>([]);
+ 
+
+
+  
   constructor(private router: Router,
     private store: AngularFirestore,
     public dialog: MatDialog,
@@ -59,10 +91,8 @@ export class AdminMainViewComponent implements OnInit, OnDestroy {
     // this.destroyed$.next(true);
     // this.destroyed$.complete();
   }
- 
-  dataSource = new MatTableDataSource<Facility>([]);  // Daten für die Einrichtungstabelle
-  dataTrainee = new MatTableDataSource<Trainee>([]);  // Daten für die Azubitabelle
-  dataCoordinators = new MatTableDataSource<Coordinators>([]);
+
+
 
   public tabChanged(tabChangeEvent: MatTabChangeEvent): void {
     console.log(tabChangeEvent.tab.textLabel);
@@ -93,19 +123,17 @@ export class AdminMainViewComponent implements OnInit, OnDestroy {
 
   }
 
+
+
+
   ngOnInit() {
     this.tab_selection = "Einrichtung";
-    this.refreshLists("users", this.dataTrainee);
-    this.refreshLists("facilityCollection", this.dataSource);
+    this.refreshList("facilityCollection", this.facilityCollection);
+    this.refreshList("users", this.traineeCollection);
   }
 
-  // public subCoordinators: any;
-  // this.refreshCoordinators(this.subCoordinators,"users", this.dataCoordinators);
-  // refreshCoordinators(sub: any, p_facilityElements: string, p_data: MatTableDataSource<any>) {
-  //   this.subCoordinators = this.store.collection(p_facilityElements, ref => ref
-  //     .where("roles.coordinator", "==", true)).valueChanges()
 
-  refreshLists(p_facilityElements: string, p_data: MatTableDataSource<any>) {
+  refreshList(p_facilityElements: string, collection: MatTableDataSource<any>) {
     let p_arr: any[] = [];
     const collectionRef = this.store.collection(p_facilityElements);
     const collectionInstance = collectionRef.valueChanges();
@@ -114,14 +142,10 @@ export class AdminMainViewComponent implements OnInit, OnDestroy {
       collectionInstance
         // .pipe(takeUntil(this.destroyed$))
         .subscribe(ss => {
-          p_arr = ss;
-          console.log("myArray", p_arr);
-          ELEMENT_DATA = [];
-          p_arr.forEach(element => {
+          let ELEMENT_DATA: any[] = [];
+          ss.forEach(element => {
             ELEMENT_DATA.push(element);
-            this.dataSourceTest.push(element);
-            console.log("datasource Test", this.dataSourceTest);
-            p_data.data = ELEMENT_DATA;
+            collection.data = ELEMENT_DATA;
           });
         }));
   }
@@ -193,24 +217,54 @@ export class AdminMainViewComponent implements OnInit, OnDestroy {
   //   });
   //   this.table.renderRows();
   // }
-  updateRowData(row_obj: { id: any; name: any; }){
-    ELEMENT_DATA= ELEMENT_DATA.filter((value: { id: any; name: any; },key: any)=>{
-      if(value.id == row_obj.id){
-        value.name = row_obj.name;
-      }
-      return true;
-    });
-  }
-  deleteRowData(row_obj: { id: any; }){
-    ELEMENT_DATA = ELEMENT_DATA.filter((value: { id: any; },key: any)=>{
-      return value.id != row_obj.id;
-    });
-  }
+  
   deleteData(data: any){
-    console.log("DataSource Realtalk",this.dataSource);
+    console.log("DataSource Realtalk",this.facilityCollection);
     // this.refreshLists("")
     return this.store.collection("facilityCollection").doc(data.ID).delete();
   }
 
-  
+
+  DeleteChoice() {
+
+    const facCollection = this.store.collection("facilityCollection")
+      .get()
+      .toPromise()
+      .then(querySnapshot => {
+        this.facilityCollection.data.length = 0;
+        querySnapshot.forEach((doc) => this.store.collection("facilityCollection").doc(doc.id).delete())
+        console.log("Es hat funktioniert");
+      })
+      .catch((error) => console.error("Error removing document: ", error)
+      );
+
+      facCollection.then(prom =>
+        console.log("Refreshe die Seite hier, um den Fehler zu umgehen? DIESE FUNKTION IST NICHT FERTIG!")
+      );
+
+  }
+
+// -------- Methoden für Checkboxen in der Tabelle -----------
+
+
+  // isAllSelected() {
+  //   const numSelected = this.selection.selected.length;
+  //   const numRows = this.facilityCollection.length;
+  //   return numSelected === numRows;
+  // }
+
+  //Selektiert alles, wenn nicht alle ausgewählt sind, andernfalls alles entwählen
+  // masterToggle() {
+  //   this.isAllSelected() ?
+  //       //if true
+  //       this.selection.clear() :  
+  //       //if false
+  //       this.facilityCollection.data.forEach(fac => this.selection.select()); //fac
+  // }
+
+  //Das Label für die cCheckbox in der übergebenen Zeile ???
+  // checkboxLabel(row?: IFacility): string {
+  //   return "yoho";
+  //  }
+
 }

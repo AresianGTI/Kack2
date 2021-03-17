@@ -127,12 +127,12 @@ export class AdminMainViewComponent implements OnInit, OnDestroy {
   }
 
 
-  openDialog(action: any,obj: { action?: any; }) {
+  openDialog(action: any,obj?: { action?: any; }) {
    
     let dialogRef: any;
     if(action == "Update")
     {
-      obj.action = action;
+      obj!.action = action;
       switch (this.tab_selection) {
         case ("Einrichtung"): {
           dialogRef = this.dialog.open(FacilityDialogComponent, {data:obj});
@@ -168,7 +168,7 @@ export class AdminMainViewComponent implements OnInit, OnDestroy {
       }
     }
     else if(action == "Delete"){
-      obj.action = action;
+      obj!.action = action;
       dialogRef = this.dialog.open(DialogBoxComponent, {data:obj});
       dialogRef.afterClosed().subscribe((result: { event: string; data: any; }) => {this.deleteData(result.data)});
     }

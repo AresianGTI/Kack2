@@ -37,23 +37,18 @@ export class AuthService {
     public ngZone: NgZone, // NgZone service to remove outside scope warning
 
   ) {
-    /* Saving user data in localstorage when 
-    logged in and setting up null when logged out */
-    // this.user$ = this.afAuth.authState.pipe(switchMap(user => {
-    //   if (user) {
-    //     this.getUserData(user);
-    //     this.currentData 
-    //     return this.afs.doc<any>(`users/${user.uid}`).valueChanges()
-    //   } else {
-    //     return of(null);
-    //   }
-    // }))   
+    // Authentifizierung wird beim Laden der Seite nicht gespeichert
         this.user$ = this.afAuth.authState.pipe(switchMap(user => {
       if (user) {
         this.getUserData(user);
         this.loggedInData = user;
+        localStorage.setItem('user', JSON.stringify(user));
+        JSON.parse(localStorage.getItem('user')!);
+        
         return this.afs.doc<any>(`users/${user.uid}`).valueChanges()
       } else {
+        localStorage.setItem('user', this.currentData);
+        localStorage.getItem('user');
         return of(null);
       }
     }))
@@ -85,7 +80,7 @@ export class AuthService {
     return this.afAuth.signInWithEmailAndPassword(email, password)
       .then((result) => {
         this.ngZone.run(() => {
-          this.router.navigate(['Stammdaten']);
+          this.router.navigate(['/trainee']);
         });
         this.getUserData(result.user!);
       })
@@ -151,7 +146,7 @@ export class AuthService {
     return this.afAuth.signInWithPopup(provider)
       .then((result) => {
         this.ngZone.run(() => {
-          this.router.navigate(['Stammdaten']);
+          this.router.navigate(['/trainee']);
         })
         this.SetUserData(result.user!);
       }).catch((error) => {
@@ -242,7 +237,7 @@ export class AuthService {
     return saf;
   }
   canRead(user: any): boolean {
-    const allowed = ["admin", "hehe", "coordinator"];
+    const allowed = ["admin", "trainee", "coordinator"];
     return this.checkAuthorization(user, allowed)
   }
   canEdit(user: any): boolean {

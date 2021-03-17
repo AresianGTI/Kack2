@@ -33,7 +33,7 @@ const routes: Routes = [
   {
     path: '',
     component: MainComponent,
-    canActivate: [AngularFireAuthGuard],
+    // canActivate: [AngularFireAuthGuard],
     // An dieser Stelle funktioniert es
     // data: { authGuardPipe: redirectUnauthorizedToLogin },
     children: [
@@ -50,24 +50,24 @@ const routes: Routes = [
       {
         path: 'GoogleCharts',
         component: GoogleChartViewComponent,
-        canActivate: [AngularFireAuthGuard]
+        // canActivate: [AngularFireAuthGuard]
       },
       {
         path: 'Calendar',
         component: CalendarComponent,
-        canActivate: [AngularFireAuthGuard]
+        // canActivate: [AngularFireAuthGuard]
       },
       {
         path: 'GoogleCharts/single-facility',
         component: SingleFacilityChartComponent,
-        canActivate: [AngularFireAuthGuard],
+        // canActivate: [AngularFireAuthGuard],
         // data: { authGuardPipe: dd },
       },
       // data: { authGuardPipe: dd },
       {
         path: 'GoogleCharts/single-facility/single-trainee',
         component: SingleTraineeChartComponent,
-        canActivate: [AngularFireAuthGuard],
+        // canActivate: [AngularFireAuthGuard],
       }
     ],
   },
@@ -78,20 +78,20 @@ const routes: Routes = [
   {
     path: 'facility-dialog', component: FacilityDialogComponent,
     // canActivate:[CanReadGuard],
-    data: { authGuardPipe: redirectUnauthorizedToLogin }
+    // data: { authGuardPipe: redirectUnauthorizedToLogin }
   },
   {
     path: 'trainee-dialog', component: TraineeDialogComponent,
-    canActivate: [AngularFireAuthGuard],
-    data: { authGuardPipe: redirectUnauthorizedToLogin }
+    // canActivate: [AngularFireAuthGuard],
+    // data: { authGuardPipe: redirectUnauthorizedToLogin }
   },
   {
     path: 'dialog', component: DialogBoxComponent,
-    canActivate: [AngularFireAuthGuard],
-    data: { authGuardPipe: redirectUnauthorizedToLogin }
+    // canActivate: [AngularFireAuthGuard],
+    // data: { authGuardPipe: redirectUnauthorizedToLogin }
   },
 
-  { path: '**', redirectTo: "/loginView", pathMatch: "full" }
+  // { path: '**', redirectTo: "/loginView", pathMatch: "full" }
 
 ];
 @NgModule({

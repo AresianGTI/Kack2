@@ -11,6 +11,7 @@ import { Observable, of, Subscription } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { switchMap } from 'rxjs/operators/';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
+import { loggedIn } from '@angular/fire/auth-guard';
 
 const secondaryApp = firebase.initializeApp(environment.firebaseConfig, 'Secondary');
 @Injectable({
@@ -38,18 +39,27 @@ export class AuthService {
 
   ) {
     // Authentifizierung wird beim Laden der Seite nicht gespeichert
+    this.isLoggedIn;
+    console.log("Ist logged in: ",this.isLoggedIn)
         this.user$ = this.afAuth.authState.pipe(switchMap(user => {
       if (user) {
         this.getUserData(user);
         this.loggedInData = user;
+        this.isLoggedIn
+        // this.isLoggedIn.next(user)
+        //  this.loggedInData.next(user);
         localStorage.setItem('user', JSON.stringify(user));
         JSON.parse(localStorage.getItem('user')!);
+        console.log("Local Sotrage", localStorage);
+        console.log("Ist logged in: ",this.isLoggedIn)
         
         return this.afs.doc<any>(`users/${user.uid}`).valueChanges()
       } else {
         localStorage.setItem('user', this.currentData);
         localStorage.getItem('user');
-        return of(null);
+        console.log("Local Sotrage else", localStorage);
+        console.log("Local Sotrage user", user);
+        return of(user);
       }
     }))
     //    this.loginSubscriptions.push(this.afAuth.authState.subscribe(user => {
@@ -133,7 +143,7 @@ export class AuthService {
   // Returns true when user is looged in and email is verified
   get isLoggedIn(): boolean {
     const user = JSON.parse(localStorage.getItem('user')!);
-    return (user !== null && user.emailVerified !== false) ? true : false;
+    return (user !== null !== false) ? true : false;
   }
 
   // Sign in with Google

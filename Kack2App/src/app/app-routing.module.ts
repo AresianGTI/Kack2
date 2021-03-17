@@ -17,6 +17,7 @@ import { CanReadGuard } from './core/can-read.guard';
 import { SingleTraineeChartComponent } from './modules/coordinatorView/single-trainee-chart/single-trainee-chart/single-trainee-chart.component';
 import { SingleFacilityChartComponent } from './modules/coordinatorView/single-facility-chart/single-facility-chart/single-facility-chart.component';
 import { CalendarComponent } from './modules/calendar/calendar.component';
+import { DialogBoxComponent } from './modules/dialog-box/dialog-box.component';
 const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo(["loginView"]);
 const dd = () => redirectUnauthorizedTo(["single-trainee"]);
 // const loggedIn = () => loggedIn(["login"]);
@@ -81,6 +82,11 @@ const routes: Routes = [
   },
   {
     path: 'trainee-dialog', component: TraineeDialogComponent,
+    canActivate: [AngularFireAuthGuard],
+    data: { authGuardPipe: redirectUnauthorizedToLogin }
+  },
+  {
+    path: 'dialog', component: DialogBoxComponent,
     canActivate: [AngularFireAuthGuard],
     data: { authGuardPipe: redirectUnauthorizedToLogin }
   },

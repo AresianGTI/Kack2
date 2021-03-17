@@ -12,7 +12,7 @@ export class FacilityType implements IfacilityType{
     facilitytypeName!: string;
 }
 export class Facility implements IFacility{
-
+    id!: string;
     facilityName!: string;
     facilityadress!: string;
     facilitytype: FacilityType = new FacilityType();

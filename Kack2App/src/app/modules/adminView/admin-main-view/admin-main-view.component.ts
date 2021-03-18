@@ -3,7 +3,7 @@ import { stringify } from '@angular/compiler/src/util';
 import { Component, OnInit, ChangeDetectorRef, ViewChild, OnDestroy } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { FacilityDialogComponent } from '../facility-dialog/facility-dialog.component';
@@ -27,8 +27,14 @@ import {
 } from "@angular/animations";
 
 import { AuthService } from 'src/app/core/auth.service';
+import { DialogBoxComponent } from '../../../modules/dialog-box/dialog-box.component';
 
 
+
+export interface UsersData {
+  name: string;
+  id: number;
+}
 
 @Component({
   selector: 'app-admin-main-view',
@@ -53,18 +59,17 @@ export class AdminMainViewComponent implements OnInit, OnDestroy {
 
 expandedElement!: IFacility;
 
-
-
-
   tab_selection!: string;
   user: any;
   //for subscriptions and unsubscriptions
   subscriptions: Subscription[] = [];
-
-  displayedColumnsFacility: string[] = ['Position', 'Name', 'Einrichtungsart', 'Adresse'];
+  // displayedColumns: string[] = ['id', 'name', 'action'];
+  displayedColumnsFacility: string[] = ['Einrichtungsart','Name', 'action', ];
   displayedColumnsTrainee: string[] = ['Nachname', 'Vorname', 'Stammeinrichtung'];
   displayedColumnsCoordinators: string[] = ['Nachname', 'Vorname', 'test'];
   isHidden = false;
+  dataSourceTest: any[]=[];
+  // @ViewChild(MatTable,{static:true}) table: MatTable<any>;
 
 facilityCollection = new MatTableDataSource<Facility>([]);  // Elemente für die Einrichtungstabelle
 traineeCollection = new MatTableDataSource<Trainee>([]);  // Elemente für die Azubitabelle
@@ -91,7 +96,6 @@ CoordinatorCollection = new MatTableDataSource<Coordinators>([]);
 
   public tabChanged(tabChangeEvent: MatTabChangeEvent): void {
     console.log(tabChangeEvent.tab.textLabel);
-   
   }
 
   setTab(tabChangeEvent: MatTabChangeEvent) {          // Hier wird der Label vom Tab in die Variable zugewiesen!!!
@@ -102,7 +106,6 @@ CoordinatorCollection = new MatTableDataSource<Coordinators>([]);
   }
 
   ChooseDialog() {
-
     let dialogRef;
     switch (this.tab_selection) {
       case ("Einrichtung"): {
@@ -145,8 +148,82 @@ CoordinatorCollection = new MatTableDataSource<Coordinators>([]);
             collection.data = ELEMENT_DATA;
           });
         }));
-
   }
+
+
+  openDialog(action: any,obj?: { action?: any; }) {
+   
+    let dialogRef: any;
+    if(action == "Update")
+    {      
+      obj!.action = action;
+      switch (this.tab_selection) {
+        case ("Einrichtung"): {
+          dialogRef = this.dialog.open(FacilityDialogComponent, {data:obj});
+          // dialogRef.afterClosed().subscribe((result: { event: string; data: any; }) => {this.updateData(result.data)}); //Einrichtungsdialog wird geöffnet
+          break;
+        }
+        case ("Auszubildender"): {
+          dialogRef = this.dialog.open(TraineeDialogComponent, {data:obj});
+          dialogRef.afterClosed().subscribe((result: { event: string; data: any; }) => {});  //Azubidialog wird geöffnet
+          break;
+        }
+        default: {
+          break;
+        }
+      }
+    }
+    else if(action == "Create")
+    {
+      switch (this.tab_selection) {
+        case ("Einrichtung"): {
+          dialogRef = this.dialog.open(FacilityDialogComponent, {data: action});
+          // dialogRef.afterClosed().subscribe((result: { event: string;}) => {}); //Einrichtungsdialog wird geöffnet
+          break;
+        }
+        case ("Auszubildender"): {
+          dialogRef = this.dialog.open(TraineeDialogComponent);
+          // dialogRef.afterClosed().subscribe((result: { event: string; data: any; }) => {});  //Azubidialog wird geöffnet
+          break;
+        }
+        default: {
+          break;
+        }
+      }
+    }
+    else if(action == "Delete"){
+      obj!.action = action;
+      dialogRef = this.dialog.open(DialogBoxComponent, {data:obj});
+      dialogRef.afterClosed().subscribe((result: { event: string; data: any; }) => {this.deleteData(result.data)});
+    }
+    else if(action == "")
+    {
+
+    }
+  }
+  updateData(data: any) {
+
+    return this.store.collection("facilityCollection").doc(data.ID).update(
+      {
+        Kapzitaet: 10
+      }
+    );
+  }
+  // addRowData(row_obj: { name: any; }){
+  //   var d = new Date();
+  //   this.dataSource.push({
+  //     id:d.getTime(),
+  //     name:row_obj.name
+  //   });
+  //   this.table.renderRows();
+  // }
+  
+  deleteData(data: any){
+    console.log("DataSource Realtalk",this.facilityCollection);
+    // this.refreshLists("")
+    return this.store.collection("facilityCollection").doc(data.ID).delete();
+  }
+
 
   DeleteChoice() {
 

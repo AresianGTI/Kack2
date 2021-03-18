@@ -1,7 +1,8 @@
-<mat-tab-group  mat-align-tabs="center" mat-stretch-tabs class="example-stretched-tabs mat-elevation-z4"
-(selectedTabChange)="setTab($event)">
-    
+<mat-tab-group mat-align-tabs="center" mat-stretch-tabs class="example-stretched-tabs mat-elevation-z4"
+    (selectedTabChange)="setTab($event)">
+
     <mat-tab label="Einrichtung" textLabel="tab_selection">
+
         <table mat-table [dataSource]="facilityCollection" multiTemplateDataRows class="mat-elevation-z8">
             <ng-container matColumnDef="{{column}}" *ngFor="let column of displayedColumnsFacility">
                 <th mat-header-cell *matHeaderCellDef> {{column}} </th>
@@ -14,7 +15,10 @@
                     <div class="example-element-detail"
                         [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
                         <div class="example-element-diagram">
-                            <div class="example-element-name"> Ich bins, der {{element.Name}} </div>
+                            <div class="example-element-name"> Ich bins, der {{element.Name}}
+                                <button mat-raised-button color="primary" (click)="openDialog('Update', element)">Edit</button> |
+                                <button mat-raised-button color="primary" (click)="openDialog('Delete',element)">Delete</button>
+                            </div>
                         </div>
                     </div>
                 </td>
@@ -27,6 +31,7 @@
             </tr>
             <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
         </table>
+
     </mat-tab>
 
 
@@ -61,8 +66,9 @@
 
 </mat-tab-group>
 
+
 <div class="button-container" [hidden]="isHidden">
-    <button mat-raised-button color="primary" (click)="ChooseDialog()">Create</button>
+    <button mat-raised-button color="primary" (click)="openDialog('Create')">Create</button>
     <button mat-raised-button color="primary" (click)="DeleteChoice()">Delete All</button>
 
 </div>

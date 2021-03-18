@@ -46,6 +46,8 @@ import { CalendarModule, DateAdapter } from 'angular-calendar';
 import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
+import { DialogBoxComponent } from './modules/dialog-box/dialog-box.component';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -59,6 +61,7 @@ import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
     SingleFacilityChartComponent,
     SingleTraineeChartComponent,
     CalendarComponent,
+    DialogBoxComponent
     
   ],
   imports: [
@@ -94,7 +97,6 @@ import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
   //  GoogleChartsModule
    CalendarModule.forRoot({ provide: DateAdapter, useFactory: adapterFactory }),
   //  CalendarComponent,
-
   ],
   providers: [AuthService],
   bootstrap: [AppComponent]

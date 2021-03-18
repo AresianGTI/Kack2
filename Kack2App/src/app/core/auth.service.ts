@@ -9,8 +9,9 @@ import { Facility } from '../models/facility';
 import { Coordinators } from '../models/coordinators';
 import { Observable, of, Subscription } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { switchMap } from 'rxjs/operators/';
+import { switchMap, take } from 'rxjs/operators/';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
+import { loggedIn } from '@angular/fire/auth-guard';
 
 const secondaryApp = firebase.initializeApp(environment.firebaseConfig, 'Secondary');
 @Injectable({
@@ -37,24 +38,21 @@ export class AuthService {
     public ngZone: NgZone, // NgZone service to remove outside scope warning
 
   ) {
-    /* Saving user data in localstorage when 
-    logged in and setting up null when logged out */
-    // this.user$ = this.afAuth.authState.pipe(switchMap(user => {
-    //   if (user) {
-    //     this.getUserData(user);
-    //     this.currentData 
-    //     return this.afs.doc<any>(`users/${user.uid}`).valueChanges()
-    //   } else {
-    //     return of(null);
-    //   }
-    // }))   
-        this.user$ = this.afAuth.authState.pipe(switchMap(user => {
+    // Authentifizierung wird beim Laden der Seite nicht gespeichert
+    // this.isLoggedIn;
+    // console.log("Ist logged in: ",this.isLoggedIn)
+        this.user$ = this.afAuth.authState.pipe(take(1),switchMap(user => {
       if (user) {
-        this.getUserData(user);
-        this.loggedInData = user;
+             this.getUserData(user);
+
+         this.loggedInData = user;
+        localStorage.setItem('user', JSON.stringify(user));
+        JSON.parse(localStorage.getItem('user')!);
         return this.afs.doc<any>(`users/${user.uid}`).valueChanges()
       } else {
-        return of(null);
+        localStorage.setItem('user', this.currentData);
+        localStorage.getItem('user');
+        return of(user);
       }
     }))
     //    this.loginSubscriptions.push(this.afAuth.authState.subscribe(user => {
@@ -77,7 +75,13 @@ export class AuthService {
 
   DestroySubscriptions(){
     this.loginSubscriptions.forEach(sub =>
-      sub.unsubscribe());
+     
+      sub.unsubscribe(),
+      console.log("Sub unsubscribed"));
+      for(let sub in this.loginSubscriptions){
+        console.log("ICh bin ein SUBMARINA weniger", sub);
+      }
+      
   }
 
   // Sign in with email/password
@@ -85,7 +89,7 @@ export class AuthService {
     return this.afAuth.signInWithEmailAndPassword(email, password)
       .then((result) => {
         this.ngZone.run(() => {
-          this.router.navigate(['Stammdaten']);
+          this.router.navigate(['/trainee']);
         });
         this.getUserData(result.user!);
       })
@@ -138,7 +142,7 @@ export class AuthService {
   // Returns true when user is looged in and email is verified
   get isLoggedIn(): boolean {
     const user = JSON.parse(localStorage.getItem('user')!);
-    return (user !== null && user.emailVerified !== false) ? true : false;
+    return (user !== null !== false) ? true : false;
   }
 
   // Sign in with Google
@@ -151,7 +155,7 @@ export class AuthService {
     return this.afAuth.signInWithPopup(provider)
       .then((result) => {
         this.ngZone.run(() => {
-          this.router.navigate(['Stammdaten']);
+          this.router.navigate(['/trainee']);
         })
         this.SetUserData(result.user!);
       }).catch((error) => {
@@ -169,8 +173,8 @@ export class AuthService {
             //Subscription muss stoppen
             this.currentData = value;
             console.log("RESULT",  this.currentData);
-            for(const sub in this.loginSubscriptions){
-              console.log("ICh bin ein SUBMARINA");
+            for(let sub in this.loginSubscriptions){
+              console.log("ICh bin ein SUBMARINA", sub);
             }
             // this.currentData = user;
           })
@@ -224,7 +228,8 @@ export class AuthService {
    await this.afAuth.signOut().then(() => {
       this.DestroySubscriptions();
       localStorage.removeItem('user');
-      this.router.navigate(['loginView']);
+      this.router.navigate(['/loginView']);
+      console.log("ganze SCHEODE WEG!!");
     })
   }
   // private checkAuthorization(user: any, allowedRoles: string[]): boolean {
@@ -242,7 +247,7 @@ export class AuthService {
     return saf;
   }
   canRead(user: any): boolean {
-    const allowed = ["admin", "hehe", "coordinator"];
+    const allowed = ["admin", "trainee", "coordinator"];
     return this.checkAuthorization(user, allowed)
   }
   canEdit(user: any): boolean {

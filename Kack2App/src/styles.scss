@@ -2,5 +2,8 @@
 
 html, body { height: 100%; background-image: linear-gradient((90deg), rgb(5, 112, 201),rgb(5,112,100)); }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+@import "../node_modules/angular-calendar/css/angular-calendar.css";
 
 
+/* Importing Bootstrap SCSS file. */
+// @import '~bootstrap/scss/bootstrap';

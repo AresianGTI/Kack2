@@ -1,14 +1,27 @@
 import { Facility } from "./facility";
+import { IUser, Roles } from './user';
 
 export interface ITrainee{
-    name: string;
-    firstname: string;
-    home_facility: Facility;
+    
 }
 
-export class Trainee implements ITrainee{
+export class Trainee implements ITrainee, IUser{
+    uid!: string;
+    roles!: Roles;
+    rolesobj : Roles = {trainee : true, admin : false, coordinator :false};  
+    displayName!: string;
+    test!: string;
+    emailVerified!: boolean;
     private _name!: string; 
     private _firstname!: string;
+    private _email!: string;
+    // constructor(){
+    //     this.roles.admin = true;
+    //     this.roles.coordinator = true;
+    //     this.roles.trainee = true;
+
+    // }
+   
     private _home_facility: Facility = new Facility();
 
     public get name(): string {
@@ -22,6 +35,12 @@ export class Trainee implements ITrainee{
     }
     public set firstname(value: string) {
         this._firstname = value;
+    }
+    public get email(): string {
+        return this._email;
+    }
+    public set email(value: string) {
+        this._email = value;
     }
     public get home_facility(): Facility {
         return this._home_facility;

@@ -1,0 +1,48 @@
+<!-- dialog-box.component.html -->
+<!-- <h1 mat-dialog-title>Row Action :: <strong>{{action}}</strong></h1>
+<div mat-dialog-content  class="example-container">
+  <mat-form-field *ngIf="action != 'Delete'; else elseTemplate">
+    <input placeholder="{{action}} Name" matInput [(ngModel)]="local_data.name">
+  </mat-form-field>
+  <ng-template #elseTemplate>
+    Sure to delete <b>{{local_data.name}}</b>?
+  </ng-template>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="doAction()">{{action}}</button>
+  <button mat-button (click)="closeDialog()" mat-flat-button color="warn">Cancel</button>
+</div>
+ -->
+
+<!-- dialog-box.component.html -->
+<h1 mat-dialog-title>Row Action :: <strong>{{action}}</strong></h1>
+<div mat-dialog-content>
+  <mat-form-field *ngIf="action != 'Delete'; else elseTemplate">
+    <input placeholder="{{action}} Name" matInput [(ngModel)]="local_data.Name">
+  </mat-form-field>
+  <ng-template #elseTemplate>
+    Sure to delete <b>{{local_data.Name}}</b>?
+  </ng-template>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="doAction()">{{action}}</button>
+  <button mat-button (click)="closeDialog()" mat-flat-button color="warn">Cancel</button>
+</div>
+
+<!-- <mat-form-field>
+    <mat-label>Test</mat-label>
+    <textarea matInput [(ngModel)]="cedula" placeholder="ula"> </textarea>
+  </mat-form-field>
+  
+  <div mat-dialog-actions>
+    <button mat-button>OK</button>
+    <button mat-button [mat-dialog-close]="{ task: data.task }">OK</button>
+<button mat-button (click)="cancel()">Cancel</button>
+    <button
+    mat-fab
+    color ="primary"
+    aria-label="Delete">
+    <mat-icon>delete</mat-icon>
+
+</button>
+  </div> -->

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { Router } from '@angular/router';
+import { AuthService } from 'src/app/core/auth.service';
 
 @Component({
   selector: 'app-main',
@@ -11,20 +12,20 @@ export class MainComponent implements OnInit {
 
   username?: string | null;
 
-  constructor(private router: Router, private auth: AngularFireAuth) {
+  constructor(private router: Router, public authService: AuthService) {
   }
-  logOut() {
-    this.auth.signOut().then(() => this.router.navigate(["/loginView"]));
-  }
+
+  logOut() { this.authService.SignOut(); }
 
   ngOnInit(): void {
     let test;
-    // this.router.navigate(["/adminMainView"]);
+    this.authService.user$.subscribe();
 
-    // this.auth.currentUser.then(hs => {
-    //   console.log("User Logged In JAJA", hs);
-    //   this.username = hs?.email;
-    // })
+    this.router.navigate(["/trainee"]);
+    // Wenn User == Admin
+    //Navigate to --> Admin
+    //Wenn User == Trainee
+    //Wenn User == Coordinator
   }
 
 }

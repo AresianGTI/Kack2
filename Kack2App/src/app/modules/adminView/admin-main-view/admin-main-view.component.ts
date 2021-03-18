@@ -155,7 +155,7 @@ CoordinatorCollection = new MatTableDataSource<Coordinators>([]);
    
     let dialogRef: any;
     if(action == "Update")
-    {
+    {      
       obj!.action = action;
       switch (this.tab_selection) {
         case ("Einrichtung"): {

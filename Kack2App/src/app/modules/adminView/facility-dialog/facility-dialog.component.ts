@@ -46,6 +46,14 @@ export class FacilityDialogComponent implements OnInit {
   ];
 
   ngOnInit(): void {
+    //Beim Editieren von Einrichtungen werden die Felder mit den existierenden Werten Gefüllt.
+    if(this.local_data)
+    {
+      this.facilityX.facilityName = this.local_data.Name;
+      this.facilityX.facilitytype.facilitytypeName = this.local_data.Einrichtungsart;
+      this.facilityX.capacity = this.local_data.Kapazitaet;
+      this.facilityX.facilityadress = this.local_data.Adresse;
+    }
   }
 
 
@@ -82,7 +90,7 @@ export class FacilityDialogComponent implements OnInit {
       {
         Name: this.facilityX.facilityName,
         Adresse: this.facilityX.facilityadress,
-        // Einrichtungsart: this.facilityX.facilitytype.facilitytypeName,
+        Einrichtungsart: this.facilityX.facilitytype.facilitytypeName,
         Kapazitaet: this.facilityX.capacity
       }
     );

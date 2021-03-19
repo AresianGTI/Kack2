@@ -4,6 +4,7 @@ import{AngularFireAuth} from '@angular/fire/auth';
 import { Router } from '@angular/router';
 import {AuthService} from '../../core/auth.service'
 import { Coordinators } from 'src/app/models/coordinators';
+import { GlobalstringsService } from 'src/app/services/globalstrings/globalstrings.service';
 @Component({
   selector: 'app-register',
   templateUrl: './login-View.component.html',
@@ -23,14 +24,16 @@ export class LoginViewComponent implements OnInit {
     private fb:FormBuilder, 
     private auth: AngularFireAuth, 
     private router: Router,
-    public authService: AuthService) {
+    public authService: AuthService,
+    public glob: GlobalstringsService) {
     //  if(this.authService.isLoggedIn()) {
     //     this.router.navigate(['overview']);
     //   }
     
    }
   //  coorindator = new Coordinators();
-ngOnInit(): void{}
+ngOnInit(): void{
+}
 
 createCoordinator(email: string, pw: string){
   let coorindator = new Coordinators();

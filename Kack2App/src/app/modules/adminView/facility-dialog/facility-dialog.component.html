@@ -7,18 +7,18 @@
     <!-- Feld für den Einrichtungsnamen -->
     <mat-form-field hintLabel="Maximal 30 Zeichen" appearance="fill">
       <mat-label>Name der Einrichtung</mat-label>
-      <input matInput #input maxlength="30" [(ngModel)]="facilityX.facilityName">
+      <input matInput #input maxlength="30" [(ngModel)]="facilityObj.facilityName">
       <mat-hint align="end">{{input.value?.length || 0}}/30</mat-hint>
     </mat-form-field>
     <mat-form-field hintLabel="Maximal 30 Zeichen" appearance="fill">
       <mat-label>Adresse</mat-label>
-      <input matInput #input maxlength="30" [(ngModel)]="facilityX.facilityadress">
+      <input matInput #input maxlength="30" [(ngModel)]="facilityObj.facilityadress">
       <mat-hint align="end">{{input.value?.length || 0}}/30</mat-hint>
     </mat-form-field>
     <!-- Feld für die Einrichtungsart -->
     <mat-form-field appearance="fill" *ngIf="action == 'Create' ">
       <mat-label>Einrichtungsart</mat-label>
-      <mat-select  [(ngModel)]="facilityX.facilitytype.facilitytypeName">
+      <mat-select  [(ngModel)]="facilityObj.facilitytype.facilitytypeName">
         <mat-option *ngFor="let facilityType of facilityTypes" [value]="facilityType.facilitytypeName">
           {{facilityType.facilitytypeName}}
         </mat-option>
@@ -28,7 +28,7 @@
     </mat-form-field>
     <mat-form-field hintLabel="Verfügbare Kapazität" appearance="fill">
       <mat-label>Geben Sie die Kapazität an:</mat-label>
-      <input matInput type="number" [formControl]="selected" [(ngModel)]="facilityX.capacity">
+      <input matInput type="number" [formControl]="selected" [(ngModel)]="facilityObj.capacity">
     </mat-form-field>
   </div>
 
@@ -36,8 +36,8 @@
 <mat-dialog-actions align="End">
   <button mat-raised-button color="primary" mat-dialog-close>Abbrechen</button>
   <button mat-raised-button (click)="getRightFunction()" color="primary" [disabled]=
-  "!facilityX.facilityName || !facilityX.facilityadress || 
-   !facilityX.facilitytype.facilitytypeName || !facilityX.capacity">{{action}}</button>
+  "!facilityObj.facilityName || !facilityObj.facilityadress || 
+   !facilityObj.facilitytype.facilitytypeName || !facilityObj.capacity">{{action}}</button>
    
 </mat-dialog-actions>
 

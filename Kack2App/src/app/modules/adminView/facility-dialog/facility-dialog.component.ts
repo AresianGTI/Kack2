@@ -18,7 +18,7 @@ export class FacilityDialogComponent implements OnInit {
   local_data: any;
 
   selectedValue: string = "";
-  facilityX: Facility = new Facility();
+  facilityObj: Facility = new Facility();
   selected = new FormControl(0);
 
   constructor(public firestore: AngularFirestore,
@@ -49,30 +49,17 @@ export class FacilityDialogComponent implements OnInit {
     //Beim Editieren von Einrichtungen werden die Felder mit den existierenden Werten Gefüllt.
     if(this.local_data)
     {
-      this.facilityX.facilityName = this.local_data.Name;
-      this.facilityX.facilitytype.facilitytypeName = this.local_data.Einrichtungsart;
-      this.facilityX.capacity = this.local_data.Kapazitaet;
-      this.facilityX.facilityadress = this.local_data.Adresse;
+      this.facilityObj.facilityName = this.local_data.Name;
+      this.facilityObj.facilitytype.facilitytypeName = this.local_data.Einrichtungsart;
+      this.facilityObj.capacity = this.local_data.Kapazitaet;
+      this.facilityObj.facilityadress = this.local_data.Adresse;
     }
-  }
-
-
-
-
-  doAction() {
-    this.dialogRef.close({ event: this.action, data: this.local_data });
   }
 
   closeDialog() {
     this.dialogRef.close({ event: 'Cancel' });
   }
 
-  // cancel(): void {
-  //   // this.data.task.title = this.backupTask.title;
-  //   // this.data.task.description = this.backupTask.description;
-  //   // this.dialogRef.close(this.data);
-  //   // console.log("Test erfolgreich")
-  // }
   getRightFunction(){
     if(this.action == "Update"){
       this.updateData()
@@ -84,34 +71,36 @@ export class FacilityDialogComponent implements OnInit {
     }
 
   }
+  //FirestoreService
   updateData() {
 
     return this.firestore.collection("facilityCollection").doc(this.data.ID).update(
       {
-        Name: this.facilityX.facilityName,
-        Adresse: this.facilityX.facilityadress,
-        Einrichtungsart: this.facilityX.facilitytype.facilitytypeName,
-        Kapazitaet: this.facilityX.capacity
+        Name: this.facilityObj.facilityName,
+        Adresse: this.facilityObj.facilityadress,
+        Einrichtungsart: this.facilityObj.facilitytype.facilitytypeName,
+        Kapazitaet: this.facilityObj.capacity
       }
     );
   }
+  //FirestoreService
   createFacility() {
-    this.facilityX.id = this.firestore.createId();
+    this.facilityObj.id = this.firestore.createId();
     let facilityObj =
     {
-      ID: this.facilityX.id,
-      Name: this.facilityX.facilityName,
-      Adresse: this.facilityX.facilityadress,
-      Einrichtungsart: this.facilityX.facilitytype.facilitytypeName,
-      Kapazitaet: this.facilityX.capacity
+      ID: this.facilityObj.id,
+      Name: this.facilityObj.facilityName,
+      Adresse: this.facilityObj.facilityadress,
+      Einrichtungsart: this.facilityObj.facilitytype.facilitytypeName,
+      Kapazitaet: this.facilityObj.capacity
     }
       ;
 
-    this.firestore.collection('facilityCollection').doc(this.facilityX.id).set(facilityObj).then(res => {
-      this.facilityX.facilityName = "";
-      this.facilityX.facilityadress = "";
-      this.facilityX.facilitytype.facilitytypeName = "";
-      // this.facilityX.capacity == undefined;  // funktioniert nicht
+    this.firestore.collection('facilityCollection').doc(this.facilityObj.id).set(facilityObj).then(res => {
+      this.facilityObj.facilityName = "";
+      this.facilityObj.facilityadress = "";
+      this.facilityObj.facilitytype.facilitytypeName = "";
+      // this.facilityObj.capacity == undefined;  // funktioniert nicht
       console.log("test", res);
       alert("Die Einrichtung wurde erstellt!");
     }).catch(error => {
@@ -121,29 +110,4 @@ export class FacilityDialogComponent implements OnInit {
   }
 
 
-  changeFacility() {
-
-    //   const userRef: AngularFirestoreDocument<any> = this.afs.doc<any>("users" + `/${user.uid}`);
-    //   const userData: any = {
-    //     uid: user.uid,
-    //     email: user.email!,
-    //     displayName: user.displayName!,
-    //     emailVerified: user.emailVerified,
-    //     roles: {
-    //       trainee: data?.rolesobj.trainee ,
-    //       admin: data?.rolesobj.admin ,
-    //       coordinator: data?.rolesobj.coordinator
-    //     },
-    //     Stammeinrichtung: data?.home_facility.facilityName || "Keine Stammeinrichtung",
-    //     Nachname: data?.name || "Name No Value",
-    //     Vorname: data?.firstname || "FirstName No Value"
-    //   }
-    //   this.testData = userData;
-    //   console.log("UserData", this.testData)
-    //   // Updates existing Documents in a non-destructive way
-    //   return userRef.set(userData, {
-    //     merge: true
-    //   })
-    // }
-  }
 }

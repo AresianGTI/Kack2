@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SingleTraineeChartComponent } from './single-trainee-chart.component';
+import { FacilityChartComponent } from './facility-chart.component';
 
-describe('SingleTraineeChartComponent', () => {
-  let component: SingleTraineeChartComponent;
-  let fixture: ComponentFixture<SingleTraineeChartComponent>;
+describe('FacilityChartComponent', () => {
+  let component: FacilityChartComponent;
+  let fixture: ComponentFixture<FacilityChartComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ SingleTraineeChartComponent ]
+      declarations: [ FacilityChartComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(SingleTraineeChartComponent);
+    fixture = TestBed.createComponent(FacilityChartComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -5,7 +5,7 @@
       <a mat-list-item matTooltip="Hier finden Sie die Übersicht" routerLink="/trainee">Übersicht</a>
       <a mat-list-item matTooltip="Hier finden Sie die Stammdaten" *ngIf="this.authService?.currentData?.roles?.coordinator" routerLink="/Stammdaten">Stammdaten</a>
       <a mat-list-item matTooltip="Hier finden Sie die Zeitplan" routerLink="/Calendar">Zeitplan</a>
-      <a mat-list-item matTooltip="Hier finden Sie Ihre Einsatzplanung" *ngIf="this.authService?.currentData?.roles?.trainee" routerLink="/GoogleCharts/single-facility/single-trainee">Einsatzplanung</a>
+      <a mat-list-item matTooltip="Hier finden Sie Ihre Einsatzplanung" *ngIf="this.authService?.currentData?.roles?.trainee" routerLink="/GoogleCharts/facility-chart/trainee-chart">Einsatzplanung</a>
       <a mat-list-item matTooltip="Hier finden Sie eine die verfügbaren Kapazitaeten der Einrichtungen"   *ngIf="this.authService?.currentData?.roles?.coordinator" routerLink="/GoogleCharts">Kapazitäten</a>
     
       <a mat-list-item matTooltip="Hier finden Sie die Einstellungen" routerLink="#">Einstellungen</a>

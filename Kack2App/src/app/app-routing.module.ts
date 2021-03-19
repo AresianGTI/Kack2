@@ -14,8 +14,8 @@ import { GoogleChartViewComponent } from './modules/coordinatorView/google-chart
 // import { CanReadGuard } from './core/can-read.guard';
 import { AdminGuard } from './core/admin.guard';
 import { CanReadGuard } from './core/can-read.guard';
-import { SingleTraineeChartComponent } from './modules/coordinatorView/single-trainee-chart/single-trainee-chart/single-trainee-chart.component';
-import { SingleFacilityChartComponent } from './modules/coordinatorView/single-facility-chart/single-facility-chart/single-facility-chart.component';
+import { TraineeChartComponent } from './modules/trainee-chart/trainee-chart.component';
+import { FacilityChartComponent } from './modules/facility-chart/facility-chart.component';
 import { CalendarComponent } from './modules/calendar/calendar.component';
 import { DialogBoxComponent } from './modules/dialog-box/dialog-box.component';
 const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo(["loginView"]);
@@ -58,15 +58,15 @@ const routes: Routes = [
         // canActivate: [AngularFireAuthGuard]
       },
       {
-        path: 'GoogleCharts/single-facility',
-        component: SingleFacilityChartComponent,
+        path: 'GoogleCharts/facility-chart',
+        component: FacilityChartComponent,
         // canActivate: [AngularFireAuthGuard],
         // data: { authGuardPipe: dd },
       },
       // data: { authGuardPipe: dd },
       {
-        path: 'GoogleCharts/single-facility/single-trainee',
-        component: SingleTraineeChartComponent,
+        path: 'GoogleCharts/facility-chart/trainee-chart',
+        component: TraineeChartComponent,
         // canActivate: [AngularFireAuthGuard],
       }
     ],

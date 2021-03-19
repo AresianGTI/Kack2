@@ -1,4 +1,3 @@
-import { stringify } from '@angular/compiler/src/util';
 import { ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
@@ -18,6 +17,7 @@ export class GoogleChartViewComponent implements OnInit {
   subscription!: Subscription;
   convertingArray!: any[];
 
+  //überprüfen, ob das auch anders geht 
   facilityArray: Array<{
     Name: string;
     Kapazitaet: number;
@@ -29,14 +29,11 @@ export class GoogleChartViewComponent implements OnInit {
 //Wenn die Buchstaben gleich sind, kann man hier ein Facility-Array verwenden.
 
   usedFacilities: Array<{}> = [];
-  constructor(private store: AngularFirestore,
-    private changeDetectorRefs: ChangeDetectorRef, private router: Router,
-    private route: ActivatedRoute) { }
-
-
+  constructor(private store: AngularFirestore) { }
 
   ngOnInit(): void {
 
+    //FirestoreService Methode
      this.subscription = this.store.collection("users")
       .get()
       .subscribe( trainee => {
@@ -44,30 +41,26 @@ export class GoogleChartViewComponent implements OnInit {
           this.usedFacilities.push(element.get("Stammeinrichtung"));
         });
         console.log(this.usedFacilities); // Array mit den Stammdaten
-       // unsubscribe = false;
      });
 
-
     //get all facilities for the progress-bar (facilityname and capacity of facility)
-
     const facilityCol = this.store.collection("facilityCollection");
-    const facilityObservableArray =  facilityCol.valueChanges(); //.get()?
+    const facilityObservableArray =  facilityCol.valueChanges();
 
     this.subscription = facilityObservableArray.subscribe(facility => {  //converting in array
        this.convertingArray = facility;
        this.convertingArray.forEach(fclty => {  //push into Array for Progressbar
         this.facilityArray.push(fclty);
        })
-       this.calculateUsedFacility();
+
+       this.calculateUsedCapacity();
        
      });
 
-    //  this.convertingArray.length = 0; // Array leeren, ohne es zu verändern
-    //  this.facilityArray.length = 0;
-    // funktioniert nicht am Ende von ngOnInit() ?!?!?!?!?
   }
 
-  calculateUsedFacility(){
+  //Abfangen, dass verwendete Kapazität die maximale Kapazität nicht übersteigt
+  calculateUsedCapacity(){
        //calculate the used mainfacility for progress-bar value
        this.facilityArray.forEach(facility => {
         facility.VerwendeteKapazitaet = 0;
@@ -76,17 +69,12 @@ export class GoogleChartViewComponent implements OnInit {
             facility.VerwendeteKapazitaet++;
             
           };
-          console.log("Einrichtung:",facility.Name, "hat: ", facility.VerwendeteKapazitaet);
+
         });
-        console.log("unsubscribed");
+
         
         this.subscription.unsubscribe();
       });
-  }
-
-  goToFacility(){
-    // console.log(this.router.navigate(["single-facility"], {relativeTo: this.route}));
-    // this.router.navigate(["single-facility"], {relativeTo: this.route})
   }
 
 

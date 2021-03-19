@@ -31,22 +31,12 @@ import { DialogBoxComponent } from '../../../modules/dialog-box/dialog-box.compo
 
 
 
-export interface UsersData {
-  name: string;
-  id: number;
-}
+
 
 @Component({
   selector: 'app-admin-main-view',
   templateUrl: './admin-main-view.component.html',
   styleUrls: ['./admin-main-view.component.scss'],
-  // animations: [
-  //   trigger('detailExpand', [
-  //     state('collapsed', style({ height: '0px', minHeight: '0', visibility: 'hidden' })),
-  //     state('expanded', style({ height: '*', visibility: 'visible' })),
-  //     transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
-  //   ]),
-  // ],
   animations: [
     trigger('detailExpand', [
       state('collapsed', style({height: '0px', minHeight: '0', display: 'none'})),
@@ -60,14 +50,12 @@ export class AdminMainViewComponent implements OnInit, OnDestroy {
 expandedElement!: IFacility;
 
   tab_selection!: string;
-  user: any;
   //for subscriptions and unsubscriptions
   subscriptions: Subscription[] = [];
-  // displayedColumns: string[] = ['id', 'name', 'action'];
   displayedColumnsFacility: string[] = ['Einrichtungsart','Name', 'action', ];
   displayedColumnsTrainee: string[] = ['Nachname', 'Vorname', 'Stammeinrichtung'];
   displayedColumnsCoordinators: string[] = ['Nachname', 'Vorname', 'test'];
-  isHidden = false;
+  buttonIsHidden = false;
   dataSourceTest: any[]=[];
   // @ViewChild(MatTable,{static:true}) table: MatTable<any>;
 
@@ -82,27 +70,16 @@ CoordinatorCollection = new MatTableDataSource<Coordinators>([]);
     private store: AngularFirestore,
     public dialog: MatDialog,
     public authService: AuthService) {
-      // this.authService.user$.subscribe(user => this.user = user)
      }
 
   ngOnDestroy(): void {
     this.subscriptions.forEach(sub => sub.unsubscribe());
-    console.log("ondestroy aufgerufen");
-    // this.destroyed$.next(true);
-    // this.destroyed$.complete();
-  }
-
-
-
-  public tabChanged(tabChangeEvent: MatTabChangeEvent): void {
-    console.log(tabChangeEvent.tab.textLabel);
   }
 
   setTab(tabChangeEvent: MatTabChangeEvent) {          // Hier wird der Label vom Tab in die Variable zugewiesen!!!
     this.tab_selection = tabChangeEvent.tab.textLabel;
-     if(this.tab_selection =="Koordinatoren") this.isHidden = true
-     else this.isHidden = false;
-
+     if(this.tab_selection =="Koordinatoren") this.buttonIsHidden = true
+     else this.buttonIsHidden = false;
   }
 
   ChooseDialog() {
@@ -201,22 +178,7 @@ CoordinatorCollection = new MatTableDataSource<Coordinators>([]);
 
     }
   }
-  updateData(data: any) {
 
-    return this.store.collection("facilityCollection").doc(data.ID).update(
-      {
-        Kapzitaet: 10
-      }
-    );
-  }
-  // addRowData(row_obj: { name: any; }){
-  //   var d = new Date();
-  //   this.dataSource.push({
-  //     id:d.getTime(),
-  //     name:row_obj.name
-  //   });
-  //   this.table.renderRows();
-  // }
   
   deleteData(data: any){
     console.log("DataSource Realtalk",this.facilityCollection);
@@ -225,7 +187,7 @@ CoordinatorCollection = new MatTableDataSource<Coordinators>([]);
   }
 
 
-  DeleteChoice() {
+  deleteAll() {
 
     const facCollection = this.store.collection("facilityCollection")
       .get()

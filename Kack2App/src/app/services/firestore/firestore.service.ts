@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { Subscription } from 'rxjs';
+import { Observable, Subject, Subscription } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 import { GlobalstringsService } from '../globalstrings/globalstrings.service';
 
 @Injectable({
@@ -11,25 +12,38 @@ export class FirestoreService {
   constructor(public afs: AngularFirestore) { 
 
   }
-    getUserData(user: any, subscriptionList: Subscription[]) {
-      let userData;
-      //Check ob subscription schon vorhanden ist--> Wenn ja soll keine weitere Subscription erstellt werden
-      subscriptionList.push(
-        this.afs.collection("users").doc(`/${user.uid}`).valueChanges()
-        .subscribe(value =>
-          {
-            //Subscription muss stoppen
-            // this.userData = value;
-            userData = value;
-            console.log("RESULT",  value);
-            // for(let sub in subscriptionList){
-            //   console.log("ICh bin ein SUBMARINA", sub);
-            // }
-          })
-          
-      );
-      console.log("UserData: ", userData);
-      return userData;
 
-  }
+
+
+  
+    getUserData = (user: any, subscriptionList: Subscription[]): Promise<any> =>{
+      
+      //Check ob subscription schon vorhanden ist--> Wenn ja soll keine weitere Subscription erstellt werden
+      // subscriptionList.push(
+        var docRef = this.afs.collection("users").doc(`/${user.uid}`);
+      return docRef.ref.get().then((doc) =>{
+        return doc.data();
+        // return userData;
+      } )
+
+      }
+       
+        // value =>
+        //   {
+        //     //Subscription muss stoppen
+        //     // this.userData = value;
+        //     userData = value;
+        //     console.log("RESULT",  value);
+        //     return userData;
+        //     // for(let sub in subscriptionList){
+        //     //   console.log("ICh bin ein SUBMARINA", sub);
+        //     // }
+        //   })
+          // console.log("UserData: ", userData);
+      // );
+      // return userData;
+      
+      // return subject;
+
+  // }
 }

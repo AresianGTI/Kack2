@@ -21,7 +21,7 @@ export class MainComponent implements OnInit {
     let test;
     this.authService.user$.subscribe();
 
-    this.router.navigate(["/trainee"]);
+    this.router.navigate(["/overview"]);
     // Wenn User == Admin
     //Navigate to --> Admin
     //Wenn User == Trainee

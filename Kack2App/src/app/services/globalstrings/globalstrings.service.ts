@@ -4,6 +4,17 @@ import { Injectable } from '@angular/core';
   providedIn: 'root'
 })
 export class GlobalstringsService {
+// Routes
+  private _overview = "overview";
+  public get overview() {
+    return this._overview;
+  }
+  private _loginView = "loginView";
+  public get loginView(){
+    return this._loginView;
+  }
+
+
 test = "hasiktir";
   constructor() { }
 }

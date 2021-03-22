@@ -18,6 +18,8 @@ import { TraineeChartComponent } from './modules/trainee-chart/trainee-chart.com
 import { FacilityChartComponent } from './modules/facility-chart/facility-chart.component';
 import { CalendarComponent } from './modules/calendar/calendar.component';
 import { DialogBoxComponent } from './modules/dialog-box/dialog-box.component';
+import { GlobalstringsService } from './services/globalstrings/globalstrings.service';
+
 const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo(["loginView"]);
 const dd = () => redirectUnauthorizedTo(["single-trainee"]);
 // const loggedIn = () => loggedIn(["login"]);
@@ -28,7 +30,6 @@ const dd = () => redirectUnauthorizedTo(["single-trainee"]);
 //   // , ...canActivate(redirectUnauthorizedToLogin)},
 
 // ];
-
 const routes: Routes = [
   {
     path: '',
@@ -44,7 +45,7 @@ const routes: Routes = [
         component: AdminMainViewComponent,
       },
       {
-        path: 'trainee',
+        path: 'overview',
         component: TraineeInformationComponent,
       },
       {
@@ -98,4 +99,6 @@ const routes: Routes = [
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule]
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {
+  constructor(public stringService: GlobalstringsService) {}
+ }

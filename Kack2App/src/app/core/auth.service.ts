@@ -63,16 +63,17 @@ export class AuthService {
   SignIn(email: string, password: string) {
     return this.afAuth.signInWithEmailAndPassword(email, password)
       .then((result) => {
-        // this.ngZone.run(() => {
+        this.firestoreService.getUserData(result.user, this.loginSubscriptions)
+        .then((data) => {
+          this.userData = data;
           this.router.navigate(['/' + this.stringService.overview]);
+          console.log("USERDATA: ", this.userData)
+        })
+      })  
+        // this.ngZone.run(() => {
+          
         // });
-       this.firestoreService.getUserData(result.user, this.loginSubscriptions)
-        
-      })
-      .then(() => {
-        console.log("Meine UserDataa in SignIn: ", this.userData );
-      }
-      )
+      
       .catch(e => this.errorMessage = e.message);
   }
   SignUp(email: string, password: string, data?: any) {

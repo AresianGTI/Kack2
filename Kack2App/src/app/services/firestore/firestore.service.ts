@@ -17,13 +17,9 @@ export class FirestoreService {
 
   
     getUserData = (user: any, subscriptionList: Subscription[]): Promise<any> =>{
-      
-      //Check ob subscription schon vorhanden ist--> Wenn ja soll keine weitere Subscription erstellt werden
-      // subscriptionList.push(
-        var docRef = this.afs.collection("users").doc(`/${user.uid}`);
+      var docRef = this.afs.collection("users").doc(`/${user.uid}`);
       return docRef.ref.get().then((doc) =>{
         return doc.data();
-        // return userData;
       } )
 
       }

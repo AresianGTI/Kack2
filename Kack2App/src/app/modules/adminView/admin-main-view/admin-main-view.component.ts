@@ -28,6 +28,7 @@ import {
 
 import { AuthService } from 'src/app/core/auth.service';
 import { DialogBoxComponent } from '../../../modules/dialog-box/dialog-box.component';
+import { SubscriptionCollectionService } from 'src/app/services/subscription-collection.service';
 
 
 
@@ -57,23 +58,22 @@ expandedElement!: IFacility;
   displayedColumnsCoordinators: string[] = ['Nachname', 'Vorname', 'test'];
   buttonIsHidden = false;
   dataSourceTest: any[]=[];
-  // @ViewChild(MatTable,{static:true}) table: MatTable<any>;
 
 facilityCollection = new MatTableDataSource<Facility>([]);  // Elemente für die Einrichtungstabelle
 traineeCollection = new MatTableDataSource<Trainee>([]);  // Elemente für die Azubitabelle
 CoordinatorCollection = new MatTableDataSource<Coordinators>([]);
  
-
-
-  
-  constructor(private router: Router,
+  constructor(
     private store: AngularFirestore,
     public dialog: MatDialog,
-    public authService: AuthService) {
+    public authService: AuthService,
+    public subscriptionService: SubscriptionCollectionService) {
      }
 
   ngOnDestroy(): void {
-    this.subscriptions.forEach(sub => sub.unsubscribe());
+
+    // this.subscriptions.forEach(sub => sub.unsubscribe());
+    this.subscriptionService.DestroySubscriptions(this.subscriptions);
   }
 
   setTab(tabChangeEvent: MatTabChangeEvent) {          // Hier wird der Label vom Tab in die Variable zugewiesen!!!
@@ -126,32 +126,38 @@ CoordinatorCollection = new MatTableDataSource<Coordinators>([]);
           });
         }));
   }
-
+  testmethod(action: any,obj?: { action?: any; }){
+    let dialogRef: any;
+    obj!.action = action;
+    switch (this.tab_selection) {
+      case ("Einrichtung"): {
+        dialogRef = this.dialog.open(FacilityDialogComponent, {data:obj});
+        dialogRef = this.dialog.open(FacilityDialogComponent, {data: action});
+        // dialogRef.afterClosed().subscribe((result: { event: string; data: any; }) => {this.updateData(result.data)}); //Einrichtungsdialog wird geöffnet
+        break;
+      }
+      case ("Auszubildender"): {
+        dialogRef = this.dialog.open(TraineeDialogComponent, {data:obj});
+        dialogRef = this.dialog.open(TraineeDialogComponent);
+        // dialogRef.afterClosed().subscribe((result: { event: string; data: any; }) => {});  //Azubidialog wird geöffnet
+        break;
+      }
+      default: {
+        break;
+      }
+    }
+  }
 
   openDialog(action: any,obj?: { action?: any; }) {
    
     let dialogRef: any;
     if(action == "Update")
-    {      
-      obj!.action = action;
-      switch (this.tab_selection) {
-        case ("Einrichtung"): {
-          dialogRef = this.dialog.open(FacilityDialogComponent, {data:obj});
-          // dialogRef.afterClosed().subscribe((result: { event: string; data: any; }) => {this.updateData(result.data)}); //Einrichtungsdialog wird geöffnet
-          break;
-        }
-        case ("Auszubildender"): {
-          dialogRef = this.dialog.open(TraineeDialogComponent, {data:obj});
-          dialogRef.afterClosed().subscribe((result: { event: string; data: any; }) => {});  //Azubidialog wird geöffnet
-          break;
-        }
-        default: {
-          break;
-        }
-      }
+    { 
+      this.testmethod(action, obj);
     }
     else if(action == "Create")
     {
+      this.testmethod(action);
       switch (this.tab_selection) {
         case ("Einrichtung"): {
           dialogRef = this.dialog.open(FacilityDialogComponent, {data: action});

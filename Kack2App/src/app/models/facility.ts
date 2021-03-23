@@ -1,58 +1,67 @@
-export interface IFacility{
+export interface IFacility {
+    ID: string;
     name: string;
     adress: string;
     type: IfacilityType;
     capacity: number;
     usedCapacity: number;
 }
-export interface IfacilityType{
+export interface IfacilityType {
     typeName: string;
 }
-export class FacilityType implements IfacilityType{
+export class FacilityType implements IfacilityType {
     typeName!: string;
 }
-export class Facility implements IFacility{
-    private _id!: string;
-    public get id(): string {
-        return this._id;
-    }
-    public set id(value: string) {
-        this._id = value;
-    }
+export class Facility implements IFacility {
+    private _ID!: string;
+
     private _name!: string;
+    private _adress!: string;
+    private _type: FacilityType = new FacilityType();
+    private _capacity!: number;
+    private _usedCapacity: number = 0;
+
+    
+    public get ID(): string {
+        return this._ID;
+    }
+    public set ID(value: string) {
+        this._ID = value;
+    }
+
     public get name(): string {
         return this._name;
     }
     public set name(value: string) {
         this._name = value;
     }
-    private _adress!: string;
+
     public get adress(): string {
         return this._adress;
     }
     public set adress(value: string) {
         this._adress = value;
     }
-    private _type: FacilityType = new FacilityType();
+
     public get type(): FacilityType {
         return this._type;
     }
     public set type(value: FacilityType) {
         this._type = value;
     }
-    private _capacity!: number;
+
     public get capacity(): number {
         return this._capacity;
     }
     public set capacity(value: number) {
         this._capacity = value;
     }
-    private _usedCapacity: number = 0;
+
     public get usedCapacity(): number {
         return this._usedCapacity;
     }
     public set usedCapacity(value: number) {
         this._usedCapacity = value;
     }
-   
+
 }

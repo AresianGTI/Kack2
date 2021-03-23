@@ -52,9 +52,10 @@ export class AdminMainViewComponent implements OnInit, OnDestroy {
   expandedElement!: IFacility;
 
   tab_selection!: string;
+  
   //for subscriptions and unsubscriptions
   subscriptions: Subscription[] = [];
-  displayedColumnsFacility: string[] = ['Einrichtungsart', 'Name', 'action',];
+  displayedColumnsFacility: string[] = ['Einrichtungsart', 'Name', 'Kapazitaet'];
   displayedColumnsTrainee: string[] = ['Nachname', 'Vorname', 'Stammeinrichtung'];
   displayedColumnsCoordinators: string[] = ['Nachname', 'Vorname', 'test'];
   buttonIsHidden = false;
@@ -142,12 +143,12 @@ export class AdminMainViewComponent implements OnInit, OnDestroy {
       dialogRef = this.dialog.open(DialogBoxComponent, { data: obj });
       dialogRef.afterClosed()
       .subscribe((result: { event: string; data: any; }) =>
-       { this.firestoreService.deleteData(
+       { this.firestoreService.deleteDocument(
          result.data, "facilityCollection") });
     }
   }
   deleteAll(){
-    this.firestoreService.deleteAll(this.facilityCollection, "facilityCollection");
+    this.firestoreService.deleteAllDocuments(this.facilityCollection, "facilityCollection");
   }
 
 

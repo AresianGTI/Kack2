@@ -4,6 +4,8 @@ import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/fire
 import { AuthService } from 'src/app/core/auth.service';
 import { Trainee } from 'src/app/models/trainee';
 import { take } from 'rxjs/operators';
+import { FirestoreService } from 'src/app/services/firestore/firestore.service';
+import { CollectionsService } from 'src/app/services/collections/collections.service';
 @Component({
   selector: 'app-trainee-dialog',
   templateUrl: './trainee-dialog.component.html',
@@ -13,14 +15,15 @@ export class TraineeDialogComponent implements OnInit {
 
   traineeObj: Trainee = new Trainee();
   facilityList: any[] = []
-  errorMessage!: string;
 
-  constructor(public firestore: AngularFirestore, 
-    private auth: AngularFireAuth,
-    public authService: AuthService) { }
+  constructor(
+    public fireStoreService: FirestoreService,
+    public authService: AuthService,
+    public collectionService: CollectionsService,
+    ) { }
 
   ngOnInit(): void {
-    this.onQuery( this.firestore.collection('facilityCollection'));
+    this.fireStoreService.getExistingFacilities( this.collectionService.facilityCollection);
     // this.onQuery( this.firestore.collection('users', ref => ref
     // .where("roles.trainee", "==", true)));
   }
@@ -40,16 +43,6 @@ export class TraineeDialogComponent implements OnInit {
   }
 
   //FirestoreService // Zeigt nur die bestehenden Einrichtugnen an 
-  onQuery(p_collection: AngularFirestoreCollection<unknown>) {
-    this.facilityList = [];
-    p_collection 
-      .get()
-      .subscribe(ss => {
-        ss.docs.forEach(doc => {
-          this.facilityList.push(doc.get("Name"));
-        })
-      }
-      )
-  }
+
 
 }

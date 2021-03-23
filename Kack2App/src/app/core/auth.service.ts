@@ -7,7 +7,6 @@ import { Trainee } from '../models/trainee';
 import { Observable, of, Subscription } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { switchMap, take } from 'rxjs/operators/';
-import { sub } from 'date-fns';
 import { GlobalstringsService } from '../services/globalstrings/globalstrings.service';
 import { SubscriptionCollectionService } from '../services/subscription-collection.service';
 import { FirestoreService } from '../services/firestore/firestore.service';

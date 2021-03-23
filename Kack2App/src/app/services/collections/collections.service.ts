@@ -9,5 +9,10 @@ export class CollectionsService {
     return this._userCollection;
   }
 
+  private _facilityCollection = "facilityCollection";
+  public get facilityCollection() {
+    return this._facilityCollection;
+  }
+
   constructor() { }
 }

@@ -28,14 +28,14 @@
     </mat-form-field>
     <mat-form-field hintLabel="Verfügbare Kapazität" appearance="fill">
       <mat-label>Geben Sie die Kapazität an:</mat-label>
-      <input matInput type="number" [formControl]="selected" [(ngModel)]="facilityObj.capacity">
+      <input matInput type="number" [formControl]="selectedFormControl" [(ngModel)]="facilityObj.capacity">
     </mat-form-field>
   </div>
 
 </mat-dialog-content>
 <mat-dialog-actions align="End">
   <button mat-raised-button color="primary" mat-dialog-close>Abbrechen</button>
-  <button mat-raised-button (click)="getRightFunction()" color="primary" [disabled]=
+  <button mat-raised-button (click)="chooseFunction()" color="primary" [disabled]=
   "!facilityObj.name || !facilityObj.adress || 
    !facilityObj.type.typeName || !facilityObj.capacity">{{action}}</button>
    

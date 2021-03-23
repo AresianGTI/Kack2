@@ -25,7 +25,7 @@
     <!-- Feld für die Stammeinrichtung -->
     <mat-form-field appearance="fill">
       <mat-label>Stammeinrichtung wählen</mat-label>
-      <mat-select [(ngModel)]="traineeObj.home_facility.facilityName">
+      <mat-select [(ngModel)]="traineeObj.home_facility.name">
         <mat-option *ngFor="let facility of facilityList" [value]="facility">
           {{facility}}
         </mat-option>
@@ -39,5 +39,5 @@
   <button mat-raised-button color="primary" mat-dialog-close>Abbrechen</button>
   <button mat-raised-button (click)="createTrainee()" color="primary"
   [disabled]="!traineeObj.firstname || !traineeObj.name || !traineeObj.email ||
-  !traineeObj.home_facility.facilityName">Erstellen</button>
+  !traineeObj.home_facility.name">Erstellen</button>
 </mat-dialog-actions>

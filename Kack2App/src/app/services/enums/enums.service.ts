@@ -5,5 +5,12 @@ import { Injectable } from '@angular/core';
 })
 export class EnumsService {
 
+
+
+
+  // { typeName: "Krankenhaus" },
+  // { typeName: "Psychatrie" },
+  // { typeName: "Pflegeeinrichtung" },
+  // { typeName: "Altersheim" }
   constructor() { }
 }

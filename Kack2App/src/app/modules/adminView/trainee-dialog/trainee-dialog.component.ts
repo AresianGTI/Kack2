@@ -34,7 +34,7 @@ export class TraineeDialogComponent implements OnInit {
         this.traineeObj.name = "";
         this.traineeObj.firstname = "";
         this.traineeObj.email = "";
-        this.traineeObj.home_facility.facilityName = "";
+        this.traineeObj.home_facility.name = "";
         }
         )
   }

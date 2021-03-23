@@ -39,20 +39,20 @@ export class FacilityDialogComponent implements OnInit {
   }
 
   facilityTypes: IfacilityType[] = [
-    { facilitytypeName: "Krankenhaus" },
-    { facilitytypeName: "Psychatrie" },
-    { facilitytypeName: "Pflegeeinrichtung" },
-    { facilitytypeName: "Altersheim" }
+    { typeName: "Krankenhaus" },
+    { typeName: "Psychatrie" },
+    { typeName: "Pflegeeinrichtung" },
+    { typeName: "Altersheim" }
   ];
 
   ngOnInit(): void {
     //Beim Editieren von Einrichtungen werden die Felder mit den existierenden Werten Gefüllt.
     if(this.local_data)
     {
-      this.facilityObj.facilityName = this.local_data.Name;
-      this.facilityObj.facilitytype.facilitytypeName = this.local_data.Einrichtungsart;
+      this.facilityObj.name = this.local_data.Name;
+      this.facilityObj.type.typeName = this.local_data.Einrichtungsart;
       this.facilityObj.capacity = this.local_data.Kapazitaet;
-      this.facilityObj.facilityadress = this.local_data.Adresse;
+      this.facilityObj.adress = this.local_data.Adresse;
     }
   }
 
@@ -76,9 +76,9 @@ export class FacilityDialogComponent implements OnInit {
 
     return this.firestore.collection("facilityCollection").doc(this.data.ID).update(
       {
-        Name: this.facilityObj.facilityName,
-        Adresse: this.facilityObj.facilityadress,
-        Einrichtungsart: this.facilityObj.facilitytype.facilitytypeName,
+        Name: this.facilityObj.name,
+        Adresse: this.facilityObj.adress,
+        Einrichtungsart: this.facilityObj.type.typeName,
         Kapazitaet: this.facilityObj.capacity
       }
     );
@@ -89,17 +89,17 @@ export class FacilityDialogComponent implements OnInit {
     let facilityObj =
     {
       ID: this.facilityObj.id,
-      Name: this.facilityObj.facilityName,
-      Adresse: this.facilityObj.facilityadress,
-      Einrichtungsart: this.facilityObj.facilitytype.facilitytypeName,
+      Name: this.facilityObj.name,
+      Adresse: this.facilityObj.adress,
+      Einrichtungsart: this.facilityObj.type.typeName,
       Kapazitaet: this.facilityObj.capacity
     }
       ;
 
     this.firestore.collection('facilityCollection').doc(this.facilityObj.id).set(facilityObj).then(res => {
-      this.facilityObj.facilityName = "";
-      this.facilityObj.facilityadress = "";
-      this.facilityObj.facilitytype.facilitytypeName = "";
+      this.facilityObj.name = "";
+      this.facilityObj.adress = "";
+      this.facilityObj.type.typeName = "";
       // this.facilityObj.capacity == undefined;  // funktioniert nicht
       console.log("test", res);
       alert("Die Einrichtung wurde erstellt!");

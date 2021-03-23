@@ -17,5 +17,4 @@ export interface IUser {
     name: string; 
     firstname: string;
     home_facility: Facility;
-    // homeFacility: Facility;
  }

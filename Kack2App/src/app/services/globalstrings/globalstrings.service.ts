@@ -14,7 +14,5 @@ export class GlobalstringsService {
     return this._loginView;
   }
 
-
-test = "hasiktir";
   constructor() { }
 }

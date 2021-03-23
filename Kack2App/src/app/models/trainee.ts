@@ -15,12 +15,6 @@ export class Trainee implements ITrainee, IUser{
     private _name!: string; 
     private _firstname!: string;
     private _email!: string;
-    // constructor(){
-    //     this.roles.admin = true;
-    //     this.roles.coordinator = true;
-    //     this.roles.trainee = true;
-
-    // }
    
     private _home_facility: Facility = new Facility();
 

@@ -49,4 +49,24 @@ export class FirestoreService {
       merge: true
     })
   }
+
+
+  deleteData(data: any, collec: string) {
+    // console.log("DataSource Realtalk", this.facilityCollection);
+    return this.afs.collection(collec).doc(data.ID).delete();
+  }
+
+  deleteAll(collection: any, collectionName:string) {
+
+    this.afs.collection(collectionName)
+      .get()
+      .toPromise()
+      .then(querySnapshot => {
+        collection.data.length = 0;
+        querySnapshot.forEach((doc) => this.afs.collection(collectionName).doc(doc.id).delete())
+        console.log("Es hat funktioniert");
+      })
+      .catch((error) => console.error("Error removing document: ", error)
+      );
+}
 }

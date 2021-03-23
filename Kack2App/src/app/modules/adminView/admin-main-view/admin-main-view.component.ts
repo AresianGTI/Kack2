@@ -17,7 +17,7 @@ import { Coordinators } from 'src/app/models/coordinators';
 import { table } from 'console';
 import { Observable, of, Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import {DataSource, SelectionModel} from '@angular/cdk/collections';
+import { DataSource, SelectionModel } from '@angular/cdk/collections';
 import {
   animate,
   state,
@@ -29,6 +29,7 @@ import {
 import { AuthService } from 'src/app/core/auth.service';
 import { DialogBoxComponent } from '../../../modules/dialog-box/dialog-box.component';
 import { SubscriptionCollectionService } from 'src/app/services/subscription-collection.service';
+import { FirestoreService } from 'src/app/services/firestore/firestore.service';
 
 
 
@@ -40,35 +41,36 @@ import { SubscriptionCollectionService } from 'src/app/services/subscription-col
   styleUrls: ['./admin-main-view.component.scss'],
   animations: [
     trigger('detailExpand', [
-      state('collapsed', style({height: '0px', minHeight: '0', display: 'none'})),
-      state('expanded', style({height: '*'})),
+      state('collapsed', style({ height: '0px', minHeight: '0', display: 'none' })),
+      state('expanded', style({ height: '*' })),
       transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
     ]),
   ],
 })
 export class AdminMainViewComponent implements OnInit, OnDestroy {
 
-expandedElement!: IFacility;
+  expandedElement!: IFacility;
 
   tab_selection!: string;
   //for subscriptions and unsubscriptions
   subscriptions: Subscription[] = [];
-  displayedColumnsFacility: string[] = ['Einrichtungsart','Name', 'action', ];
+  displayedColumnsFacility: string[] = ['Einrichtungsart', 'Name', 'action',];
   displayedColumnsTrainee: string[] = ['Nachname', 'Vorname', 'Stammeinrichtung'];
   displayedColumnsCoordinators: string[] = ['Nachname', 'Vorname', 'test'];
   buttonIsHidden = false;
-  dataSourceTest: any[]=[];
+  dataSourceTest: any[] = [];
 
-facilityCollection = new MatTableDataSource<Facility>([]);  // Elemente für die Einrichtungstabelle
-traineeCollection = new MatTableDataSource<Trainee>([]);  // Elemente für die Azubitabelle
-CoordinatorCollection = new MatTableDataSource<Coordinators>([]);
- 
+  facilityCollection = new MatTableDataSource<Facility>([]);  // Elemente für die Einrichtungstabelle
+  traineeCollection = new MatTableDataSource<Trainee>([]);  // Elemente für die Azubitabelle
+  CoordinatorCollection = new MatTableDataSource<Coordinators>([]);
+
   constructor(
     private store: AngularFirestore,
     public dialog: MatDialog,
     public authService: AuthService,
-    public subscriptionService: SubscriptionCollectionService) {
-     }
+    public subscriptionService: SubscriptionCollectionService,
+    public firestoreService: FirestoreService) {
+  }
 
   ngOnDestroy(): void {
 
@@ -78,30 +80,9 @@ CoordinatorCollection = new MatTableDataSource<Coordinators>([]);
 
   setTab(tabChangeEvent: MatTabChangeEvent) {          // Hier wird der Label vom Tab in die Variable zugewiesen!!!
     this.tab_selection = tabChangeEvent.tab.textLabel;
-     if(this.tab_selection =="Koordinatoren") this.buttonIsHidden = true
-     else this.buttonIsHidden = false;
+    if (this.tab_selection == "Koordinatoren") this.buttonIsHidden = true
+    else this.buttonIsHidden = false;
   }
-
-  ChooseDialog() {
-    let dialogRef;
-    switch (this.tab_selection) {
-      case ("Einrichtung"): {
-        dialogRef = this.dialog.open(FacilityDialogComponent);  //Einrichtungsdialog wird geöffnet
-        break;
-      }
-      case ("Auszubildender"): {
-        dialogRef = this.dialog.open(TraineeDialogComponent);  //Azubidialog wird geöffnet
-        break;
-      }
-      default: {
-        break;
-      }
-    }
-
-  }
-
-
-
 
   ngOnInit() {
     this.tab_selection = "Einrichtung";
@@ -109,15 +90,12 @@ CoordinatorCollection = new MatTableDataSource<Coordinators>([]);
     this.refreshList("users", this.traineeCollection);
   }
 
-
   refreshList(p_facilityElements: string, collection: MatTableDataSource<any>) {
-    let p_arr: any[] = [];
     const collectionRef = this.store.collection(p_facilityElements);
     const collectionInstance = collectionRef.valueChanges();
 
     this.subscriptions.push(
       collectionInstance
-        // .pipe(takeUntil(this.destroyed$))
         .subscribe(ss => {
           let ELEMENT_DATA: any[] = [];
           ss.forEach(element => {
@@ -126,20 +104,23 @@ CoordinatorCollection = new MatTableDataSource<Coordinators>([]);
           });
         }));
   }
-  testmethod(action: any,obj?: { action?: any; }){
+  ChooseDialog(action: any, obj?: { action?: any; }) {
     let dialogRef: any;
-    obj!.action = action;
+    let data;
+    if (obj!) {
+      obj!.action = action;
+      data = obj;
+    }
+    else {
+      data = action;
+    }
     switch (this.tab_selection) {
       case ("Einrichtung"): {
-        dialogRef = this.dialog.open(FacilityDialogComponent, {data:obj});
-        dialogRef = this.dialog.open(FacilityDialogComponent, {data: action});
-        // dialogRef.afterClosed().subscribe((result: { event: string; data: any; }) => {this.updateData(result.data)}); //Einrichtungsdialog wird geöffnet
+        dialogRef = this.dialog.open(FacilityDialogComponent, { data: data });
         break;
       }
       case ("Auszubildender"): {
-        dialogRef = this.dialog.open(TraineeDialogComponent, {data:obj});
-        dialogRef = this.dialog.open(TraineeDialogComponent);
-        // dialogRef.afterClosed().subscribe((result: { event: string; data: any; }) => {});  //Azubidialog wird geöffnet
+        dialogRef = this.dialog.open(TraineeDialogComponent, { data: data });
         break;
       }
       default: {
@@ -148,71 +129,35 @@ CoordinatorCollection = new MatTableDataSource<Coordinators>([]);
     }
   }
 
-  openDialog(action: any,obj?: { action?: any; }) {
-   
-    let dialogRef: any;
-    if(action == "Update")
-    { 
-      this.testmethod(action, obj);
+  openDialog(action: any, obj?: { action?: any; }) {
+    if (action == "Update") {
+      this.ChooseDialog(action, obj);
     }
-    else if(action == "Create")
-    {
-      this.testmethod(action);
-      switch (this.tab_selection) {
-        case ("Einrichtung"): {
-          dialogRef = this.dialog.open(FacilityDialogComponent, {data: action});
-          // dialogRef.afterClosed().subscribe((result: { event: string;}) => {}); //Einrichtungsdialog wird geöffnet
-          break;
-        }
-        case ("Auszubildender"): {
-          dialogRef = this.dialog.open(TraineeDialogComponent);
-          // dialogRef.afterClosed().subscribe((result: { event: string; data: any; }) => {});  //Azubidialog wird geöffnet
-          break;
-        }
-        default: {
-          break;
-        }
-      }
+    else if (action == "Create") {
+      this.ChooseDialog(action);
     }
-    else if(action == "Delete"){
+    else if (action == "Delete") {
+      let dialogRef: any;
       obj!.action = action;
-      dialogRef = this.dialog.open(DialogBoxComponent, {data:obj});
-      dialogRef.afterClosed().subscribe((result: { event: string; data: any; }) => {this.deleteData(result.data)});
-    }
-    else if(action == "")
-    {
-
+      dialogRef = this.dialog.open(DialogBoxComponent, { data: obj });
+      dialogRef.afterClosed()
+      .subscribe((result: { event: string; data: any; }) =>
+       { this.firestoreService.deleteData(
+         result.data, "facilityCollection") });
     }
   }
+  deleteAll(){
+    this.firestoreService.deleteAll(this.facilityCollection, "facilityCollection");
+  }
+
+
+ 
+
 
   
-  deleteData(data: any){
-    console.log("DataSource Realtalk",this.facilityCollection);
-    // this.refreshLists("")
-    return this.store.collection("facilityCollection").doc(data.ID).delete();
-  }
+  // }
 
-
-  deleteAll() {
-
-    const facCollection = this.store.collection("facilityCollection")
-      .get()
-      .toPromise()
-      .then(querySnapshot => {
-        this.facilityCollection.data.length = 0;
-        querySnapshot.forEach((doc) => this.store.collection("facilityCollection").doc(doc.id).delete())
-        console.log("Es hat funktioniert");
-      })
-      .catch((error) => console.error("Error removing document: ", error)
-      );
-
-      facCollection.then(prom =>
-        console.log("Refreshe die Seite hier, um den Fehler zu umgehen? DIESE FUNKTION IST NICHT FERTIG!")
-      );
-
-  }
-
-// -------- Methoden für Checkboxen in der Tabelle -----------
+  // -------- Methoden für Checkboxen in der Tabelle -----------
 
 
   // isAllSelected() {

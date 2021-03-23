@@ -81,7 +81,6 @@ export class AuthService {
         this.firestoreService.setUserData(result.user!, data);
         secondaryApp.auth().signOut();
       })
-      
   }
 
   // Send email verfificaiton when new user sign up

@@ -12,27 +12,17 @@ import { GlobalstringsService } from '../globalstrings/globalstrings.service';
 export class FirestoreService {
 
   constructor(public afs: AngularFirestore,
-    public collectionService: CollectionsService) {
+    public collectionService: CollectionsService) {  }
 
-  }
-
-  //hihi
-  getExistingFacilities(collection: string) {
-    
-
-
-    let facilityList = [];
-    var docRef = this.afs.collection(collection)
-      .get()
-      .subscribe(ss => {
-        ss.docs.forEach(doc => {
-         
-          facilityList.push(doc.get("Name"));
-          return doc;
+  getExistingFacilities(collection: string):Array<any> {
+    let list: any[] = [];
+    this.afs.collection(collection)
+      .get().toPromise().then(ss => {
+        ss.docs.forEach(doc => { 
+          list.push(doc.get("Name"));
         })
-      }
-      )
-
+      })
+      return list;
   }
 
   getUserData = (user: any, subscriptionList: Subscription[]): Promise<any> => {
@@ -41,17 +31,17 @@ export class FirestoreService {
       return doc.data();
     })
   }
-  /* Setting up user data when sign in with username/password, 
+
+/* Setting up user data when sign in with username/password, 
  sign up with username/password and sign in with social auth  
  provider in Firestore database using AngularFirestore + AngularFirestoreDocument service */
-
+ 
   createFacility(collection: string, documentType: any, objData: object) {
     this.afs.collection(collection).doc(documentType.ID).set(objData).then(res => {
     }).catch(error => {
       console.log(error);
     });
   }
-
   setUserData(user: any, data?: any) {
     const userRef: AngularFirestoreDocument<any> = this.afs.doc<any>(this.collectionService.userCollection + `/${user.uid}`);
     const userData: any = {
@@ -73,6 +63,18 @@ export class FirestoreService {
       merge: true
     })
   }
+
+  // setUserData(collection: string, documentType: any, objData?: any, ) {
+  //   const userRef: any = this.afs.collection(collection).doc(documentType.ID).set(objData).then(res => {
+  //     return userRef.set(objData, {
+  //       merge:true
+  //     })
+  //   }).catch(error => {
+  //     console.log(error);
+  //   });
+  //   // const userRef: AngularFirestoreDocument<any> = this.afs.doc<any>(collection + `/${user.uid}`);  
+  //   // Updates existing Documents in a non-destructive way
+  // }
 
   deleteDocument(data: any, collec: string) {
     // console.log("DataSource Realtalk", this.facilityCollection);

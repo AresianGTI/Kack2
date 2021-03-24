@@ -67,18 +67,20 @@ export class AuthService {
   SignUp(email: string, password: string, data?: any) {
     return this.afAuth.createUserWithEmailAndPassword(email, password)
       .then((result) => {
-        this.firestoreService.setUserData(result.user!, data);
+        this.firestoreService.createDocument(this.collectionService.userCollection, 
+          this.setUserData(result.user!, data));
       })
       .catch(e => this.errorMessage = e.message);
   }
 
 
   // Sign up with email/password
-  SignUpTrainees(email: string, password: string, data?: any, collection = this.collectionService.userCollection) {
+  SignUpTrainees(email: string, password: string, data?: any, 
+    collection = this.collectionService.userCollection) {
     return secondaryApp.auth().createUserWithEmailAndPassword(email, password)
       .then((result) => {
-        // this.SetUserData(result.user!, data);
-        this.firestoreService.setUserData(result.user!, data);
+        this.firestoreService.createDocument(this.collectionService.userCollection, 
+          this.setUserData(result.user!, data));
         secondaryApp.auth().signOut();
       })
   }
@@ -113,20 +115,37 @@ export class AuthService {
   }
 
   // Auth logic to run auth providers
-  AuthLogin(provider: any) {
-    return this.afAuth.signInWithPopup(provider)
-      .then((result) => {
-        this.ngZone.run(() => {
-          this.router.navigate(["/" + this.stringService.overview]);
-        })
-        this.firestoreService.setUserData(result.user!);
-        // this.SetUserData(result.user!);
-      }).catch((error) => {
-        window.alert(error)
-      })
+  // AuthLogin(provider: any) {
+  //   return this.afAuth.signInWithPopup(provider)
+  //     .then((result) => {
+  //       this.ngZone.run(() => {
+  //         this.router.navigate(["/" + this.stringService.overview]);
+  //       })
+  //       // this.firestoreService.setUserData(result.user!);
+  //       // this.firestoreService.setUserData(this.setUserData(result.user, data));
+  //       // this.SetUserData(result.user!);
+  //     }).catch((error) => {
+  //       window.alert(error)
+  //     })
+  // }
+  setUserData(user: any, data?: any) {
+    const userData: any = {
+      ID: user.uid,
+      email: user.email!,
+      displayName: user.displayName!,
+      emailVerified: user.emailVerified,
+      roles: {
+        trainee: data?.rolesobj.trainee,
+        admin: data?.rolesobj.admin,
+        coordinator: data?.rolesobj.coordinator
+      },
+      Stammeinrichtung: data?.home_facility.name || "No Homefacility",
+      Nachname: data?.name || "No Value",
+      Vorname: data?.firstname || "No Value"
+    }
+    // Updates existing Documents in a non-destructive way
+    return userData;
   }
-
- 
   SignOutCreatedUser() {
     return this.afAuth.signOut().then(() => {
       localStorage.removeItem('user');

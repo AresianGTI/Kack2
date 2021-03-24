@@ -36,48 +36,14 @@ export class FirestoreService {
  sign up with username/password and sign in with social auth  
  provider in Firestore database using AngularFirestore + AngularFirestoreDocument service */
  
-  createFacility(collection: string, documentType: any, objData: object) {
-    this.afs.collection(collection).doc(documentType.ID).set(objData).then(res => {
-    }).catch(error => {
-      console.log(error);
-    });
-  }
-  setUserData(user: any, data?: any) {
-    const userRef: AngularFirestoreDocument<any> = this.afs.doc<any>(this.collectionService.userCollection + `/${user.uid}`);
-    const userData: any = {
-      uid: user.uid,
-      email: user.email!,
-      displayName: user.displayName!,
-      emailVerified: user.emailVerified,
-      roles: {
-        trainee: data?.rolesobj.trainee,
-        admin: data?.rolesobj.admin,
-        coordinator: data?.rolesobj.coordinator
-      },
-      Stammeinrichtung: data?.home_facility.name || "No Homefacility",
-      Nachname: data?.name || "No Value",
-      Vorname: data?.firstname || "No Value"
-    }
-    // Updates existing Documents in a non-destructive way
-    return userRef.set(userData, {
-      merge: true
-    })
-  }
 
-  // setUserData(collection: string, documentType: any, objData?: any, ) {
-  //   const userRef: any = this.afs.collection(collection).doc(documentType.ID).set(objData).then(res => {
-  //     return userRef.set(objData, {
-  //       merge:true
-  //     })
-  //   }).catch(error => {
-  //     console.log(error);
-  //   });
-  //   // const userRef: AngularFirestoreDocument<any> = this.afs.doc<any>(collection + `/${user.uid}`);  
-  //   // Updates existing Documents in a non-destructive way
-  // }
-
+ createDocument(collection: string, objData: any) {
+  this.afs.collection(collection).doc(objData.ID).set(objData).then(res => {
+  }).catch(error => {
+    console.log(error);
+  });
+}
   deleteDocument(data: any, collec: string) {
-    // console.log("DataSource Realtalk", this.facilityCollection);
     return this.afs.collection(collec).doc(data.ID).delete();
   }
 

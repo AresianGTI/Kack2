@@ -32,11 +32,7 @@ export class FirestoreService {
     })
   }
 
-/* Setting up user data when sign in with username/password, 
- sign up with username/password and sign in with social auth  
- provider in Firestore database using AngularFirestore + AngularFirestoreDocument service */
- 
-
+// Setting up user and facilities
  createDocument(collection: string, objData: any) {
   this.afs.collection(collection).doc(objData.ID).set(objData).then(res => {
   }).catch(error => {
@@ -48,7 +44,6 @@ export class FirestoreService {
   }
 
   deleteAllDocuments(collection: any, collectionName: string) {
-
     this.afs.collection(collectionName)
       .get()
       .toPromise()
@@ -66,7 +61,6 @@ export class FirestoreService {
   }
 
   updateCollection(collection: string, facility: Facility) {
-
     return this.afs.collection(collection).doc(facility.ID).update(
       {
         Name: facility.name,
@@ -76,6 +70,4 @@ export class FirestoreService {
       }
     );
   }
-
- 
 }

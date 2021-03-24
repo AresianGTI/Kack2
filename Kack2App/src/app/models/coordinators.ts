@@ -6,6 +6,9 @@ export interface Coordinators{
 
 }
 export class Coordinators implements IUser{
+    ID!: string;
+    homeFacility!: Facility;
+    firstName!: string;
     home_facility: Facility = new Facility();
     uid!: string;
     email!: string;

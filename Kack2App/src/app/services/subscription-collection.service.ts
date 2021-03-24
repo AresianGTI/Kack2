@@ -12,10 +12,10 @@ export class SubscriptionCollectionService {
     const promise = subscriptionList.forEach(sub =>
       sub.unsubscribe(),
       console.log("Sub unsubscribed"));
-
+      subscriptionList.length = 0;
       
-
   }
 
   constructor() { }
+
 }

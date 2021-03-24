@@ -19,31 +19,42 @@ export class FirestoreService {
     return this.afs.collection(collection);
   }
 
-  getMainFacility(collection: string): Array<{}>{
+  // getMainFacility(collection: string): Array<{}>{
 
-    let usedFacilities: Array<{}> = [];
+  //   let usedFacilities: Array<{}> = [];
 
+  //   this.afs.collection(collection)
+  //     .get()
+  //     .toPromise().then( trainee => {
+  //       trainee.docs.forEach(element => {
+  //         usedFacilities.push(element.get("Stammeinrichtung"));
+  //       });
+  //       console.log(usedFacilities); // Array mit den Stammeinrichtungen
+  //    });
+
+  //    return usedFacilities;
+  // }    
+
+  // getExistingFacilities(collection: string, field:string):Array<any> {
+  //   let list: any[] = [];
+  //   this.afs.collection(collection)
+  //     .get().toPromise().then(ss => {
+  //       ss.docs.forEach(doc => { 
+  //         list.push(doc.get("Name"));
+  //       })
+  //     })
+  //     return list;
+  // }
+
+  getFieldsFromCollection(collection: string, field: string):Array<any> {
+    let fieldList: Array<{}> = [];
     this.afs.collection(collection)
-      .get()
-      .toPromise().then( trainee => {
-        trainee.docs.forEach(element => {
-          usedFacilities.push(element.get("Stammeinrichtung"));
-        });
-        console.log(usedFacilities); // Array mit den Stammeinrichtungen
-     });
-
-     return usedFacilities;
-  }    
-
-  getExistingFacilities(collection: string):Array<any> {
-    let list: any[] = [];
-    this.afs.collection(collection)
-      .get().toPromise().then(ss => {
-        ss.docs.forEach(doc => { 
-          list.push(doc.get("Name"));
+      .get().toPromise().then(snapshot => {
+        snapshot.docs.forEach(doc => { 
+          fieldList.push(doc.get(field));
         })
       })
-      return list;
+      return fieldList;
   }
 
   getUserData = (user: any, subscriptionList: Subscription[]): Promise<any> => {

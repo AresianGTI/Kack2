@@ -7,14 +7,13 @@ export interface Roles{
 
 }
 export interface IUser {
-    uid: string;
+    ID: string;
     email: string;
+    displayName: string;
+    emailVerified: boolean;
     rolesobj : Roles;
     roles: Roles;
-    displayName: string;
-    test: string;
-    emailVerified: boolean;
+    homeFacility: Facility
     name: string; 
-    firstname: string;
-    home_facility: Facility;
+    firstName: string;
  }

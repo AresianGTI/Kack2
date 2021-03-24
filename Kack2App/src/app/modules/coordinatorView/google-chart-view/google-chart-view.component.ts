@@ -5,6 +5,7 @@ import { Observable, Subscription } from 'rxjs';
 import { Facility, FacilityType } from 'src/app/models/facility';
 import { CollectionsService } from 'src/app/services/collections/collections.service';
 import { FirestoreService } from 'src/app/services/firestore/firestore.service';
+import { SubscriptionCollectionService } from 'src/app/services/subscription-collection.service';
 
 @Component({
   selector: 'app-google-chart-view',
@@ -14,7 +15,7 @@ import { FirestoreService } from 'src/app/services/firestore/firestore.service';
 export class GoogleChartViewComponent implements OnInit {
   
   mode: ProgressBarMode = 'determinate';
-  subscription!: Subscription;
+  subscription: Subscription[] = [];
   convertingArray!: any[];
 
   //überprüfen, ob das auch anders geht 
@@ -31,24 +32,24 @@ export class GoogleChartViewComponent implements OnInit {
   usedFacilities: Array<{}> = [];
   constructor(
     private collectionService: CollectionsService,
-    private firestoreService: FirestoreService) { }
+    private firestoreService: FirestoreService,
+    public subscriptionService: SubscriptionCollectionService){
+    }
 
   ngOnInit(): void {
-
-     this.usedFacilities = this.firestoreService.getMainFacility(this.collectionService.userCollection, )
-
+     this.usedFacilities = this.firestoreService.getFieldsFromCollection(this.collectionService.userCollection, "Stammeinrichtung" )
 
     //get ALL facilities for the progress-bar (facilityname and capacity of facility)
     const facilityCol = this.firestoreService.getAllFacilities(this.collectionService.facilityCollection);
     const facilityObservableArray =  facilityCol.valueChanges();
 
-    this.subscription = facilityObservableArray.subscribe(facility => {  //converting in array
-       this.convertingArray = facility;
-       this.convertingArray.forEach(fclty => {  //push into Array for Progressbar
-        this.facilityArray.push(fclty);
-       })
+    this.subscription.push(facilityObservableArray.subscribe(facility => {  //converting in array
+      this.convertingArray = facility;
+      this.convertingArray.forEach(fclty => {  //push into Array for Progressbar
+       this.facilityArray.push(fclty);
+      })
        this.calculateUsedCapacity(); 
-     });
+    }))
   }
 
   //Abfangen, dass verwendete Kapazität die maximale Kapazität nicht übersteigt
@@ -60,9 +61,10 @@ export class GoogleChartViewComponent implements OnInit {
           if(uF == facility.Name)
             facility.VerwendeteKapazitaet++;             
         });
-        this.subscription.unsubscribe();
-      });
-  }
 
+      });
+      this.subscriptionService.DestroySubscriptions(this.subscription);
+      console.log("Subscription: ", this.subscription);
+  }
 
 }

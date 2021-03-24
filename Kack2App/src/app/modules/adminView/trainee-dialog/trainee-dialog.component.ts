@@ -22,7 +22,7 @@ export class TraineeDialogComponent implements OnInit {
     ) { }
     
   ngOnInit(): void {
-    this.facilityList =  this.fireStoreService.getExistingFacilities( this.collectionService.facilityCollection)
+    this.facilityList =  this.fireStoreService.getFieldsFromCollection( this.collectionService.facilityCollection, "Name")
       console.log("Das sind die Data im Dialog", this.facilityList);
     // this.onQuery( this.firestore.collection('users', ref => ref
     // .where("roles.trainee", "==", true)));
@@ -33,9 +33,9 @@ export class TraineeDialogComponent implements OnInit {
     this.authService.SignUpTrainees(this.traineeObj.email, "hund111", this.traineeObj).then(() => {
       //Reset Methode? FirestoreService
         this.traineeObj.name = "";
-        this.traineeObj.firstname = "";
+        this.traineeObj.firstName = "";
         this.traineeObj.email = "";
-        this.traineeObj.home_facility.name = "";
+        this.traineeObj.homeFacility.name = "";
         })
   }
 }

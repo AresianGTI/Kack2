@@ -11,6 +11,7 @@ import { GlobalstringsService } from '../services/globalstrings/globalstrings.se
 import { SubscriptionCollectionService } from '../services/subscription-collection.service';
 import { FirestoreService } from '../services/firestore/firestore.service';
 import { CollectionsService } from '../services/collections/collections.service';
+import { IUser } from '../models/user';
 
 const secondaryApp = firebase.initializeApp(environment.firebaseConfig, 'Secondary');
 @Injectable({
@@ -128,8 +129,9 @@ export class AuthService {
   //       window.alert(error)
   //     })
   // }
+
   setUserData(user: any, data?: any) {
-    const userData: any = {
+    const userFirebaseStructure: any = {
       ID: user.uid,
       email: user.email!,
       displayName: user.displayName!,
@@ -139,12 +141,12 @@ export class AuthService {
         admin: data?.rolesobj.admin,
         coordinator: data?.rolesobj.coordinator
       },
-      Stammeinrichtung: data?.home_facility.name || "No Homefacility",
-      Nachname: data?.name || "No Value",
-      Vorname: data?.firstname || "No Value"
+      homeFacility: data?.homeFacility.name || "No Homefacility",
+      name: data?.name || "No Value",
+      firstName: data?.firstName || "No Value"
     }
     // Updates existing Documents in a non-destructive way
-    return userData;
+    return userFirebaseStructure;
   }
   SignOutCreatedUser() {
     return this.afAuth.signOut().then(() => {

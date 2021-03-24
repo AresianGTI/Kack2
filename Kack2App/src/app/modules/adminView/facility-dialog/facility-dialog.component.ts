@@ -64,10 +64,10 @@ export class FacilityDialogComponent implements OnInit {
       this.firestoreService.updateCollection(this.collectionService.facilityCollection, this.facilityObj)
     }
     else if (this.action == "Create") {
-      this.facilityObj.ID = this.firestoreService.createID(this.facilityObj);
-      this.firestoreService.createFacility(
+      
+      this.firestoreService.createDocument(
         this.collectionService.facilityCollection,
-        this.facilityObj, this.getObjectData());
+        this.getObjectData());
       this.resetFacilityObject();
     }
   }
@@ -79,6 +79,7 @@ export class FacilityDialogComponent implements OnInit {
   }
 
   getObjectData() {
+    this.facilityObj.ID = this.firestoreService.createID(this.facilityObj);
     let facilityObj =
     {
       ID: this.facilityObj.ID,

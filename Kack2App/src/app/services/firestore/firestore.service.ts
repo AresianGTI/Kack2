@@ -16,7 +16,28 @@ export class FirestoreService {
 
   }
 
-  //hihi
+  getAllFacilities(collection: string){
+    return this.afs.collection(collection);
+  }
+
+  getMainFacility(collection: string): Array<{}>{
+
+    let usedFacilities: Array<{}> = [];
+
+    this.afs.collection(collection)
+      .get()
+      .toPromise().then( trainee => {
+        trainee.docs.forEach(element => {
+          usedFacilities.push(element.get("Stammeinrichtung"));
+        });
+        console.log(usedFacilities); // Array mit den Stammeinrichtungen
+     });
+
+     return usedFacilities;
+  }
+
+
+
   getExistingFacilities(collection: string) {
     
 

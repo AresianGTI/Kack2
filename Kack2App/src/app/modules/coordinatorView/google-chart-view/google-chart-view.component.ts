@@ -1,10 +1,10 @@
-import { ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
 import { MatProgressBar, ProgressBarMode } from '@angular/material/progress-bar';
-import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, Subscription } from 'rxjs';
 import { Facility, FacilityType } from 'src/app/models/facility';
+import { CollectionsService } from 'src/app/services/collections/collections.service';
+import { FirestoreService } from 'src/app/services/firestore/firestore.service';
 
 @Component({
   selector: 'app-google-chart-view',
@@ -29,22 +29,17 @@ export class GoogleChartViewComponent implements OnInit {
 //Wenn die Buchstaben gleich sind, kann man hier ein Facility-Array verwenden.
 
   usedFacilities: Array<{}> = [];
-  constructor(private store: AngularFirestore) { }
+  constructor(
+    private collectionService: CollectionsService,
+    private firestoreService: FirestoreService) { }
 
   ngOnInit(): void {
 
-    //FirestoreService Methode
-     this.subscription = this.store.collection("users")
-      .get()
-      .subscribe( trainee => {
-        trainee.docs.forEach(element => {
-          this.usedFacilities.push(element.get("Stammeinrichtung"));
-        });
-        console.log(this.usedFacilities); // Array mit den Stammdaten
-     });
+     this.usedFacilities = this.firestoreService.getMainFacility(this.collectionService.userCollection, )
 
-    //get all facilities for the progress-bar (facilityname and capacity of facility)
-    const facilityCol = this.store.collection("facilityCollection");
+
+    //get ALL facilities for the progress-bar (facilityname and capacity of facility)
+    const facilityCol = this.firestoreService.getAllFacilities(this.collectionService.facilityCollection);
     const facilityObservableArray =  facilityCol.valueChanges();
 
     this.subscription = facilityObservableArray.subscribe(facility => {  //converting in array
@@ -52,11 +47,8 @@ export class GoogleChartViewComponent implements OnInit {
        this.convertingArray.forEach(fclty => {  //push into Array for Progressbar
         this.facilityArray.push(fclty);
        })
-
-       this.calculateUsedCapacity();
-       
+       this.calculateUsedCapacity(); 
      });
-
   }
 
   //Abfangen, dass verwendete Kapazität die maximale Kapazität nicht übersteigt
@@ -65,14 +57,9 @@ export class GoogleChartViewComponent implements OnInit {
        this.facilityArray.forEach(facility => {
         facility.VerwendeteKapazitaet = 0;
         this.usedFacilities.forEach(uF =>{
-          if(uF == facility.Name){
-            facility.VerwendeteKapazitaet++;
-            
-          };
-
+          if(uF == facility.Name)
+            facility.VerwendeteKapazitaet++;             
         });
-
-        
         this.subscription.unsubscribe();
       });
   }

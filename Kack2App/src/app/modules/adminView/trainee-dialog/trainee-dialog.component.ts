@@ -15,34 +15,27 @@ export class TraineeDialogComponent implements OnInit {
 
   traineeObj: Trainee = new Trainee();
   facilityList: any[] = []
-
   constructor(
     public fireStoreService: FirestoreService,
     public authService: AuthService,
     public collectionService: CollectionsService,
     ) { }
-
+    
   ngOnInit(): void {
-    this.fireStoreService.getExistingFacilities( this.collectionService.facilityCollection);
+    this.facilityList =  this.fireStoreService.getExistingFacilities( this.collectionService.facilityCollection)
+      console.log("Das sind die Data im Dialog", this.facilityList);
     // this.onQuery( this.firestore.collection('users', ref => ref
     // .where("roles.trainee", "==", true)));
   }
 
-
   createTrainee() {
    this.traineeObj.rolesobj.trainee = true;
     this.authService.SignUpTrainees(this.traineeObj.email, "hund111", this.traineeObj).then(() => {
-
       //Reset Methode? FirestoreService
         this.traineeObj.name = "";
         this.traineeObj.firstname = "";
         this.traineeObj.email = "";
         this.traineeObj.home_facility.name = "";
-        }
-        )
+        })
   }
-
-  //FirestoreService // Zeigt nur die bestehenden Einrichtugnen an 
-
-
 }

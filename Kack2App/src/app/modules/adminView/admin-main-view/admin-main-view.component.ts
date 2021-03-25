@@ -90,10 +90,26 @@ export class AdminMainViewComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.tab_selection = "Einrichtung";
-    this.refreshList("facilityCollection", this.facilityCollection);
+    this.refreshList1("facilityCollection", this.facilityCollection);
     this.refreshList("users", this.traineeCollection);
   }
 
+  refreshList1(p_facilityElements: string, collection: MatTableDataSource<any>) {
+    const collectionRef = this.store.collection(p_facilityElements);
+    const collectionInstance = collectionRef.valueChanges();
+
+    this.subscriptions.push(
+      collectionInstance
+        .subscribe(ss => {
+          let ELEMENT_DATA: any[] = [];
+          ss.forEach(element => {
+            ELEMENT_DATA.push(element);
+            collection.data = ELEMENT_DATA;
+           
+          });
+          console.log("MyArray:",  collection.data);
+        }));
+  }
   refreshList(p_facilityElements: string, collection: MatTableDataSource<any>) {
     const collectionRef = this.store.collection(p_facilityElements);
     const collectionInstance = collectionRef.valueChanges();
@@ -105,7 +121,9 @@ export class AdminMainViewComponent implements OnInit, OnDestroy {
           ss.forEach(element => {
             ELEMENT_DATA.push(element);
             collection.data = ELEMENT_DATA;
+            
           });
+          console.log("MyArray2:",  collection.data);
         }));
   }
   ChooseDialog(action: any, obj?: { action?: any; }) {

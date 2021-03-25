@@ -74,9 +74,8 @@ export class AuthService {
       .catch(e => this.errorMessage = e.message);
   }
 
-
   // Sign up with email/password
-  SignUpTrainees(email: string, password: string, data?: any, 
+  SignUpTrainees(email: string, password: string, data?: Trainee, 
     collection = this.collectionService.userCollection) {
     return secondaryApp.auth().createUserWithEmailAndPassword(email, password)
       .then((result) => {
@@ -111,7 +110,7 @@ export class AuthService {
   }
 
   // Sign in with Google
-  GoogleAuth() {
+  GoogleAuth() { 
     // return this.AuthLogin(new auth.GoogleAuthProvider());
   }
 

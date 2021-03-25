@@ -12,6 +12,7 @@ import { SubscriptionCollectionService } from '../services/subscription-collecti
 import { FirestoreService } from '../services/firestore/firestore.service';
 import { CollectionsService } from '../services/collections/collections.service';
 import { IUser } from '../models/user';
+import { EnumRoles } from '../services/enums/enums.service';
 
 const secondaryApp = firebase.initializeApp(environment.firebaseConfig, 'Secondary');
 @Injectable({
@@ -23,6 +24,7 @@ export class AuthService {
   userData: any;
   loginSubscriptions: Subscription[] = [];
   user$: Observable<any>;
+
   
   constructor(
     public afs: AngularFirestore,   // Inject Firestore service
@@ -34,6 +36,7 @@ export class AuthService {
     public firestoreService: FirestoreService,
     public collectionService: CollectionsService // NgZone service to remove outside scope warning
   ) {
+    
     // Authentifizierung wird beim Laden der Seite nicht gespeichert
       this.user$ = this.afAuth.authState.pipe(take(1),switchMap(user => {
       if (user) {
@@ -128,18 +131,13 @@ export class AuthService {
   //       window.alert(error)
   //     })
   // }
-
   setUserData(user: any, data?: any) {
     const userFirebaseStructure: any = {
       ID: user.uid,
       email: user.email!,
       displayName: user.displayName!,
       emailVerified: user.emailVerified,
-      roles: {
-        trainee: data?.rolesobj.trainee,
-        admin: data?.rolesobj.admin,
-        coordinator: data?.rolesobj.coordinator
-      },
+      role: data?.role,
       homeFacility: data?.homeFacility.name || "No Homefacility",
       name: data?.name || "No Value",
       firstName: data?.firstName || "No Value"
@@ -164,19 +162,20 @@ export class AuthService {
     if (!user) return false
     let isAuthorized = false;
     allowedRoles.forEach(role => {
-      if(user.roles[role])
-      {
-        isAuthorized = true;
-      }
-    });
-    return isAuthorized;
-  }
+    if(user.role == role)
+    {
+      isAuthorized = true;
+    }
+  });
+  return isAuthorized;
+   }
+     
   canRead(user: any): boolean {
-    const allowedRoles = ["admin", "trainee", "coordinator"];
+    const allowedRoles = [EnumRoles.admin, EnumRoles.coordinator, EnumRoles.trainee, EnumRoles.teacher];
     return this.checkAuthorization(user, allowedRoles)
   }
   canEdit(user: any): boolean {
-    const allowedRoles = ["admin", "coordinator"];
+    const allowedRoles = [EnumRoles.admin, EnumRoles.coordinator];
     return this.checkAuthorization(user, allowedRoles)
   }
 }

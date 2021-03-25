@@ -29,7 +29,7 @@ export class TraineeDialogComponent implements OnInit {
   }
 
   createTrainee() {
-   this.traineeObj.rolesobj.trainee = true;
+  //  this.traineeObj.rolesobj.trainee = true;
     this.authService.SignUpTrainees(this.traineeObj.email, "hund111", this.traineeObj).then(() => {
       //Reset Methode? FirestoreService
         this.traineeObj.name = "";

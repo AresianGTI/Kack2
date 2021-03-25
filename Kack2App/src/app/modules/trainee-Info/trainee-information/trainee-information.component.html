@@ -8,9 +8,9 @@
           <p>Email Verified: <strong>{{user.emailVerified}}</strong></p>
           <!-- <p>Role: <strong> {{u}}</strong></p>  -->
           <p>Stammeinrichtung: <strong> {{user.Stammeinrichtung}}</strong></p> 
-          <p *ngIf = "user.roles.trainee">Trainee: <strong>{{user.roles.trainee}}</strong></p>
-          <p *ngIf = "user.roles.coordinator">Coordinator: <strong>{{user.roles.coordinator}}</strong></p>
-          <p *ngIf = "user.roles.admin">Admin: <strong>{{user.roles.admin}}</strong></p>
+          <p>Role: <strong>{{user.role}}</strong></p>
+          <!-- <p *ngIf = "user.roles">Coordinator: <strong>{{user.roles.coordinator}}</strong></p> -->
+          <!-- <p *ngIf = "user.roles ==>Admin: <strong>{{user.roles.admin}}</strong></p> -->
         </div>
       </div>
     </div>

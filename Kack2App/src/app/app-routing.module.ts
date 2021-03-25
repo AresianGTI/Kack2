@@ -34,9 +34,9 @@ const routes: Routes = [
   {
     path: '',
     component: MainComponent,
-    // canActivate: [AngularFireAuthGuard],
+    canActivate: [AngularFireAuthGuard],
     // An dieser Stelle funktioniert es
-    // data: { authGuardPipe: redirectUnauthorizedToLogin },
+    data: { authGuardPipe: redirectUnauthorizedToLogin },
     children: [
       {
         path: 'Stammdaten',

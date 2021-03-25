@@ -1,3 +1,4 @@
+import { EnumRoles } from '../services/enums/enums.service';
 import { Facility } from './facility';
 
 export interface IRoles{
@@ -12,8 +13,7 @@ export interface IUser {
     email: string;
     displayName: string;
     emailVerified: boolean;
-    rolesobj : IRoles;
-    roles: IRoles;
+    role: string,
     name: string; 
     firstName: string;
  }
@@ -23,18 +23,23 @@ export interface IUser {
      _email!: string;
      _displayName!: string;
      _emailVerified!: boolean;
-     _rolesobj!: IRoles;
-     _roles!: IRoles;
      _name!: string;
      _firstName!: string;
+      _role!: string;
      private _homeFacility = new Facility(); // sollte in Trainee und Teacher ausgelagert werden
+
      public get homeFacility() {
          return this._homeFacility;
      }
      public set homeFacility(value) {
          this._homeFacility = value;
      }
-     
+     public get role(): string {
+        return this._role;
+    }
+    public set role(value: string) {
+        this._role = value;
+    }
 
     public get ID(): string {
         return this._ID;
@@ -62,20 +67,6 @@ export interface IUser {
     }
     public set emailVerified(value: boolean) {
         this._emailVerified = value;
-    }
-
-    public get rolesobj(): IRoles {
-        return this._rolesobj;
-    }
-    public set rolesobj(value: IRoles) {
-        this._rolesobj = value;
-    }
-
-    public get roles(): IRoles {
-        return this._roles;
-    }
-    public set roles(value: IRoles) {
-        this._roles = value;
     }
     public get name(): string {
         return this._name;

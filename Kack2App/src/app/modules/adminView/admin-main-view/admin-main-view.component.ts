@@ -30,6 +30,7 @@ import { AuthService } from 'src/app/core/auth.service';
 import { DialogBoxComponent } from '../../../modules/dialog-box/dialog-box.component';
 import { SubscriptionCollectionService } from 'src/app/services/subscription-collection.service';
 import { FirestoreService } from 'src/app/services/firestore/firestore.service';
+import { EnumRoles } from 'src/app/services/enums/enums.service';
 
 
 
@@ -80,6 +81,7 @@ export class AdminMainViewComponent implements OnInit, OnDestroy {
 
     // this.subscriptions.forEach(sub => sub.unsubscribe());
     this.subscriptionService.DestroySubscriptions(this.subscriptions);
+
   }
 
   setTab(tabChangeEvent: MatTabChangeEvent) {          // Hier wird der Label vom Tab in die Variable zugewiesen!!!

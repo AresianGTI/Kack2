@@ -1,6 +1,6 @@
 import { Facility } from './facility';
 
-export interface Roles{
+export interface IRoles{
     trainee: boolean;
     coordinator: boolean;
     admin: boolean;
@@ -11,8 +11,8 @@ export interface IUser {
     email: string;
     displayName: string;
     emailVerified: boolean;
-    rolesobj : Roles;
-    roles: Roles;
+    rolesobj : IRoles;
+    roles: IRoles;
     homeFacility: Facility
     name: string; 
     firstName: string;

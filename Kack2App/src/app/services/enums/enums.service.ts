@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 @Injectable({
   providedIn: 'root'
 })
-// enum Roles {
+// enum IRoles {
 //   admin = "ss"}
 export class EnumsService {
 

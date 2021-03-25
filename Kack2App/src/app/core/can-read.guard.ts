@@ -19,13 +19,8 @@ export class CanReadGuard implements CanActivate {
           if (!canView) {
             console.error('Access denied. Must have permission to view content')
           }
-          else{
-            console.log("Aktueller USER:  ",)
-            console.log("Ausgabe von cand Read");
-          }
         })
       );
-
     }
     canActivateChild(
       next: ActivatedRouteSnapshot,

@@ -17,7 +17,7 @@ import { Coordinators } from 'src/app/models/coordinators';
 import { table } from 'console';
 import { Observable, of, Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import {DataSource, SelectionModel} from '@angular/cdk/collections';
+import { DataSource, SelectionModel } from '@angular/cdk/collections';
 import {
   animate,
   state,
@@ -28,223 +28,160 @@ import {
 
 import { AuthService } from 'src/app/core/auth.service';
 import { DialogBoxComponent } from '../../../modules/dialog-box/dialog-box.component';
+import { SubscriptionCollectionService } from 'src/app/services/subscription-collection.service';
+import { FirestoreService } from 'src/app/services/firestore/firestore.service';
+import { EnumRoles } from 'src/app/services/enums/enums.service';
 
 
 
-export interface UsersData {
-  name: string;
-  id: number;
-}
+
 
 @Component({
   selector: 'app-admin-main-view',
   templateUrl: './admin-main-view.component.html',
   styleUrls: ['./admin-main-view.component.scss'],
-  // animations: [
-  //   trigger('detailExpand', [
-  //     state('collapsed', style({ height: '0px', minHeight: '0', visibility: 'hidden' })),
-  //     state('expanded', style({ height: '*', visibility: 'visible' })),
-  //     transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
-  //   ]),
-  // ],
   animations: [
     trigger('detailExpand', [
-      state('collapsed', style({height: '0px', minHeight: '0', display: 'none'})),
-      state('expanded', style({height: '*'})),
+      state('collapsed', style({ height: '0px', minHeight: '0', display: 'none' })),
+      state('expanded', style({ height: '*' })),
       transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
     ]),
   ],
 })
 export class AdminMainViewComponent implements OnInit, OnDestroy {
 
-expandedElement!: IFacility;
+  expandedElement!: IFacility;
 
   tab_selection!: string;
-  user: any;
+  
   //for subscriptions and unsubscriptions
   subscriptions: Subscription[] = [];
-  // displayedColumns: string[] = ['id', 'name', 'action'];
-  displayedColumnsFacility: string[] = ['Einrichtungsart','Name', 'action', ];
-  displayedColumnsTrainee: string[] = ['Nachname', 'Vorname', 'Stammeinrichtung'];
-  displayedColumnsCoordinators: string[] = ['Nachname', 'Vorname', 'test'];
-  isHidden = false;
-  dataSourceTest: any[]=[];
-  // @ViewChild(MatTable,{static:true}) table: MatTable<any>;
-
-facilityCollection = new MatTableDataSource<Facility>([]);  // Elemente für die Einrichtungstabelle
-traineeCollection = new MatTableDataSource<Trainee>([]);  // Elemente für die Azubitabelle
-CoordinatorCollection = new MatTableDataSource<Coordinators>([]);
- 
-
+  displayedColumnsFacility: string[] = ['Einrichtungsart', 'Name', 'Kapazitaet'];
 
   
-  constructor(private router: Router,
+  displayedColumnsTrainee: string[] = ['name', 'firstName', 'homeFacility'];
+
+  displayedColumnsCoordinators: string[] = ['Nachname', 'Vorname', 'test'];
+  buttonIsHidden = false;
+  dataSourceTest: any[] = [];
+
+  facilityCollection = new MatTableDataSource<Facility>([]);  // Elemente für die Einrichtungstabelle
+  traineeCollection = new MatTableDataSource<Trainee>([]);  // Elemente für die Azubitabelle
+  CoordinatorCollection = new MatTableDataSource<Coordinators>([]);
+
+  constructor(
     private store: AngularFirestore,
     public dialog: MatDialog,
-    public authService: AuthService) {
-      // this.authService.user$.subscribe(user => this.user = user)
-     }
-
-  ngOnDestroy(): void {
-    this.subscriptions.forEach(sub => sub.unsubscribe());
-    console.log("ondestroy aufgerufen");
-    // this.destroyed$.next(true);
-    // this.destroyed$.complete();
+    public authService: AuthService,
+    public subscriptionService: SubscriptionCollectionService,
+    public firestoreService: FirestoreService) {
   }
 
+  ngOnDestroy(): void {
 
+    // this.subscriptions.forEach(sub => sub.unsubscribe());
+    this.subscriptionService.DestroySubscriptions(this.subscriptions);
 
-  public tabChanged(tabChangeEvent: MatTabChangeEvent): void {
-    console.log(tabChangeEvent.tab.textLabel);
   }
 
   setTab(tabChangeEvent: MatTabChangeEvent) {          // Hier wird der Label vom Tab in die Variable zugewiesen!!!
     this.tab_selection = tabChangeEvent.tab.textLabel;
-     if(this.tab_selection =="Koordinatoren") this.isHidden = true
-     else this.isHidden = false;
-
+    if (this.tab_selection == "Koordinatoren") this.buttonIsHidden = true
+    else this.buttonIsHidden = false;
   }
 
-  ChooseDialog() {
-    let dialogRef;
+  ngOnInit() {
+    this.tab_selection = "Einrichtung";
+    this.refreshList1("facilityCollection", this.facilityCollection);
+    this.refreshList("users", this.traineeCollection);
+  }
+
+  refreshList1(p_facilityElements: string, collection: MatTableDataSource<any>) {
+    const collectionRef = this.store.collection(p_facilityElements);
+    const collectionInstance = collectionRef.valueChanges();
+
+    this.subscriptions.push(
+      collectionInstance
+        .subscribe(ss => {
+          let ELEMENT_DATA: any[] = [];
+          ss.forEach(element => {
+            ELEMENT_DATA.push(element);
+            collection.data = ELEMENT_DATA;
+           
+          });
+          console.log("MyArray:",  collection.data);
+        }));
+  }
+  refreshList(p_facilityElements: string, collection: MatTableDataSource<any>) {
+    const collectionRef = this.store.collection(p_facilityElements);
+    const collectionInstance = collectionRef.valueChanges();
+
+    this.subscriptions.push(
+      collectionInstance
+        .subscribe(ss => {
+          let ELEMENT_DATA: any[] = [];
+          ss.forEach(element => {
+            ELEMENT_DATA.push(element);
+            collection.data = ELEMENT_DATA;
+            
+          });
+          console.log("MyArray2:",  collection.data);
+        }));
+  }
+  ChooseDialog(action: any, obj?: { action?: any; }) {
+    let dialogRef: any;
+    let data;
+    if (obj!) {
+      obj!.action = action;
+      data = obj;
+    }
+    else {
+      data = action;
+    }
     switch (this.tab_selection) {
       case ("Einrichtung"): {
-        dialogRef = this.dialog.open(FacilityDialogComponent);  //Einrichtungsdialog wird geöffnet
+        dialogRef = this.dialog.open(FacilityDialogComponent, { data: data });
         break;
       }
       case ("Auszubildender"): {
-        dialogRef = this.dialog.open(TraineeDialogComponent);  //Azubidialog wird geöffnet
+        dialogRef = this.dialog.open(TraineeDialogComponent, { data: data });
         break;
       }
       default: {
         break;
       }
     }
-
   }
 
-
-
-
-  ngOnInit() {
-    this.tab_selection = "Einrichtung";
-    this.refreshList("facilityCollection", this.facilityCollection);
-    this.refreshList("users", this.traineeCollection);
-  }
-
-
-  refreshList(p_facilityElements: string, collection: MatTableDataSource<any>) {
-    let p_arr: any[] = [];
-    const collectionRef = this.store.collection(p_facilityElements);
-    const collectionInstance = collectionRef.valueChanges();
-
-    this.subscriptions.push(
-      collectionInstance
-        // .pipe(takeUntil(this.destroyed$))
-        .subscribe(ss => {
-          let ELEMENT_DATA: any[] = [];
-          ss.forEach(element => {
-            ELEMENT_DATA.push(element);
-            collection.data = ELEMENT_DATA;
-          });
-        }));
-  }
-
-
-  openDialog(action: any,obj?: { action?: any; }) {
-   
-    let dialogRef: any;
-    if(action == "Update")
-    {      
+  openDialog(action: any, obj?: { action?: any; }) {
+    if (action == "Update") {
+      this.ChooseDialog(action, obj);
+    }
+    else if (action == "Create") {
+      this.ChooseDialog(action);
+    }
+    else if (action == "Delete") {
+      let dialogRef: any;
       obj!.action = action;
-      switch (this.tab_selection) {
-        case ("Einrichtung"): {
-          dialogRef = this.dialog.open(FacilityDialogComponent, {data:obj});
-          // dialogRef.afterClosed().subscribe((result: { event: string; data: any; }) => {this.updateData(result.data)}); //Einrichtungsdialog wird geöffnet
-          break;
-        }
-        case ("Auszubildender"): {
-          dialogRef = this.dialog.open(TraineeDialogComponent, {data:obj});
-          dialogRef.afterClosed().subscribe((result: { event: string; data: any; }) => {});  //Azubidialog wird geöffnet
-          break;
-        }
-        default: {
-          break;
-        }
-      }
-    }
-    else if(action == "Create")
-    {
-      switch (this.tab_selection) {
-        case ("Einrichtung"): {
-          dialogRef = this.dialog.open(FacilityDialogComponent, {data: action});
-          // dialogRef.afterClosed().subscribe((result: { event: string;}) => {}); //Einrichtungsdialog wird geöffnet
-          break;
-        }
-        case ("Auszubildender"): {
-          dialogRef = this.dialog.open(TraineeDialogComponent);
-          // dialogRef.afterClosed().subscribe((result: { event: string; data: any; }) => {});  //Azubidialog wird geöffnet
-          break;
-        }
-        default: {
-          break;
-        }
-      }
-    }
-    else if(action == "Delete"){
-      obj!.action = action;
-      dialogRef = this.dialog.open(DialogBoxComponent, {data:obj});
-      dialogRef.afterClosed().subscribe((result: { event: string; data: any; }) => {this.deleteData(result.data)});
-    }
-    else if(action == "")
-    {
-
+      dialogRef = this.dialog.open(DialogBoxComponent, { data: obj });
+      dialogRef.afterClosed()
+      .subscribe((result: { event: string; data: any; }) =>
+       { this.firestoreService.deleteDocument(
+         result.data, "facilityCollection") });
     }
   }
-  updateData(data: any) {
-
-    return this.store.collection("facilityCollection").doc(data.ID).update(
-      {
-        Kapzitaet: 10
-      }
-    );
+  deleteAll(){
+    this.firestoreService.deleteAllDocuments(this.facilityCollection, "facilityCollection");
   }
-  // addRowData(row_obj: { name: any; }){
-  //   var d = new Date();
-  //   this.dataSource.push({
-  //     id:d.getTime(),
-  //     name:row_obj.name
-  //   });
-  //   this.table.renderRows();
-  // }
+
+
+ 
+
+
   
-  deleteData(data: any){
-    console.log("DataSource Realtalk",this.facilityCollection);
-    // this.refreshLists("")
-    return this.store.collection("facilityCollection").doc(data.ID).delete();
-  }
+  // }
 
-
-  DeleteChoice() {
-
-    const facCollection = this.store.collection("facilityCollection")
-      .get()
-      .toPromise()
-      .then(querySnapshot => {
-        this.facilityCollection.data.length = 0;
-        querySnapshot.forEach((doc) => this.store.collection("facilityCollection").doc(doc.id).delete())
-        console.log("Es hat funktioniert");
-      })
-      .catch((error) => console.error("Error removing document: ", error)
-      );
-
-      facCollection.then(prom =>
-        console.log("Refreshe die Seite hier, um den Fehler zu umgehen? DIESE FUNKTION IST NICHT FERTIG!")
-      );
-
-  }
-
-// -------- Methoden für Checkboxen in der Tabelle -----------
+  // -------- Methoden für Checkboxen in der Tabelle -----------
 
 
   // isAllSelected() {

@@ -1,20 +1,12 @@
 import { InnerSubscriber } from 'rxjs/internal/InnerSubscriber';
+import { EnumRoles } from '../services/enums/enums.service';
 import { Facility } from './facility';
-import { IUser, Roles } from './user';
+import { IUser, IRoles, User } from './user';
 
 export interface Coordinators{
 
 }
-export class Coordinators implements IUser{
-    home_facility: Facility = new Facility();
-    uid!: string;
-    email!: string;
-    roles!: Roles;
-    rolesobj : Roles = {trainee : false, admin : false, coordinator :true}; 
-    displayName!: string;
-    test!: string;
-    emailVerified!: boolean;
-    name!: string;
-    firstname!: string;
-
+export class Coordinators extends User{
+    _rolesobj: IRoles = { trainee: false, admin: false, coordinator: true }; 
+    _role: string = EnumRoles.coordinator;
 }

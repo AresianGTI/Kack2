@@ -14,10 +14,12 @@ import { GoogleChartViewComponent } from './modules/coordinatorView/google-chart
 // import { CanReadGuard } from './core/can-read.guard';
 import { AdminGuard } from './core/admin.guard';
 import { CanReadGuard } from './core/can-read.guard';
-import { SingleTraineeChartComponent } from './modules/coordinatorView/single-trainee-chart/single-trainee-chart/single-trainee-chart.component';
-import { SingleFacilityChartComponent } from './modules/coordinatorView/single-facility-chart/single-facility-chart/single-facility-chart.component';
+import { TraineeChartComponent } from './modules/trainee-chart/trainee-chart.component';
+import { FacilityChartComponent } from './modules/facility-chart/facility-chart.component';
 import { CalendarComponent } from './modules/calendar/calendar.component';
 import { DialogBoxComponent } from './modules/dialog-box/dialog-box.component';
+import { GlobalstringsService } from './services/globalstrings/globalstrings.service';
+
 const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo(["loginView"]);
 const dd = () => redirectUnauthorizedTo(["single-trainee"]);
 // const loggedIn = () => loggedIn(["login"]);
@@ -28,14 +30,13 @@ const dd = () => redirectUnauthorizedTo(["single-trainee"]);
 //   // , ...canActivate(redirectUnauthorizedToLogin)},
 
 // ];
-
 const routes: Routes = [
   {
     path: '',
     component: MainComponent,
-    // canActivate: [AngularFireAuthGuard],
+    canActivate: [AngularFireAuthGuard],
     // An dieser Stelle funktioniert es
-    // data: { authGuardPipe: redirectUnauthorizedToLogin },
+    data: { authGuardPipe: redirectUnauthorizedToLogin },
     children: [
       {
         path: 'Stammdaten',
@@ -44,7 +45,7 @@ const routes: Routes = [
         component: AdminMainViewComponent,
       },
       {
-        path: 'trainee',
+        path: 'overview',
         component: TraineeInformationComponent,
       },
       {
@@ -58,15 +59,15 @@ const routes: Routes = [
         // canActivate: [AngularFireAuthGuard]
       },
       {
-        path: 'GoogleCharts/single-facility',
-        component: SingleFacilityChartComponent,
+        path: 'GoogleCharts/facility-chart',
+        component: FacilityChartComponent,
         // canActivate: [AngularFireAuthGuard],
         // data: { authGuardPipe: dd },
       },
       // data: { authGuardPipe: dd },
       {
-        path: 'GoogleCharts/single-facility/single-trainee',
-        component: SingleTraineeChartComponent,
+        path: 'GoogleCharts/facility-chart/trainee-chart',
+        component: TraineeChartComponent,
         // canActivate: [AngularFireAuthGuard],
       }
     ],
@@ -98,4 +99,6 @@ const routes: Routes = [
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule]
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {
+  constructor(public stringService: GlobalstringsService) {}
+ }

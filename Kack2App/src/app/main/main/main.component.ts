@@ -18,14 +18,8 @@ export class MainComponent implements OnInit {
   logOut() { this.authService.SignOut(); }
 
   ngOnInit(): void {
-    let test;
     this.authService.user$.subscribe();
-
-    this.router.navigate(["/trainee"]);
-    // Wenn User == Admin
-    //Navigate to --> Admin
-    //Wenn User == Trainee
-    //Wenn User == Coordinator
+    this.router.navigate(["/overview"]);
   }
 
 }

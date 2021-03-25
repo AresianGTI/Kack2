@@ -1,11 +1,11 @@
-import { stringify } from '@angular/compiler/src/util';
-import { ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
 import { MatProgressBar, ProgressBarMode } from '@angular/material/progress-bar';
-import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, Subscription } from 'rxjs';
 import { Facility, FacilityType } from 'src/app/models/facility';
+import { CollectionsService } from 'src/app/services/collections/collections.service';
+import { FirestoreService } from 'src/app/services/firestore/firestore.service';
+import { SubscriptionCollectionService } from 'src/app/services/subscription-collection.service';
 
 @Component({
   selector: 'app-google-chart-view',
@@ -15,9 +15,10 @@ import { Facility, FacilityType } from 'src/app/models/facility';
 export class GoogleChartViewComponent implements OnInit {
   
   mode: ProgressBarMode = 'determinate';
-  subscription!: Subscription;
+  subscription: Subscription[] = [];
   convertingArray!: any[];
 
+  //überprüfen, ob das auch anders geht 
   facilityArray: Array<{
     Name: string;
     Kapazitaet: number;
@@ -29,65 +30,41 @@ export class GoogleChartViewComponent implements OnInit {
 //Wenn die Buchstaben gleich sind, kann man hier ein Facility-Array verwenden.
 
   usedFacilities: Array<{}> = [];
-  constructor(private store: AngularFirestore,
-    private changeDetectorRefs: ChangeDetectorRef, private router: Router,
-    private route: ActivatedRoute) { }
-
-
+  constructor(
+    private collectionService: CollectionsService,
+    private firestoreService: FirestoreService,
+    public subscriptionService: SubscriptionCollectionService){
+    }
 
   ngOnInit(): void {
+     this.usedFacilities = this.firestoreService.getFieldsFromCollection(this.collectionService.userCollection, "homeFacility" )
 
-     this.subscription = this.store.collection("users")
-      .get()
-      .subscribe( trainee => {
-        trainee.docs.forEach(element => {
-          this.usedFacilities.push(element.get("Stammeinrichtung"));
-        });
-        console.log(this.usedFacilities); // Array mit den Stammdaten
-       // unsubscribe = false;
-     });
+    //get ALL facilities for the progress-bar (facilityname and capacity of facility)
+    const facilityCol = this.firestoreService.getAllFacilities(this.collectionService.facilityCollection);
+    const facilityObservableArray =  facilityCol.valueChanges();
 
-
-    //get all facilities for the progress-bar (facilityname and capacity of facility)
-
-    const facilityCol = this.store.collection("facilityCollection");
-    const facilityObservableArray =  facilityCol.valueChanges(); //.get()?
-
-    this.subscription = facilityObservableArray.subscribe(facility => {  //converting in array
-       this.convertingArray = facility;
-       this.convertingArray.forEach(fclty => {  //push into Array for Progressbar
-        this.facilityArray.push(fclty);
-       })
-       this.calculateUsedFacility();
-       
-     });
-
-    //  this.convertingArray.length = 0; // Array leeren, ohne es zu verändern
-    //  this.facilityArray.length = 0;
-    // funktioniert nicht am Ende von ngOnInit() ?!?!?!?!?
+    this.subscription.push(facilityObservableArray.subscribe(facility => {  //converting in array
+      this.convertingArray = facility;
+      this.convertingArray.forEach(fclty => {  //push into Array for Progressbar
+       this.facilityArray.push(fclty);
+      })
+       this.calculateUsedCapacity(); 
+    }))
   }
 
-  calculateUsedFacility(){
+  //Abfangen, dass verwendete Kapazität die maximale Kapazität nicht übersteigt
+  calculateUsedCapacity(){
        //calculate the used mainfacility for progress-bar value
        this.facilityArray.forEach(facility => {
         facility.VerwendeteKapazitaet = 0;
         this.usedFacilities.forEach(uF =>{
-          if(uF == facility.Name){
-            facility.VerwendeteKapazitaet++;
-            
-          };
-          console.log("Einrichtung:",facility.Name, "hat: ", facility.VerwendeteKapazitaet);
+          if(uF == facility.Name)
+            facility.VerwendeteKapazitaet++;             
         });
-        console.log("unsubscribed");
-        
-        this.subscription.unsubscribe();
+
       });
+      this.subscriptionService.DestroySubscriptions(this.subscription);
+      console.log("Subscription: ", this.subscription);
   }
-
-  goToFacility(){
-    // console.log(this.router.navigate(["single-facility"], {relativeTo: this.route}));
-    // this.router.navigate(["single-facility"], {relativeTo: this.route})
-  }
-
 
 }

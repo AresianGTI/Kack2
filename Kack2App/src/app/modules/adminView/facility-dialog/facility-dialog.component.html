@@ -7,20 +7,20 @@
     <!-- Feld für den Einrichtungsnamen -->
     <mat-form-field hintLabel="Maximal 30 Zeichen" appearance="fill">
       <mat-label>Name der Einrichtung</mat-label>
-      <input matInput #input maxlength="30" [(ngModel)]="facilityX.facilityName">
+      <input matInput #input maxlength="30" [(ngModel)]="facilityObj.name">
       <mat-hint align="end">{{input.value?.length || 0}}/30</mat-hint>
     </mat-form-field>
     <mat-form-field hintLabel="Maximal 30 Zeichen" appearance="fill">
       <mat-label>Adresse</mat-label>
-      <input matInput #input maxlength="30" [(ngModel)]="facilityX.facilityadress">
+      <input matInput #input maxlength="30" [(ngModel)]="facilityObj.adress">
       <mat-hint align="end">{{input.value?.length || 0}}/30</mat-hint>
     </mat-form-field>
     <!-- Feld für die Einrichtungsart -->
     <mat-form-field appearance="fill" *ngIf="action == 'Create' ">
       <mat-label>Einrichtungsart</mat-label>
-      <mat-select  [(ngModel)]="facilityX.facilitytype.facilitytypeName">
-        <mat-option *ngFor="let facilityType of facilityTypes" [value]="facilityType.facilitytypeName">
-          {{facilityType.facilitytypeName}}
+      <mat-select  [(ngModel)]="facilityObj.type.typeName">
+        <mat-option *ngFor="let facilityType of facilityTypes" [value]="facilityType.typeName">
+          {{facilityType.typeName}}
         </mat-option>
         <!-- <mat-option value="option">{{facValues}}</mat-option> -->
       </mat-select>
@@ -28,34 +28,15 @@
     </mat-form-field>
     <mat-form-field hintLabel="Verfügbare Kapazität" appearance="fill">
       <mat-label>Geben Sie die Kapazität an:</mat-label>
-      <input matInput type="number" [formControl]="selected" [(ngModel)]="facilityX.capacity">
+      <input matInput type="number" [formControl]="selectedFormControl" [(ngModel)]="facilityObj.capacity">
     </mat-form-field>
   </div>
 
 </mat-dialog-content>
 <mat-dialog-actions align="End">
   <button mat-raised-button color="primary" mat-dialog-close>Abbrechen</button>
-  <button mat-raised-button (click)="getRightFunction()" color="primary" [disabled]=
-  "!facilityX.facilityName || !facilityX.facilityadress || 
-   !facilityX.facilitytype.facilitytypeName || !facilityX.capacity">{{action}}</button>
+  <button mat-raised-button (click)="chooseFunction()" color="primary" [disabled]=
+  "!facilityObj.name || !facilityObj.adress || 
+   !facilityObj.type.typeName || !facilityObj.capacity">{{action}}</button>
    
 </mat-dialog-actions>
-
-
-<!-- <mat-form-field>
-    <mat-label>Test</mat-label>
-    <textarea matInput [(ngModel)]="cedula" placeholder="ula"> </textarea>
-  </mat-form-field>
-  
-  <div mat-dialog-actions>
-    <button mat-button>OK</button>
-    <!-- <button mat-button [mat-dialog-close]="{ task: data.task }">OK</button> -->
-<!-- <button mat-button (click)="cancel()">Cancel</button>
-    <button
-    mat-fab
-    color ="primary"
-    aria-label="Delete">
-    <mat-icon>delete</mat-icon>
-
-</button>
-  </div> -->

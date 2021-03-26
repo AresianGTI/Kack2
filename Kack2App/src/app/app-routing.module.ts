@@ -19,6 +19,7 @@ import { FacilityChartComponent } from './modules/facility-chart/facility-chart.
 import { CalendarComponent } from './modules/calendar/calendar.component';
 import { DialogBoxComponent } from './modules/dialog-box/dialog-box.component';
 import { GlobalstringsService } from './services/globalstrings/globalstrings.service';
+import { CreateCoordinatorDialogComponent } from './login/create_coordinator-dialog/create-coordinator-dialog/create-coordinator-dialog.component';
 
 const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo(["loginView"]);
 const dd = () => redirectUnauthorizedTo(["single-trainee"]);
@@ -75,6 +76,11 @@ const routes: Routes = [
   {
     path: 'loginView',
     component: LoginViewComponent
+  },
+  {
+    path: 'create-coordinator-dialog', component: CreateCoordinatorDialogComponent,
+    // canActivate:[CanReadGuard],
+    // data: { authGuardPipe: redirectUnauthorizedToLogin }
   },
   {
     path: 'facility-dialog', component: FacilityDialogComponent,

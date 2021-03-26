@@ -1,0 +1,45 @@
+<h2 mat-dialog-title>Registrieren als Koordinator</h2>
+<mat-dialog-content class="mat-typography">
+    <p>
+        Füllen Sie bitte die Felder für ihren Login aus<br />
+    </p>
+    <div class="example-container">
+        <!-- Feld für den Azubinamen -->
+        <mat-form-field hintLabel="Maximal 30 Zeichen" appearance="fill">
+            <mat-label>Name des Koordinators</mat-label>
+            <input matInput #input maxlength="30" [(ngModel)]="coordinator.firstName">
+            <mat-hint align="end">{{input.value?.length || 0}}/30</mat-hint>
+        </mat-form-field>
+        <!-- Feld für den Nachnamn des Azubis -->
+        <mat-form-field hintLabel="Maximal 30 Zeichen" appearance="fill">
+            <mat-label>Nachname des Koordinator</mat-label>
+            <input matInput #input maxlength="30" [(ngModel)]="coordinator.name">
+            <mat-hint align="end">{{input.value?.length || 0}}/30</mat-hint>
+        </mat-form-field>
+        <!-- Feld für die E-Mail Adresse des Azubis -->
+        <mat-form-field hintLabel="Maximal 30 Zeichen" appearance="fill">
+            <mat-label>E-Mail Adresse des Koordinators</mat-label>
+            <input matInput #input maxlength="30" [(ngModel)]="coordinator.email">
+            <mat-hint align="end">{{input.value?.length || 0}}/30</mat-hint>
+        </mat-form-field>
+        <!-- Feld für das Passwort  -->
+        <mat-form-field hintLabel="Maximal 30 Zeichen" appearance="fill">
+            <mat-label>Geben Sie ihr Passwort für den Login ein</mat-label>
+            <input matInput #input maxlength="20" [(ngModel)]="password">
+            <mat-hint align="end">{{input.value?.length || 0}}/20</mat-hint>
+        </mat-form-field>
+        <!-- Feld für die Stammeinrichtung  -->
+        <mat-form-field hintLabel="Maximal 30 Zeichen" appearance="fill">
+            <mat-label>Geben Sie ihre Stammeinrichtung ein</mat-label>
+            <input matInput #input maxlength="30" [(ngModel)]="coordinator.homeFacility.name">
+            <mat-hint align="end">{{input.value?.length || 0}}/30</mat-hint>
+        </mat-form-field>
+
+    </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="End">
+    <button mat-raised-button color="primary" mat-dialog-close>Abbrechen</button>
+    <button mat-raised-button (click)="createCoordinator()" color="primary" [disabled]="!coordinator.firstName || !coordinator.name || !coordinator.email ||
+  !coordinator.homeFacility.name">Erstellen</button>
+</mat-dialog-actions>

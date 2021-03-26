@@ -13,7 +13,7 @@ import { TraineeDialogComponent } from '../trainee-dialog/trainee-dialog.compone
 import { FormControl } from '@angular/forms';
 import { Facility, IFacility, IfacilityType } from 'src/app/models/facility';
 import { element } from 'protractor';
-import { Coordinators } from 'src/app/models/coordinators';
+import { Coordinator } from 'src/app/models/coordinator';
 import { table } from 'console';
 import { Observable, of, Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -67,7 +67,7 @@ export class AdminMainViewComponent implements OnInit, OnDestroy {
 
   facilityCollection = new MatTableDataSource<Facility>([]);  // Elemente für die Einrichtungstabelle
   traineeCollection = new MatTableDataSource<Trainee>([]);  // Elemente für die Azubitabelle
-  CoordinatorCollection = new MatTableDataSource<Coordinators>([]);
+  CoordinatorCollection = new MatTableDataSource<Coordinator>([]);
 
   constructor(
     private store: AngularFirestore,
@@ -170,15 +170,11 @@ export class AdminMainViewComponent implements OnInit, OnDestroy {
          result.data, "facilityCollection") });
     }
   }
+
   deleteAll(){
     this.firestoreService.deleteAllDocuments(this.facilityCollection, "facilityCollection");
   }
 
-
- 
-
-
-  
   // }
 
   // -------- Methoden für Checkboxen in der Tabelle -----------

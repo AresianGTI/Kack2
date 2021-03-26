@@ -49,6 +49,7 @@ import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { DialogBoxComponent } from './modules/dialog-box/dialog-box.component';
 import { GlobalstringsService } from './services/globalstrings/globalstrings.service';
 import { FirestoreService } from './services/firestore/firestore.service';
+import { CreateCoordinatorDialogComponent } from './login/create_coordinator-dialog/create-coordinator-dialog/create-coordinator-dialog.component';
 // import { GlobalstringsService } from './services/globalstrings/globalstrings.service';
 // import { FirestoreService } from './services/firestore/firestore.service';
 
@@ -65,7 +66,8 @@ import { FirestoreService } from './services/firestore/firestore.service';
     FacilityChartComponent,
     TraineeChartComponent,
     CalendarComponent,
-    DialogBoxComponent
+    DialogBoxComponent,
+    CreateCoordinatorDialogComponent
     
   ],
   imports: [

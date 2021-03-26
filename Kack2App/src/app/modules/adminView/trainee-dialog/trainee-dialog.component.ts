@@ -1,9 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { AngularFireAuth } from '@angular/fire/auth';
-import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
 import { AuthService } from 'src/app/core/auth.service';
-import { Trainee } from 'src/app/models/trainee';
-import { take } from 'rxjs/operators';
+import { Trainee } from 'src/app/models/user';
 import { FirestoreService } from 'src/app/services/firestore/firestore.service';
 import { CollectionsService } from 'src/app/services/collections/collections.service';
 @Component({

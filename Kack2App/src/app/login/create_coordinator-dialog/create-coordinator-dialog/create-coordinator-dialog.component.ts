@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from 'src/app/core/auth.service';
-import { Coordinator } from 'src/app/models/coordinator';
+import { Coordinator } from 'src/app/models/user';
 
 @Component({
   selector: 'app-create-coordinator-dialog',

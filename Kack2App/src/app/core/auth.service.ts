@@ -3,7 +3,7 @@ import { AngularFireAuth } from "@angular/fire/auth";
 import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firestore';
 import { Router } from "@angular/router";
 import firebase from 'firebase';
-import { Trainee } from '../models/trainee';
+import { Trainee } from '../models/user';
 import { Observable, of, Subscription } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { switchMap, take } from 'rxjs/operators/';

@@ -1,9 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { AngularFireAuth } from '@angular/fire/auth';
-import { Router } from '@angular/router';
 import { AuthService } from '../../core/auth.service'
-import { Coordinator } from 'src/app/models/coordinator';
+import { Coordinator } from 'src/app/models/user';
 import { GlobalstringsService } from 'src/app/services/globalstrings/globalstrings.service';
 import { MatDialog } from '@angular/material/dialog';
 import { CreateCoordinatorDialogComponent } from '../create_coordinator-dialog/create-coordinator-dialog/create-coordinator-dialog.component';

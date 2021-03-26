@@ -1,23 +1,15 @@
-import { variable } from '@angular/compiler/src/output/output_ast';
-import { stringify } from '@angular/compiler/src/util';
 import { Component, OnInit, ChangeDetectorRef, ViewChild, OnDestroy } from '@angular/core';
-import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
 import { FacilityDialogComponent } from '../facility-dialog/facility-dialog.component';
-import { Trainee } from 'src/app/models/trainee';
+import { Trainee } from 'src/app/models/user';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { TraineeDialogComponent } from '../trainee-dialog/trainee-dialog.component';
-import { FormControl } from '@angular/forms';
 import { Facility, IFacility, IfacilityType } from 'src/app/models/facility';
-import { element } from 'protractor';
-import { Coordinator } from 'src/app/models/coordinator';
-import { table } from 'console';
+import { Coordinator } from 'src/app/models/user';
 import { Observable, of, Subject, Subscription } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
-import { DataSource, SelectionModel } from '@angular/cdk/collections';
+
 import {
   animate,
   state,

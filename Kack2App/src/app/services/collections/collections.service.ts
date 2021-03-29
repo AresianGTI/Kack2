@@ -9,7 +9,7 @@ export class CollectionsService {
     return this._userCollection;
   }
 
-  private _facilityCollection = "facilityCollection";
+  private _facilityCollection = "facilities";
   public get facilityCollection() {
     return this._facilityCollection;
   }

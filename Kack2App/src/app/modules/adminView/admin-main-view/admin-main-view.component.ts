@@ -8,7 +8,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { FacilityDialogComponent } from '../facility-dialog/facility-dialog.component';
 import { Trainee } from 'src/app/models/trainee';
-import { MatTabChangeEvent } from '@angular/material/tabs';
+import { MatTabChangeEvent, MatTabLabel } from '@angular/material/tabs';
 import { TraineeDialogComponent } from '../trainee-dialog/trainee-dialog.component';
 import { FormControl } from '@angular/forms';
 import { Facility, IFacility, IfacilityType } from 'src/app/models/facility';
@@ -31,6 +31,8 @@ import { DialogBoxComponent } from '../../../modules/dialog-box/dialog-box.compo
 import { SubscriptionCollectionService } from 'src/app/services/subscription-collection.service';
 import { FirestoreService } from 'src/app/services/firestore/firestore.service';
 import { EnumRoles } from 'src/app/services/enums/enums.service';
+import { th } from 'date-fns/locale';
+import { Collection } from 'typescript';
 
 
 
@@ -53,12 +55,12 @@ export class AdminMainViewComponent implements OnInit, OnDestroy {
   expandedElement!: IFacility;
 
   tab_selection!: string;
-  
+
   //for subscriptions and unsubscriptions
   subscriptions: Subscription[] = [];
   displayedColumnsFacility: string[] = ['Einrichtungsart', 'Name', 'Kapazitaet'];
 
-  
+
   displayedColumnsTrainee: string[] = ['name', 'firstName', 'homeFacility'];
 
   displayedColumnsCoordinators: string[] = ['Nachname', 'Vorname', 'test'];
@@ -92,7 +94,7 @@ export class AdminMainViewComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.tab_selection = "Einrichtung";
-    this.refreshList1("facilityCollection", this.facilityCollection);
+    this.refreshList1("facilities", this.facilityCollection);
     this.refreshList("usersCollection", this.traineeCollection);
   }
 
@@ -107,9 +109,9 @@ export class AdminMainViewComponent implements OnInit, OnDestroy {
           ss.forEach(element => {
             ELEMENT_DATA.push(element);
             collection.data = ELEMENT_DATA;
-           
+
           });
-          console.log("MyArray:",  collection.data);
+          console.log("MyArray:", collection.data);
         }));
   }
   refreshList(p_facilityElements: string, collection: MatTableDataSource<any>) {
@@ -123,9 +125,9 @@ export class AdminMainViewComponent implements OnInit, OnDestroy {
           ss.forEach(element => {
             ELEMENT_DATA.push(element);
             collection.data = ELEMENT_DATA;
-            
+
           });
-          console.log("MyArray2:",  collection.data);
+          console.log("MyArray2:", collection.data);
         }));
   }
   ChooseDialog(action: any, obj?: { action?: any; }) {
@@ -165,9 +167,10 @@ export class AdminMainViewComponent implements OnInit, OnDestroy {
       obj!.action = action;
       dialogRef = this.dialog.open(DialogBoxComponent, { data: obj });
       dialogRef.afterClosed()
-      .subscribe((result: { event: string; data: any; }) =>
-       { this.firestoreService.deleteDocument(
-         result.data, "facilityCollection") });
+        .subscribe((result: { event: string; data: any; }) => {
+          this.firestoreService.deleteDocument(
+            result.data, "facilities")
+        });
     }
   }
 
@@ -175,30 +178,20 @@ export class AdminMainViewComponent implements OnInit, OnDestroy {
    * get the active Tab to return the right Collection.
    * @returns currentCollection : string
    */
-  getActiveTab(){
-    let currentCollection: string = "";
-    if(this.tab_selection == "Einrichtung") {
-    currentCollection = "facilityCollection";
+  deleteAll() {
+    if (this.tab_selection == "Einrichtung") {
+      this.firestoreService.deleteAllDocuments(this.facilityCollection, "facilities");
+      this.facilityCollection = new MatTableDataSource<Facility>([]);
     }
-    if(this.tab_selection == "Auszubildender"){
-      currentCollection = "usersCollection";
+    if (this.tab_selection == "Auszubildender") {
+      this.firestoreService.deleteAllDocuments(this.traineeCollection, "usersCollection");
+      this.traineeCollection = new MatTableDataSource<Trainee>([]);
     }
-    return currentCollection;
 
   }
-  deleteAll(){
-    this.firestoreService.deleteAllDocuments(this.facilityCollection,this.getActiveTab());
-  }
-
-
- 
-
-
-  
   // }
 
   // -------- Methoden für Checkboxen in der Tabelle -----------
-
 
   // isAllSelected() {
   //   const numSelected = this.selection.selected.length;

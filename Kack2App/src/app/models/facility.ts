@@ -64,4 +64,6 @@ export class Facility implements IFacility {
         this._usedCapacity = value;
     }
 
+    
+
 }

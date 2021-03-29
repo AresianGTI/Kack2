@@ -19,7 +19,7 @@ export class MainComponent implements OnInit {
 
   ngOnInit(): void {
     this.authService.user$.subscribe();
-    this.router.navigate(["/overview"]);
+    // this.router.navigate(["/overview"]);
   }
 
 }

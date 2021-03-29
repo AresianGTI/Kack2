@@ -93,7 +93,7 @@ export class AdminMainViewComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.tab_selection = "Einrichtung";
     this.refreshList1("facilityCollection", this.facilityCollection);
-    this.refreshList("users", this.traineeCollection);
+    this.refreshList("usersCollection", this.traineeCollection);
   }
 
   refreshList1(p_facilityElements: string, collection: MatTableDataSource<any>) {
@@ -170,8 +170,24 @@ export class AdminMainViewComponent implements OnInit, OnDestroy {
          result.data, "facilityCollection") });
     }
   }
+
+  /**
+   * get the active Tab to return the right Collection.
+   * @returns currentCollection : string
+   */
+  getActiveTab(){
+    let currentCollection: string = "";
+    if(this.tab_selection == "Einrichtung") {
+    currentCollection = "facilityCollection";
+    }
+    if(this.tab_selection == "Auszubildender"){
+      currentCollection = "usersCollection";
+    }
+    return currentCollection;
+
+  }
   deleteAll(){
-    this.firestoreService.deleteAllDocuments(this.facilityCollection, "facilityCollection");
+    this.firestoreService.deleteAllDocuments(this.facilityCollection,this.getActiveTab());
   }
 
 

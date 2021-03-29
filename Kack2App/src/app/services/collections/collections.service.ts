@@ -4,7 +4,7 @@ import { Injectable } from '@angular/core';
   providedIn: 'root'
 })
 export class CollectionsService {
-  private _userCollection = "users";
+  private _userCollection = "usersCollection";
   public get userCollection() {
     return this._userCollection;
   }

@@ -39,14 +39,18 @@ import { TraineeDialogComponent } from './modules/adminView/trainee-dialog/train
 import { AuthService } from "./core/auth.service";
 import { TraineeInformationComponent } from './modules/trainee-Info/trainee-information/trainee-information.component';
 import { GoogleChartViewComponent } from './modules/coordinatorView/google-chart-view/google-chart-view.component';
-import { SingleFacilityChartComponent } from './modules/coordinatorView/single-facility-chart/single-facility-chart/single-facility-chart.component';
-import { SingleTraineeChartComponent } from './modules/coordinatorView/single-trainee-chart/single-trainee-chart/single-trainee-chart.component';
+import { FacilityChartComponent } from './modules/facility-chart/facility-chart.component';
+import { TraineeChartComponent } from './modules/trainee-chart/trainee-chart.component';
 import { CalendarComponent } from './modules/calendar/calendar.component';
 import { CalendarModule, DateAdapter } from 'angular-calendar';
 import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { DialogBoxComponent } from './modules/dialog-box/dialog-box.component';
+import { GlobalstringsService } from './services/globalstrings/globalstrings.service';
+import { FirestoreService } from './services/firestore/firestore.service';
+// import { GlobalstringsService } from './services/globalstrings/globalstrings.service';
+// import { FirestoreService } from './services/firestore/firestore.service';
 
 @NgModule({
   declarations: [
@@ -58,8 +62,8 @@ import { DialogBoxComponent } from './modules/dialog-box/dialog-box.component';
     TraineeDialogComponent,
     TraineeInformationComponent,
     GoogleChartViewComponent,
-    SingleFacilityChartComponent,
-    SingleTraineeChartComponent,
+    FacilityChartComponent,
+    TraineeChartComponent,
     CalendarComponent,
     DialogBoxComponent
     
@@ -98,7 +102,7 @@ import { DialogBoxComponent } from './modules/dialog-box/dialog-box.component';
    CalendarModule.forRoot({ provide: DateAdapter, useFactory: adapterFactory }),
   //  CalendarComponent,
   ],
-  providers: [AuthService],
+  providers: [AuthService, GlobalstringsService, FirestoreService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

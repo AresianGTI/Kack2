@@ -1,17 +1,18 @@
 import { Injectable, NgZone, Testability } from '@angular/core';
-import { IUser, Roles } from "../models/user";
 import { AngularFireAuth } from "@angular/fire/auth";
 import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firestore';
 import { Router } from "@angular/router";
 import firebase from 'firebase';
 import { Trainee } from '../models/trainee';
-import { Facility } from '../models/facility';
-import { Coordinators } from '../models/coordinators';
 import { Observable, of, Subscription } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { switchMap, take } from 'rxjs/operators/';
-import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
-import { loggedIn } from '@angular/fire/auth-guard';
+import { GlobalstringsService } from '../services/globalstrings/globalstrings.service';
+import { SubscriptionCollectionService } from '../services/subscription-collection.service';
+import { FirestoreService } from '../services/firestore/firestore.service';
+import { CollectionsService } from '../services/collections/collections.service';
+import { IUser } from '../models/user';
+import { EnumRoles } from '../services/enums/enums.service';
 
 const secondaryApp = firebase.initializeApp(environment.firebaseConfig, 'Secondary');
 @Injectable({
@@ -20,105 +21,72 @@ const secondaryApp = firebase.initializeApp(environment.firebaseConfig, 'Seconda
 
 export class AuthService {
   errorMessage!: String;
-  currentData: any;
   userData: any;
-  testData: any;// Save logged in user data
-  traineData!: Trainee;
-  loggedInData:any;
-  userMuser: any;
   loginSubscriptions: Subscription[] = [];
-  // Save logged in user data
-  // Save logged in user data
   user$: Observable<any>;
+
   
   constructor(
     public afs: AngularFirestore,   // Inject Firestore service
     public afAuth: AngularFireAuth, // Inject Firebase auth service
     public router: Router,
-    public ngZone: NgZone, // NgZone service to remove outside scope warning
-
+    public ngZone: NgZone,
+    public stringService: GlobalstringsService,
+    public subscriptionService: SubscriptionCollectionService,
+    public firestoreService: FirestoreService,
+    public collectionService: CollectionsService // NgZone service to remove outside scope warning
   ) {
+    
     // Authentifizierung wird beim Laden der Seite nicht gespeichert
-    // this.isLoggedIn;
-    // console.log("Ist logged in: ",this.isLoggedIn)
-        this.user$ = this.afAuth.authState.pipe(take(1),switchMap(user => {
+      this.user$ = this.afAuth.authState.pipe(take(1),switchMap(user => {
       if (user) {
-             this.getUserData(user);
-
-         this.loggedInData = user;
+        this.getUserDataFromFirestore(user);
         localStorage.setItem('user', JSON.stringify(user));
         JSON.parse(localStorage.getItem('user')!);
-        return this.afs.doc<any>(`users/${user.uid}`).valueChanges()
+        return this.afs.doc<any>(`usersCollection/${user.uid}`).valueChanges()
       } else {
-        localStorage.setItem('user', this.currentData);
+        localStorage.setItem('user', this.userData);
         localStorage.getItem('user');
         return of(user);
       }
     }))
-    //    this.loginSubscriptions.push(this.afAuth.authState.subscribe(user => {
-    //   if (user) {
-    //      this.getUserData(user);
-    //      this.loggedInData = user;
-       
-    //     localStorage.setItem('user', JSON.stringify(user));
-    //     JSON.parse(localStorage.getItem('user')!);
-    //     return this.afs.doc<any>(`users/${user.uid}`).valueChanges()
-    //     // console.log("User vorhanden", user);
-    //   } else {
-    //     localStorage.setItem('user', this.currentData);
-    //     // console.log(localStorage);
-    //     localStorage.getItem('user');
-    //     return 0;
-    //   }
-    // }));
-  }
-
-  DestroySubscriptions(){
-    this.loginSubscriptions.forEach(sub =>
-     
-      sub.unsubscribe(),
-      console.log("Sub unsubscribed"));
-      for(let sub in this.loginSubscriptions){
-        console.log("ICh bin ein SUBMARINA weniger", sub);
-      }
-      
   }
 
   // Sign in with email/password
   SignIn(email: string, password: string) {
     return this.afAuth.signInWithEmailAndPassword(email, password)
       .then((result) => {
-        this.ngZone.run(() => {
-          this.router.navigate(['/trainee']);
-        });
-        this.getUserData(result.user!);
-      })
-      .then(() => {
-        console.log("Meine UserDataa in SignIn: " );
-      }
-      )
+      this.getUserDataFromFirestore(result.user);
+      this.router.navigate(['/' + this.stringService.overview]);
+      })  
       .catch(e => this.errorMessage = e.message);
   }
+  getUserDataFromFirestore(result: any){
+    this.firestoreService.getUserData(result, this.loginSubscriptions)
+    .then((data) => {
+      this.userData = data;
+      
+    })
+  }
+  
   SignUp(email: string, password: string, data?: any) {
     return this.afAuth.createUserWithEmailAndPassword(email, password)
       .then((result) => {
-        /* Call the SendVerificaitonMail() function when new user sign 
-        up and returns promise */
-        // this.SendVerificationMail();
-        this.SetUserData(result.user!,data);
+        this.firestoreService.createDocument(this.collectionService.userCollection, 
+          this.setUserData(result.user!, data));
       })
       .catch(e => this.errorMessage = e.message);
   }
 
-
   // Sign up with email/password
-  SignUpTrainees(email: string, password: string, data?: any, collection = "users") {
+  SignUpTrainees(email: string, password: string, data?: Trainee, 
+    collection = this.collectionService.userCollection) {
     return secondaryApp.auth().createUserWithEmailAndPassword(email, password)
       .then((result) => {
-        this.SetUserData(result.user!, data);
+        this.firestoreService.createDocument(this.collectionService.userCollection, 
+          this.setUserData(result.user!, data));
         secondaryApp.auth().signOut();
       })
-      
   }
 
   // Send email verfificaiton when new user sign up
@@ -146,112 +114,69 @@ export class AuthService {
   }
 
   // Sign in with Google
-  GoogleAuth() {
+  GoogleAuth() { 
     // return this.AuthLogin(new auth.GoogleAuthProvider());
   }
 
   // Auth logic to run auth providers
-  AuthLogin(provider: any) {
-    return this.afAuth.signInWithPopup(provider)
-      .then((result) => {
-        this.ngZone.run(() => {
-          this.router.navigate(['/trainee']);
-        })
-        this.SetUserData(result.user!);
-      }).catch((error) => {
-        window.alert(error)
-      })
-  }
-  getUserData(user: any) {
-    // const userRef: AngularFirestoreDocument<any> = this.afs.doc<any>("coordinators" +`/${user.uid}`);
-    // let result: any = this.afs.collection("coordinators").doc(user.uid).valueChanges()
-    // let collection = "coordinators";
-      this.loginSubscriptions.push(
-        this.afs.collection("users").doc(`/${user.uid}`).valueChanges()
-        .subscribe(value =>
-          {
-            //Subscription muss stoppen
-            this.currentData = value;
-            console.log("RESULT",  this.currentData);
-            for(let sub in this.loginSubscriptions){
-              console.log("ICh bin ein SUBMARINA", sub);
-            }
-            // this.currentData = user;
-          })
-          
-      );
-    // }
-  
-//  console.log("RESULT", result);
-//     console.log("UID", user.uid);
-
-      // p_data.data = elemData;
-      // .valueChanges()
-      // console.log("was diese jaaaah",this.afs.collection("coordinators").doc(user.uid));
-  }
-
-  /* Setting up user data when sign in with username/password, 
-  sign up with username/password and sign in with social auth  
-  provider in Firestore database using AngularFirestore + AngularFirestoreDocument service */
-  SetUserData(user: any, data?: any) {
-    // this.getUserData(user);
-    const userRef: AngularFirestoreDocument<any> = this.afs.doc<any>("users" + `/${user.uid}`);
-    const userData: any = {
-      uid: user.uid,
+  // AuthLogin(provider: any) {
+  //   return this.afAuth.signInWithPopup(provider)
+  //     .then((result) => {
+  //       this.ngZone.run(() => {
+  //         this.router.navigate(["/" + this.stringService.overview]);
+  //       })
+  //       // this.firestoreService.setUserData(result.user!);
+  //       // this.firestoreService.setUserData(this.setUserData(result.user, data));
+  //       // this.SetUserData(result.user!);
+  //     }).catch((error) => {
+  //       window.alert(error)
+  //     })
+  // }
+  setUserData(user: any, data?: any) {
+    const userFirebaseStructure: any = {
+      ID: user.uid,
       email: user.email!,
       displayName: user.displayName!,
       emailVerified: user.emailVerified,
-      roles: {
-        trainee: data?.rolesobj.trainee ,
-        admin: data?.rolesobj.admin ,
-        coordinator: data?.rolesobj.coordinator
-      },
-      Stammeinrichtung: data?.home_facility.facilityName || "Keine Stammeinrichtung",
-      Nachname: data?.name || "Name No Value",
-      Vorname: data?.firstname || "FirstName No Value"
+      role: data?.role,
+      homeFacility: data?.homeFacility.name || "No Homefacility",
+      name: data?.name || "No Value",
+      firstName: data?.firstName || "No Value"
     }
-    this.testData = userData;
-    console.log("UserData", this.testData)
     // Updates existing Documents in a non-destructive way
-    return userRef.set(userData, {
-      merge: true
-    })
+    return userFirebaseStructure;
   }
   SignOutCreatedUser() {
     return this.afAuth.signOut().then(() => {
       localStorage.removeItem('user');
-      // this.router.navigate(['login-view']);
     })
   }
-  // Sign out 
  async SignOut() {
    await this.afAuth.signOut().then(() => {
-      this.DestroySubscriptions();
+      this.subscriptionService.DestroySubscriptions(this.loginSubscriptions)
       localStorage.removeItem('user');
-      this.router.navigate(['/loginView']);
-      console.log("ganze SCHEODE WEG!!");
+      this.router.navigate(['/' + this.stringService.loginView]);
     })
   }
-  // private checkAuthorization(user: any, allowedRoles: string[]): boolean {
+  
   private checkAuthorization(user: any, allowedRoles: string[]): boolean {
     if (!user) return false
-
-    let saf = false;
+    let isAuthorized = false;
     allowedRoles.forEach(role => {
-      if(user.roles[role])
-      {
-        console.log("UserRole[role]",user.roles[role])
-        saf = true;
-      }
-    });
-    return saf;
-  }
+    if(user.role == role)
+    {
+      isAuthorized = true;
+    }
+  });
+  return isAuthorized;
+   }
+     
   canRead(user: any): boolean {
-    const allowed = ["admin", "trainee", "coordinator"];
-    return this.checkAuthorization(user, allowed)
+    const allowedRoles = [EnumRoles.admin, EnumRoles.coordinator, EnumRoles.trainee, EnumRoles.teacher];
+    return this.checkAuthorization(user, allowedRoles)
   }
   canEdit(user: any): boolean {
-    const allowed = ["admin", "coordinator"];
-    return this.checkAuthorization(user, allowed)
+    const allowedRoles = [EnumRoles.admin, EnumRoles.coordinator];
+    return this.checkAuthorization(user, allowedRoles)
   }
 }

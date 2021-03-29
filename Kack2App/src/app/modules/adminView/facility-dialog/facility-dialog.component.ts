@@ -1,9 +1,9 @@
-import { ParseTreeResult, ThrowStmt } from '@angular/compiler';
 import { Component, Inject, OnInit, Optional } from '@angular/core';
-import { AngularFirestore } from '@angular/fire/firestore';
 import { FormControl } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Facility, IfacilityType } from 'src/app/models/facility';
+import { CollectionsService } from 'src/app/services/collections/collections.service';
+import { FirestoreService } from 'src/app/services/firestore/firestore.service';
 
 
 
@@ -17,133 +17,77 @@ export class FacilityDialogComponent implements OnInit {
   action: string;
   local_data: any;
 
-  selectedValue: string = "";
-  facilityX: Facility = new Facility();
-  selected = new FormControl(0);
+  facilityObj: Facility = new Facility();
+  selectedFormControl = new FormControl(0);
 
-  constructor(public firestore: AngularFirestore,
-
+  constructor(
+    public firestoreService: FirestoreService,
+    public collectionService: CollectionsService,
     public dialogRef: MatDialogRef<FacilityDialogComponent>,
     //@Optional() is used to prevent error if no data is passed
     @Optional() @Inject(MAT_DIALOG_DATA) public data: any) {
-      if(typeof(data) === "string")
-      {
-        this.action = data;
-      }
-      else{
-        console.log("Logger Lan", data);
-        this.local_data = { ...data };
-        this.action = this.local_data.action;
-      }
-   
+    if (typeof (data) === "string") {
+      this.action = data;
+    }
+    else {
+      this.local_data = { ...data };
+      this.action = this.local_data.action;
+    }
+
   }
 
+  //Mögliche Veränderung in der Zukunft... Klassen?
   facilityTypes: IfacilityType[] = [
-    { facilitytypeName: "Krankenhaus" },
-    { facilitytypeName: "Psychatrie" },
-    { facilitytypeName: "Pflegeeinrichtung" },
-    { facilitytypeName: "Altersheim" }
+    { typeName: "Krankenhaus" },
+    { typeName: "Psychatrie" },
+    { typeName: "Pflegeeinrichtung" },
+    { typeName: "Altersheim" }
   ];
 
   ngOnInit(): void {
-    //Beim Editieren von Einrichtungen werden die Felder mit den existierenden Werten Gefüllt.
-    if(this.local_data)
-    {
-      this.facilityX.facilityName = this.local_data.Name;
-      this.facilityX.facilitytype.facilitytypeName = this.local_data.Einrichtungsart;
-      this.facilityX.capacity = this.local_data.Kapazitaet;
-      this.facilityX.facilityadress = this.local_data.Adresse;
+    //get the current fields for editing facilities
+    if (this.local_data) {
+      this.facilityObj.ID = this.local_data.ID;
+      this.facilityObj.name = this.local_data.Name;
+      this.facilityObj.type.typeName = this.local_data.Einrichtungsart;
+      this.facilityObj.capacity = this.local_data.Kapazitaet;
+      this.facilityObj.adress = this.local_data.Adresse;
     }
-  }
-
-
-
-
-  doAction() {
-    this.dialogRef.close({ event: this.action, data: this.local_data });
   }
 
   closeDialog() {
     this.dialogRef.close({ event: 'Cancel' });
   }
 
-  // cancel(): void {
-  //   // this.data.task.title = this.backupTask.title;
-  //   // this.data.task.description = this.backupTask.description;
-  //   // this.dialogRef.close(this.data);
-  //   // console.log("Test erfolgreich")
-  // }
-  getRightFunction(){
-    if(this.action == "Update"){
-      this.updateData()
+  chooseFunction() {
+    if (this.action == "Update") {
+      this.firestoreService.updateCollection(this.collectionService.facilityCollection, this.facilityObj)
+    }
+    else if (this.action == "Create") {
       
-
+      this.firestoreService.createDocument(
+        this.collectionService.facilityCollection,
+        this.getObjectData());
+      this.resetFacilityObject();
     }
-    else if(this.action == "Create"){
-      this.createFacility();
-    }
-
   }
-  updateData() {
-
-    return this.firestore.collection("facilityCollection").doc(this.data.ID).update(
-      {
-        Name: this.facilityX.facilityName,
-        Adresse: this.facilityX.facilityadress,
-        Einrichtungsart: this.facilityX.facilitytype.facilitytypeName,
-        Kapazitaet: this.facilityX.capacity
-      }
-    );
+  resetFacilityObject() {
+    this.facilityObj.name = "";
+    this.facilityObj.adress = "";
+    this.facilityObj.type.typeName = "";
+    this.facilityObj.capacity = 1;
   }
-  createFacility() {
-    this.facilityX.id = this.firestore.createId();
+
+  getObjectData() {
+    this.facilityObj.ID = this.firestoreService.createID(this.facilityObj);
     let facilityObj =
     {
-      ID: this.facilityX.id,
-      Name: this.facilityX.facilityName,
-      Adresse: this.facilityX.facilityadress,
-      Einrichtungsart: this.facilityX.facilitytype.facilitytypeName,
-      Kapazitaet: this.facilityX.capacity
+      ID: this.facilityObj.ID,
+      Name: this.facilityObj.name,
+      Adresse: this.facilityObj.adress,
+      Einrichtungsart: this.facilityObj.type.typeName,
+      Kapazitaet: this.facilityObj.capacity
     }
-      ;
-
-    this.firestore.collection('facilityCollection').doc(this.facilityX.id).set(facilityObj).then(res => {
-      this.facilityX.facilityName = "";
-      this.facilityX.facilityadress = "";
-      this.facilityX.facilitytype.facilitytypeName = "";
-      // this.facilityX.capacity == undefined;  // funktioniert nicht
-      console.log("test", res);
-      alert("Die Einrichtung wurde erstellt!");
-    }).catch(error => {
-      console.log(error);
-    });
-
-  }
-
-
-  changeFacility() {
-
-    //   const userRef: AngularFirestoreDocument<any> = this.afs.doc<any>("users" + `/${user.uid}`);
-    //   const userData: any = {
-    //     uid: user.uid,
-    //     email: user.email!,
-    //     displayName: user.displayName!,
-    //     emailVerified: user.emailVerified,
-    //     roles: {
-    //       trainee: data?.rolesobj.trainee ,
-    //       admin: data?.rolesobj.admin ,
-    //       coordinator: data?.rolesobj.coordinator
-    //     },
-    //     Stammeinrichtung: data?.home_facility.facilityName || "Keine Stammeinrichtung",
-    //     Nachname: data?.name || "Name No Value",
-    //     Vorname: data?.firstname || "FirstName No Value"
-    //   }
-    //   this.testData = userData;
-    //   console.log("UserData", this.testData)
-    //   // Updates existing Documents in a non-destructive way
-    //   return userRef.set(userData, {
-    //     merge: true
-    //   })
-    // }
+    return facilityObj;
   }
 }

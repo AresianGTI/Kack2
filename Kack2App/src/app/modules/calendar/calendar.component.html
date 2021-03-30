@@ -1,92 +1,48 @@
 <div class="row text-center">
   <div class="col-md-4">
     <div class="btn-group">
-      <div
-        class="btn btn-primary"
-        mwlCalendarPreviousView
-        [view]="view"
-        [(viewDate)]="viewDate"
-        (viewDateChange)="closeOpenMonthViewDay()"
-      >
+      <button mat-raised-button color="primary" class="btn btn-primary" mwlCalendarPreviousView [view]="view"
+        [(viewDate)]="viewDate" (viewDateChange)="closeOpenMonthViewDay()">
         Previous
-      </div>
-      <div
-        class="btn btn-outline-secondary"
-        mwlCalendarToday
-        [(viewDate)]="viewDate"
-      >
+      </button>
+
+      <button mat-raised-button class="btn btn-outline-secondary" mwlCalendarToday [(viewDate)]="viewDate"
+        color="primary">
         Today
-      </div>
-      <div
-        class="btn btn-primary"
-        mwlCalendarNextView
-        [view]="view"
-        [(viewDate)]="viewDate"
-        (viewDateChange)="closeOpenMonthViewDay()"
-      >
+      </button>
+
+      <button mat-raised-button color="primary" class="btn btn-primary" mwlCalendarNextView [view]="view"
+        [(viewDate)]="viewDate" (viewDateChange)="closeOpenMonthViewDay()">
         Next
-      </div>
-    </div>
-  </div>
-  <div class="col-md-4">
+      </button>
+  <div class="test">
     <h3>{{ viewDate | calendarDate:(view + 'ViewTitle'):'en' }}</h3>
   </div>
-  <div class="col-md-4">
-    <div class="btn-group">
-      <div
-        class="btn btn-primary"
-        (click)="setView(CalendarView.Month)"
-        [class.active]="view === CalendarView.Month"
-      >
+      <button mat-raised-button color="primary" class="btn btn-primary" (click)="setView(CalendarView.Month)"
+        [class.active]="view === CalendarView.Month">
         Month
-      </div>
-      <div
-        class="btn btn-primary"
-        (click)="setView(CalendarView.Week)"
-        [class.active]="view === CalendarView.Week"
-      >
+      </button>
+      <button mat-raised-button color="primary" class="btn btn-primary" (click)="setView(CalendarView.Week)"
+        [class.active]="view === CalendarView.Week">
         Week
-      </div>
-      <div
-        class="btn btn-primary"
-        (click)="setView(CalendarView.Day)"
-        [class.active]="view === CalendarView.Day"
-      >
+      </button>
+      <button mat-raised-button color="primary" class="btn btn-primary" (click)="setView(CalendarView.Day)"
+        [class.active]="view === CalendarView.Day">
         Day
-      </div>
+      </button>
     </div>
   </div>
-</div>
 <br />
 <div [ngSwitch]="view">
-  <mwl-calendar-month-view
-    *ngSwitchCase="CalendarView.Month"
-    [viewDate]="viewDate"
-    [events]="events"
-    [refresh]="refresh"
-    [activeDayIsOpen]="activeDayIsOpen"
-    (dayClicked)="dayClicked($event.day)"
-    (eventClicked)="handleEvent('Clicked', $event.event)"
-    (eventTimesChanged)="eventTimesChanged($event)"
-  >
+  <mwl-calendar-month-view *ngSwitchCase="CalendarView.Month" [viewDate]="viewDate" [events]="events"
+    [refresh]="refresh" [activeDayIsOpen]="activeDayIsOpen" (dayClicked)="dayClicked($event.day)"
+    (eventClicked)="handleEvent('Clicked', $event.event)" (eventTimesChanged)="eventTimesChanged($event)">
   </mwl-calendar-month-view>
-  <mwl-calendar-week-view
-    *ngSwitchCase="CalendarView.Week"
-    [viewDate]="viewDate"
-    [events]="events"
-    [refresh]="refresh"
-    (eventClicked)="handleEvent('Clicked', $event.event)"
-    (eventTimesChanged)="eventTimesChanged($event)"
-  >
+  <mwl-calendar-week-view *ngSwitchCase="CalendarView.Week" [viewDate]="viewDate" [events]="events" [refresh]="refresh"
+    (eventClicked)="handleEvent('Clicked', $event.event)" (eventTimesChanged)="eventTimesChanged($event)">
   </mwl-calendar-week-view>
-  <mwl-calendar-day-view
-    *ngSwitchCase="CalendarView.Day"
-    [viewDate]="viewDate"
-    [events]="events"
-    [refresh]="refresh"
-    (eventClicked)="handleEvent('Clicked', $event.event)"
-    (eventTimesChanged)="eventTimesChanged($event)"
-  >
+  <mwl-calendar-day-view *ngSwitchCase="CalendarView.Day" [viewDate]="viewDate" [events]="events" [refresh]="refresh"
+    (eventClicked)="handleEvent('Clicked', $event.event)" (eventTimesChanged)="eventTimesChanged($event)">
   </mwl-calendar-day-view>
 </div>
 
@@ -94,13 +50,19 @@
 
 <br /><br /><br />
 
-<h3>
-  Edit events
+<button mat-mini-fab color="primary" (click)="openDialog()">
+  <mat-icon>
+    add
+  </mat-icon>
+
+</button>
+
   <button class="btn btn-primary float-right" (click)="addEvent()">
     Add new
   </button>
+  
+  
   <div class="clearfix"></div>
-</h3>
 
 <div class="table-responsive">
   <table class="table table-bordered">
@@ -108,60 +70,47 @@
       <tr>
         <th>Title</th>
         <th>Primary color</th>
-        <th>Secondary color</th>
-        <th>Starts at</th>
-        <th>Ends at</th>
+        <th>Date</th>
         <th>Remove</th>
       </tr>
     </thead>
 
     <tbody>
       <tr *ngFor="let event of events">
+      <mat-form-field appearance="fill">
+        <mat-label>Stammeinrichtung wählen</mat-label>
+        <mat-select [(ngModel)]="event.title">
+          <mat-option *ngFor="let evento of eventsTest"   [value]="evento.title" (click)="getEventData(event, evento)"  >
+            {{evento.title}}
+          </mat-option>
+        </mat-select>
+        <!-- <mat-hint align="end">Wählen Sie eine Einrichtungsart aus</mat-hint> -->
+      </mat-form-field>
+    
+      <!-- <tr *ngFor="let event of events"> -->
+        <!-- <td>
+          <input type="text" class="form-control" [(ngModel)]="event.title" (keyup)="refresh.next()" />
+        </td>
+         <td>
+          <input type="color" [(ngModel)]="event.color.primary" (change)="refresh.next()" />
+        </td> -->
         <td>
-          <input
-            type="text"
-            class="form-control"
-            [(ngModel)]="event.title"
-            (keyup)="refresh.next()"
-          />
+          <mat-form-field appearance="fill">
+            <mat-label>Enter a date range</mat-label>
+            <mat-date-range-input [rangePicker]="picker">
+              <input matStartDate placeholder="Start date"
+              [(ngModel)]="event.start"
+              (ngModelChange)="refresh.next()">
+              <input matEndDate placeholder="End date"
+              [(ngModel)]="event.end" 
+              (ngModelChange)="refresh.next()">
+            </mat-date-range-input>
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-date-range-picker #picker></mat-date-range-picker>
+          </mat-form-field>
         </td>
         <td>
-          <input
-            type="color"
-            [(ngModel)]="event.color.primary"
-            (change)="refresh.next()"
-          />
-        </td>
-        <td>
-          <input
-            type="color"
-            [(ngModel)]="event.color.secondary"
-            (change)="refresh.next()"
-          />
-        </td>
-        <td>
-          <input
-            class="form-control"
-            type="text"
-            mwlFlatpickr
-            [(ngModel)]="event.start"
-            (ngModelChange)="refresh.next()"
-            dateFormat="Y-m-dTH:i"
-            altFormat="F j, Y H:i"
-            placeholder="Not set"
-          />
-        </td>
-        <td>
-          <input
-            class="form-control"
-            type="text"
-            mwlFlatpickr
-            [(ngModel)]="event.end"
-            (ngModelChange)="refresh.next()"
-            dateFormat="Y-m-dTH:i"
-            altFormat="F j, Y H:i"
-            placeholder="Not set"
-          />
+        
         </td>
         <td>
           <button class="btn btn-danger" (click)="deleteEvent(event)">
@@ -171,6 +120,7 @@
       </tr>
     </tbody>
   </table>
+
 </div>
 
 <ng-template #modalContent let-close="close">

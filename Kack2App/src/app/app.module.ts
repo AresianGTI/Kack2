@@ -52,6 +52,13 @@ import { FirestoreService } from './services/firestore/firestore.service';
 // import { GlobalstringsService } from './services/globalstrings/globalstrings.service';
 // import { FirestoreService } from './services/firestore/firestore.service';
 
+import { CommonModule } from '@angular/common';
+import { FlatpickrModule } from 'angularx-flatpickr';
+import { NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
+import { CalendarDialogComponent } from './calendar-dialog/calendar-dialog.component';
+import {MatDatepickerModule} from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -65,7 +72,8 @@ import { FirestoreService } from './services/firestore/firestore.service';
     FacilityChartComponent,
     TraineeChartComponent,
     CalendarComponent,
-    DialogBoxComponent
+    DialogBoxComponent,
+    CalendarDialogComponent
     
   ],
   imports: [
@@ -97,12 +105,16 @@ import { FirestoreService } from './services/firestore/firestore.service';
    MatIconModule,
    MatListModule,
    MatCheckboxModule,
+   NgbModalModule,
+   FlatpickrModule.forRoot(),
   //  Observable
   //  GoogleChartsModule
    CalendarModule.forRoot({ provide: DateAdapter, useFactory: adapterFactory }),
+   MatDatepickerModule,
+   MatNativeDateModule
   //  CalendarComponent,
   ],
-  providers: [AuthService, GlobalstringsService, FirestoreService],
+  providers: [AuthService, GlobalstringsService, FirestoreService, MatDatepickerModule, MatNativeDateModule],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

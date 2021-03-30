@@ -21,6 +21,8 @@ import {
   CalendarEventTimesChangedEvent,
   CalendarView,
 } from 'angular-calendar';
+import { MatDialog } from '@angular/material/dialog';
+import { CalendarDialogComponent } from 'src/app/calendar-dialog/calendar-dialog.component';
 
 const colors: any = {
   red: {
@@ -33,6 +35,10 @@ const colors: any = {
   },
   yellow: {
     primary: '#e3bc08',
+    secondary: '#FDF1BA',
+  },
+  green: {
+    primary: '#90ee90',
     secondary: '#FDF1BA',
   },
 };
@@ -78,12 +84,39 @@ export class CalendarComponent{
   ];
 
   refresh: Subject<any> = new Subject();
+  events: CalendarEvent[] = [  ];
 
-  events: CalendarEvent[] = [
+  eventsTest: CalendarEvent[] = [
     {
       start: subDays(startOfDay(new Date()), 1),
       end: addDays(new Date(), 1),
-      title: 'A 3 day event',
+      title: 'Praxisanleitung',
+      color: colors.blue,
+      actions: this.actions,
+      allDay: true,
+      resizable: {
+        beforeStart: true,
+        afterEnd: true,
+      },
+      draggable: true,
+    },
+    {
+      start: subDays(startOfDay(new Date()), 1),
+      end: addDays(new Date(), 1),
+      title: 'Privattermin',
+      color: colors.yellow,
+      actions: this.actions,
+      allDay: true,
+      resizable: {
+        beforeStart: true,
+        afterEnd: true,
+      },
+      draggable: true,
+    },
+    {
+      start: subDays(startOfDay(new Date()), 1),
+      end: addDays(new Date(), 1),
+      title: 'Krankmeldung',
       color: colors.red,
       actions: this.actions,
       allDay: true,
@@ -94,35 +127,24 @@ export class CalendarComponent{
       draggable: true,
     },
     {
-      start: startOfDay(new Date()),
-      title: 'An event with no end date',
-      color: colors.yellow,
+      start: subDays(startOfDay(new Date()), 1),
+      end: addDays(new Date(), 1),
+      title: 'Urlaubsanfrage',
+      color: colors.green,
       actions: this.actions,
-    },
-    {
-      start: subDays(endOfMonth(new Date()), 3),
-      end: addDays(endOfMonth(new Date()), 3),
-      title: 'A long event that spans 2 months',
-      color: colors.blue,
       allDay: true,
-    },
-    {
-      start: addHours(startOfDay(new Date()), 2),
-      end: addHours(new Date(), 2),
-      title: 'A draggable and resizable event',
-      color: colors.yellow,
-      actions: this.actions,
       resizable: {
         beforeStart: true,
         afterEnd: true,
       },
       draggable: true,
-    },
+    }
   ];
 
   activeDayIsOpen: boolean = true;
 
-  constructor(private modal: NgbModal) {}
+  constructor(private modal: NgbModal,
+    public dialog: MatDialog) {}
 
   dayClicked({ date, events }: { date: Date; events: CalendarEvent[] }): void {
     if (isSameMonth(date, this.viewDate)) {
@@ -165,11 +187,11 @@ export class CalendarComponent{
     this.events = [
       ...this.events,
       {
-        title: 'New event',
+        title: '',
         start: startOfDay(new Date()),
         end: endOfDay(new Date()),
         color: colors.red,
-        draggable: true,
+        // draggable: true,
         resizable: {
           beforeStart: true,
           afterEnd: true,
@@ -188,5 +210,11 @@ export class CalendarComponent{
 
   closeOpenMonthViewDay() {
     this.activeDayIsOpen = false;
+  }
+  openDialog(){
+    this.dialog.open(CalendarDialogComponent);
+  }
+  getEventData(event: any, evento: any){
+   event.color =  evento.color
   }
 }

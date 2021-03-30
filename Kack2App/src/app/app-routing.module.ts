@@ -19,6 +19,7 @@ import { FacilityChartComponent } from './modules/facility-chart/facility-chart.
 import { CalendarComponent } from './modules/calendar/calendar.component';
 import { DialogBoxComponent } from './modules/dialog-box/dialog-box.component';
 import { GlobalstringsService } from './services/globalstrings/globalstrings.service';
+import { CalendarDialogComponent } from './calendar-dialog/calendar-dialog.component';
 
 const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo(["loginView"]);
 const dd = () => redirectUnauthorizedTo(["single-trainee"]);
@@ -91,6 +92,7 @@ const routes: Routes = [
     // canActivate: [AngularFireAuthGuard],
     // data: { authGuardPipe: redirectUnauthorizedToLogin }
   },
+  {path: "calendar-dialog", component: CalendarDialogComponent}
 
   // { path: '**', redirectTo: "/loginView", pathMatch: "full" }
 

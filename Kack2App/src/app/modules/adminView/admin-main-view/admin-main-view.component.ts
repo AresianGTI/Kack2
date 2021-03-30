@@ -9,25 +9,11 @@ import { TraineeDialogComponent } from '../trainee-dialog/trainee-dialog.compone
 import { Facility, IFacility, IfacilityType } from 'src/app/models/facility';
 import { Coordinator } from 'src/app/models/user';
 import { Observable, of, Subject, Subscription } from 'rxjs';
-
-import {
-  animate,
-  state,
-  style,
-  transition,
-  trigger
-} from "@angular/animations";
-
+import {  animate,  state,  style, transition,  trigger} from "@angular/animations";
 import { AuthService } from 'src/app/core/auth.service';
 import { DialogBoxComponent } from '../../../modules/dialog-box/dialog-box.component';
 import { SubscriptionCollectionService } from 'src/app/services/subscription-collection.service';
 import { FirestoreService } from 'src/app/services/firestore/firestore.service';
-import { EnumRoles } from 'src/app/services/enums/enums.service';
-
-
-
-
-
 @Component({
   selector: 'app-admin-main-view',
   templateUrl: './admin-main-view.component.html',
@@ -43,16 +29,12 @@ import { EnumRoles } from 'src/app/services/enums/enums.service';
 export class AdminMainViewComponent implements OnInit, OnDestroy {
 
   expandedElement!: IFacility;
-
   tab_selection!: string;
   
   //for subscriptions and unsubscriptions
   subscriptions: Subscription[] = [];
   displayedColumnsFacility: string[] = ['Einrichtungsart', 'Name', 'Kapazitaet'];
-
-  
   displayedColumnsTrainee: string[] = ['name', 'firstName', 'homeFacility'];
-
   displayedColumnsCoordinators: string[] = ['Nachname', 'Vorname', 'test'];
   buttonIsHidden = false;
   dataSourceTest: any[] = [];

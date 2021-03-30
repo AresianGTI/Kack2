@@ -5,8 +5,6 @@ import { Facility, IfacilityType } from 'src/app/models/facility';
 import { CollectionsService } from 'src/app/services/collections/collections.service';
 import { FirestoreService } from 'src/app/services/firestore/firestore.service';
 
-
-
 @Component({
   selector: 'app-facility-dialog',
   templateUrl: './facility-dialog.component.html',
@@ -67,27 +65,32 @@ export class FacilityDialogComponent implements OnInit {
       
       this.firestoreService.createDocument(
         this.collectionService.facilityCollection,
-        this.getObjectData());
-      this.resetFacilityObject();
+        this.getFacilityStructure());
+      this.emptyFacilityObject();
     }
   }
-  resetFacilityObject() {
+  emptyFacilityObject() {
     this.facilityObj.name = "";
     this.facilityObj.adress = "";
     this.facilityObj.type.typeName = "";
     this.facilityObj.capacity = 1;
   }
 
-  getObjectData() {
+  /**
+   * Document-structure for the firebase facilityCollection
+   * @returns facilityObj
+   */
+  getFacilityStructure() {
     this.facilityObj.ID = this.firestoreService.createID(this.facilityObj);
-    let facilityObj =
+    let facilityStructureObj =
     {
       ID: this.facilityObj.ID,
       Name: this.facilityObj.name,
+      Kapazitaet: this.facilityObj.capacity,
+      VerwendeteKapazitaet : 0,
       Adresse: this.facilityObj.adress,
-      Einrichtungsart: this.facilityObj.type.typeName,
-      Kapazitaet: this.facilityObj.capacity
+      Einrichtungsart: this.facilityObj.type.typeName
     }
-    return facilityObj;
+    return facilityStructureObj;
   }
 }

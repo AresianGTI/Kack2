@@ -19,33 +19,6 @@ export class FirestoreService {
     return this.afs.collection(collection);
   }
 
-  // getMainFacility(collection: string): Array<{}>{
-
-  //   let usedFacilities: Array<{}> = [];
-
-  //   this.afs.collection(collection)
-  //     .get()
-  //     .toPromise().then( trainee => {
-  //       trainee.docs.forEach(element => {
-  //         usedFacilities.push(element.get("Stammeinrichtung"));
-  //       });
-  //       console.log(usedFacilities); // Array mit den Stammeinrichtungen
-  //    });
-
-  //    return usedFacilities;
-  // }    
-
-  // getExistingFacilities(collection: string, field:string):Array<any> {
-  //   let list: any[] = [];
-  //   this.afs.collection(collection)
-  //     .get().toPromise().then(ss => {
-  //       ss.docs.forEach(doc => { 
-  //         list.push(doc.get("Name"));
-  //       })
-  //     })
-  //     return list;
-  // }
-
   getFieldsFromCollection(collection: string, field: string):Array<any> {
     let fieldList: Array<{}> = [];
     this.afs.collection(collection)
@@ -92,14 +65,21 @@ export class FirestoreService {
     return objData.ID = this.afs.createId();
   }
 
-  updateCollection(collection: string, facility: Facility) {
-    return this.afs.collection(collection).doc(facility.ID).update(
+  updateCollection(collection: string, facilityObj: Facility) {
+    return this.afs.collection(collection).doc(facilityObj.ID).update(
       {
-        Name: facility.name,
-        Adresse: facility.adress,
-        Einrichtungsart: facility.type.typeName,
-        Kapazitaet: facility.capacity
+        Name: facilityObj.name,
+        Adresse: facilityObj.adress,
+        Einrichtungsart: facilityObj.type.typeName,
+        Kapazitaet: facilityObj.capacity 
       }
+    );
+  }
+  
+  updateUsedCapacity(collection: string, facilityObj: any) //getFactilityStructure Klasse
+  {
+    return this.afs.collection(collection).doc(facilityObj.ID).update(
+      {VerwendeteKapazitaet: facilityObj.VerwendeteKapazitaet+ 1}
     );
   }
 }

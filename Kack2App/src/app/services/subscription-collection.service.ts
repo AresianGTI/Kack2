@@ -11,7 +11,7 @@ export class SubscriptionCollectionService {
   DestroySubscriptions(subscriptionList: Subscription[]){
     const promise = subscriptionList.forEach(sub =>
       sub.unsubscribe(),
-      console.log("Sub unsubscribed"));
+      console.log("Sub unsubscribed in Subscription-Service"));
       subscriptionList.length = 0;
       
   }

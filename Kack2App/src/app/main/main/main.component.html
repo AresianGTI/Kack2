@@ -3,9 +3,10 @@
     <mat-toolbar>Menü</mat-toolbar>
     <mat-nav-list>
       <a mat-list-item matTooltip="Hier finden Sie die Übersicht" routerLink="/overview">Übersicht</a>
-      <a mat-list-item matTooltip="Hier finden Sie die Stammdaten" *ngIf="this.authService.userData.role == 'coordinator'" routerLink="/Stammdaten">Stammdaten</a>
+      <!-- Die '?' werden benötigt, damit kein Error auftaucht, wenn die userData Aufrufe schneler sind als die subscription -->
+      <a mat-list-item matTooltip="Hier finden Sie die Stammdaten" *ngIf="this.authService?.userData?.role == 'coordinator'" routerLink="/Stammdaten">Stammdaten</a>
       <a mat-list-item matTooltip="Hier finden Sie die Zeitplan" routerLink="/Calendar">Zeitplan</a>
-      <a mat-list-item matTooltip="Hier finden Sie Ihre Einsatzplanung" *ngIf="this.authService.userData.role == 'trainee'" routerLink="/GoogleCharts/facility-chart/trainee-chart">Einsatzplanung</a>
+      <a mat-list-item matTooltip="Hier finden Sie Ihre Einsatzplanung" *ngIf="this.authService?.userData?.role == 'trainee'" routerLink="/GoogleCharts/facility-chart/trainee-chart">Einsatzplanung</a>
       <a mat-list-item matTooltip="Hier finden Sie eine die verfügbaren Kapazitaeten der Einrichtungen"   *ngIf="this.authService?.userData?.role =='coordinator'" routerLink="/GoogleCharts">Kapazitäten</a>
     
       <a mat-list-item matTooltip="Hier finden Sie die Einstellungen" routerLink="#">Einstellungen</a>

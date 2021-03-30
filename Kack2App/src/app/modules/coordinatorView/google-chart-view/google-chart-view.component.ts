@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
 import { MatProgressBar, ProgressBarMode } from '@angular/material/progress-bar';
 import { Observable, Subscription } from 'rxjs';
@@ -12,14 +12,15 @@ import { SubscriptionCollectionService } from 'src/app/services/subscription-col
   templateUrl: './google-chart-view.component.html',
   styleUrls: ['./google-chart-view.component.scss']
 })
-export class GoogleChartViewComponent implements OnInit {
+export class GoogleChartViewComponent implements OnInit, OnDestroy {
   
   mode: ProgressBarMode = 'determinate';
   subscription: Subscription[] = [];
-  convertingArray!: any[];
+  convertingArray: any[] = [];
 
-  //überprüfen, ob das auch anders geht 
+  //getFactilityStructure Klasse
   facilityArray: Array<{
+    ID: string;
     Name: string;
     Kapazitaet: number;
     VerwendeteKapazitaet: number;
@@ -43,28 +44,34 @@ export class GoogleChartViewComponent implements OnInit {
     const facilityCol = this.firestoreService.getAllFacilities(this.collectionService.facilityCollection);
     const facilityObservableArray =  facilityCol.valueChanges();
 
-    this.subscription.push(facilityObservableArray.subscribe(facility => {  //converting in array
+    this.subscription.push(facilityObservableArray.subscribe((facility) => {  //converting in array
       this.convertingArray = facility;
       this.convertingArray.forEach(fclty => {  //push into Array for Progressbar
        this.facilityArray.push(fclty);
       })
-       this.calculateUsedCapacity(); 
     }))
   }
 
-  //Abfangen, dass verwendete Kapazität die maximale Kapazität nicht übersteigt
-  calculateUsedCapacity(){
-       //calculate the used mainfacility for progress-bar value
-       this.facilityArray.forEach(facility => {
-        facility.VerwendeteKapazitaet = 0;
-        this.usedFacilities.forEach(uF =>{
-          if(uF == facility.Name)
-            facility.VerwendeteKapazitaet++;             
-        });
-
-      });
-      this.subscriptionService.DestroySubscriptions(this.subscription);
-      console.log("Subscription: ", this.subscription);
+  ngOnDestroy(){
+    //Reset All...
+    this.subscriptionService.DestroySubscriptions(this.subscription);
+    this.facilityArray.length = 0;
+    this.convertingArray.length = 0;
   }
+
+
+  // //Berechnet die Kapazitäten für jede Einrichtung ohne verwendete Kapazitäten direkt auszulesen
+    // Nützlich, nachdem eine Einrichtung gelöscht wird, aber Azubis noch drin sind...
+  // calculateUsedCapacity(){
+  //   //calculate the used mainfacility for progress-bar value
+  //   this.facilityArray.forEach(facility => {
+  //    facility.VerwendeteKapazitaet = 0;
+  //    this.usedFacilities.forEach(uF =>{
+  //      if(uF == facility.Name)
+  //        facility.VerwendeteKapazitaet++;             
+  //    });
+
+  //  });
+
 
 }

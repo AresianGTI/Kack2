@@ -80,7 +80,9 @@ export class AuthService {
   // Sign up with email/password
   SignUpTrainees(email: string, password: string, data?: Trainee, 
     collection = this.collectionService.userCollection) {
+      //Create Authentication User
     return secondaryApp.auth().createUserWithEmailAndPassword(email, password)
+      //Create Trainee Document
       .then((result) => {
         this.firestoreService.createDocument(this.collectionService.userCollection, 
           this.setUserData(result.user!, data));

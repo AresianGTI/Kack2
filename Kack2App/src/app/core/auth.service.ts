@@ -43,7 +43,7 @@ export class AuthService {
         this.getUserDataFromFirestore(user);
         localStorage.setItem('user', JSON.stringify(user));
         JSON.parse(localStorage.getItem('user')!);
-        return this.afs.doc<any>(`users/${user.uid}`).valueChanges()
+        return this.afs.doc<any>(`usersCollection/${user.uid}`).valueChanges()
       } else {
         localStorage.setItem('user', this.userData);
         localStorage.getItem('user');
@@ -56,7 +56,8 @@ export class AuthService {
   SignIn(email: string, password: string) {
     return this.afAuth.signInWithEmailAndPassword(email, password)
       .then((result) => {
-      this.getUserDataFromFirestore(result.user)
+      this.getUserDataFromFirestore(result.user);
+      this.router.navigate(['/' + this.stringService.overview]);
       })  
       .catch(e => this.errorMessage = e.message);
   }
@@ -64,7 +65,7 @@ export class AuthService {
     this.firestoreService.getUserData(result, this.loginSubscriptions)
     .then((data) => {
       this.userData = data;
-      this.router.navigate(['/' + this.stringService.overview]);
+      
     })
   }
   

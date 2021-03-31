@@ -56,9 +56,6 @@ export class GoogleChartViewComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(){
     //Reset All...
-    // this.subscriptionService.DestroySubscriptions(this.subscription);
-    console.log("facilityArray: ", this.facilityArray);
-    console.log("convertingarray: ", this.convertingArray);
     this.facilityArray.length = 0;
     this.convertingArray.length = 0;
   }

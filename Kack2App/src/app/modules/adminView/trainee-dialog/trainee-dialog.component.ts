@@ -14,7 +14,6 @@ import { Facility, FacilityType } from 'src/app/models/facility';
 export class TraineeDialogComponent implements OnInit, OnDestroy {
 
   traineeObj: Trainee = new Trainee();
-  dialogFacilityObj: Facility = new Facility();
 
   //getFacilityStructure Klasse
   dialogfacilityArray: Array<{
@@ -25,11 +24,10 @@ export class TraineeDialogComponent implements OnInit, OnDestroy {
     Adresse: string;
     Einrichtungsart: FacilityType;
   }> = [];
-  selectedFacility: any; //getFacilityStructure
 
+  selectedFacility: any; //getFacilityStructure
   facilityCollection!: any;
   convertingArray: any;
-
   subscription: Subscription[] = [];
 
   constructor(
@@ -39,12 +37,15 @@ export class TraineeDialogComponent implements OnInit, OnDestroy {
     public subscriptionService: SubscriptionCollectionService
   ) { }
 
-
   ngOnDestroy(): void {
     this.subscriptionService.DestroySubscriptions(this.subscription);
   }
 
   ngOnInit(): void {
+    this.getSelectionFacilities();
+  }
+
+  getSelectionFacilities(){
     this.facilityCollection = this.fireStoreService.getAllFacilities(this.collectionService.facilityCollection);
     const facilityObservableArray = this.facilityCollection.valueChanges();
 
@@ -52,23 +53,31 @@ export class TraineeDialogComponent implements OnInit, OnDestroy {
       this.convertingArray = facility;
       this.convertingArray.forEach((fclty: any) => {
         this.dialogfacilityArray.push(fclty);
+        this.subscriptionService.DestroySubscriptions(this.subscription); //Muss an dieser Stelle zerstört werden
       })
-    }))
+    })
+    )
   }
 
   createTrainee() {
     this.traineeObj.homeFacility.name = this.selectedFacility.Name; //für das Trainee-Objekt...
     this.authService.SignUpTrainees(this.traineeObj.email, "hund111", this.traineeObj).then(() => {
       this.fireStoreService.updateUsedCapacity(this.collectionService.facilityCollection, this.selectedFacility)
-
-      //Clear Methode in FirestoreService?
-      this.subscriptionService.DestroySubscriptions(this.subscription);
-      this.dialogfacilityArray.length = 0;
-      this.selectedFacility = undefined;
-      this.traineeObj.name = "";
-      this.traineeObj.firstName = "";
-      this.traineeObj.email = "";
-      this.traineeObj.homeFacility.name = "";
+      this.refreshDialog();
     })
   }
+
+  refreshDialog(){
+    this.subscriptionService.DestroySubscriptions(this.subscription);
+    this.selectedFacility = undefined;
+    this.traineeObj.name = "";
+    this.traineeObj.firstName = "";
+    this.traineeObj.email = "";
+    this.traineeObj.homeFacility.name = "";
+    this.facilityCollection = undefined;
+    this.convertingArray.length = 0;
+    this.dialogfacilityArray.length = 0;
+    this.ngOnInit();
+  }
+
 }

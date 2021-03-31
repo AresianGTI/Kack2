@@ -34,7 +34,7 @@ export class AdminMainViewComponent implements OnInit, OnDestroy {
   //for subscriptions and unsubscriptions
   subscriptions: Subscription[] = [];
   displayedColumnsFacility: string[] = ['Einrichtungsart', 'Name', 'Kapazitaet'];
-  displayedColumnsTrainee: string[] = ['name', 'firstName', 'homeFacility'];
+  displayedColumnsTrainee: string[] = ['firstName', 'name', 'homeFacility'];
   displayedColumnsCoordinators: string[] = ['Nachname', 'Vorname', 'test'];
   buttonIsHidden = false;
   dataSourceTest: any[] = [];

@@ -48,13 +48,17 @@ export class GoogleChartViewComponent implements OnInit, OnDestroy {
       this.convertingArray = facility;
       this.convertingArray.forEach(fclty => {  //push into Array for Progressbar
        this.facilityArray.push(fclty);
+       this.subscriptionService.DestroySubscriptions(this.subscription);
       })
     }))
+    this.facilityArray.length = 0;
   }
 
   ngOnDestroy(){
     //Reset All...
-    this.subscriptionService.DestroySubscriptions(this.subscription);
+    // this.subscriptionService.DestroySubscriptions(this.subscription);
+    console.log("facilityArray: ", this.facilityArray);
+    console.log("convertingarray: ", this.convertingArray);
     this.facilityArray.length = 0;
     this.convertingArray.length = 0;
   }
@@ -73,5 +77,5 @@ export class GoogleChartViewComponent implements OnInit, OnDestroy {
 
   //  });
 
-
-}
+  // }
+  }

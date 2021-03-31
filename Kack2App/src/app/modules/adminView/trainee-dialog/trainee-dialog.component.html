@@ -3,7 +3,7 @@
   <p>
     Geben Sie bitte den Namen, den Nachnamen und die Stammeinrichtung des Azubis an.<br />
   </p>
-  <mat-label style="color:crimson" *ngIf = " selectedFacility && (selectedFacility.VerwendeteKapazitaet >= selectedFacility.Kapazitaet)">Keine Kapazitäten mehr frei in dieser Einrichtung!</mat-label> 
+ 
   <div class="example-container">
     <!-- Feld für den Azubinamen -->
     <mat-form-field hintLabel="Maximal 30 Zeichen" appearance="fill">
@@ -36,6 +36,7 @@
     </mat-form-field>
   </div>
 </mat-dialog-content>
+<mat-label style="color:crimson" *ngIf = " selectedFacility && (selectedFacility.VerwendeteKapazitaet >= selectedFacility.Kapazitaet)">Keine Kapazitäten mehr frei in dieser Einrichtung!</mat-label> 
 
 <mat-dialog-actions align="End">
   <button mat-raised-button color="primary" mat-dialog-close>Abbrechen</button>

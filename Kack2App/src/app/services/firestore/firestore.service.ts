@@ -31,7 +31,7 @@ export class FirestoreService {
   }
 
   getUserData = (user: any, subscriptionList: Subscription[]): Promise<any> => {
-    var docRef = this.afs.collection("usersCollection").doc(`/${user.uid}`);
+    var docRef = this.afs.collection(this.collectionService.userCollection).doc(`/${user.uid}`);
     return docRef.ref.get().then((doc) => {
       return doc.data();
     })

@@ -26,7 +26,7 @@ export class User implements IUser {
     _name!: string;
     _firstName!: string;
     _role!: string;
-    private _homeFacility = new Facility(); // sollte in Trainee und Teacher ausgelagert werden
+    private _homeFacility = new Facility();
 
     public get homeFacility() {
         return this._homeFacility;

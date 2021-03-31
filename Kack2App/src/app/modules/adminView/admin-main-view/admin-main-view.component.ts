@@ -14,6 +14,7 @@ import { AuthService } from 'src/app/core/auth.service';
 import { DialogBoxComponent } from '../../../modules/dialog-box/dialog-box.component';
 import { SubscriptionCollectionService } from 'src/app/services/subscription-collection.service';
 import { FirestoreService } from 'src/app/services/firestore/firestore.service';
+import { CollectionsService } from 'src/app/services/collections/collections.service';
 @Component({
   selector: 'app-admin-main-view',
   templateUrl: './admin-main-view.component.html',
@@ -48,7 +49,8 @@ export class AdminMainViewComponent implements OnInit, OnDestroy {
     public dialog: MatDialog,
     public authService: AuthService,
     public subscriptionService: SubscriptionCollectionService,
-    public firestoreService: FirestoreService) {
+    public firestoreService: FirestoreService,
+    private collectionService: CollectionsService) {
   }
 
   ngOnDestroy(): void {
@@ -66,8 +68,8 @@ export class AdminMainViewComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.tab_selection = "Einrichtung";
-    this.refreshList1("facilityCollection", this.facilityCollection);
-    this.refreshList("usersCollection", this.traineeCollection);
+    this.refreshList1(this.collectionService.facilityCollection, this.facilityCollection);
+    this.refreshList(this.collectionService.userCollection, this.traineeCollection);
   }
 
   refreshList1(p_facilityElements: string, collection: MatTableDataSource<any>) {
@@ -141,7 +143,7 @@ export class AdminMainViewComponent implements OnInit, OnDestroy {
       dialogRef.afterClosed()
       .subscribe((result: { event: string; data: any; }) =>
        { this.firestoreService.deleteDocument(
-         result.data, "facilityCollection") });
+         result.data, this.collectionService.facilityCollection) });
     }
   }
 
@@ -152,10 +154,10 @@ export class AdminMainViewComponent implements OnInit, OnDestroy {
   getActiveTab(){
     let currentCollection: string = "";
     if(this.tab_selection == "Einrichtung") {
-    currentCollection = "facilityCollection";
+    currentCollection = this.collectionService.facilityCollection;
     }
     if(this.tab_selection == "Auszubildender"){
-      currentCollection = "usersCollection";
+      currentCollection = this.collectionService.userCollection;
     }
     return currentCollection;
 

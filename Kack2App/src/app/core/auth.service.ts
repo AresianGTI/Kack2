@@ -43,7 +43,7 @@ export class AuthService {
         this.getUserDataFromFirestore(user);
         localStorage.setItem('user', JSON.stringify(user));
         JSON.parse(localStorage.getItem('user')!);
-        return this.afs.doc<any>(`usersCollection/${user.uid}`).valueChanges()
+        return this.afs.doc<any>(this.collectionService.userCollection+`/${user.uid}`).valueChanges() //Mal schauen ob Kaki recht hat ...
       } else {
         localStorage.setItem('user', this.userData);
         localStorage.getItem('user');
@@ -69,11 +69,11 @@ export class AuthService {
     })
   }
   
-  SignUp(email: string, password: string, data?: any) {
+  SignUp(email: string, password: string, userData?: any) {
     return this.afAuth.createUserWithEmailAndPassword(email, password)
       .then((result) => {
         this.firestoreService.createDocument(this.collectionService.userCollection, 
-          this.setUserData(result.user!, data));
+          this.setUserData(result.user!, userData));
       })
       .catch(e => this.errorMessage = e.message);
   }
@@ -134,6 +134,8 @@ export class AuthService {
   //       window.alert(error)
   //     })
   // }
+
+  //XYZ 
   setUserData(user: any, data?: any) {
     const userFirebaseStructure: any = {
       ID: user.uid,

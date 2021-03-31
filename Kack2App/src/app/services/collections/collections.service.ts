@@ -4,12 +4,12 @@ import { Injectable } from '@angular/core';
   providedIn: 'root'
 })
 export class CollectionsService {
-  private _userCollection = "usersCollection";
+  private _userCollection = "usersCollectionOnur";
   public get userCollection() {
     return this._userCollection;
   }
 
-  private _facilityCollection = "facilityCollection";
+  private _facilityCollection = "facilityCollectionOnur";
   public get facilityCollection() {
     return this._facilityCollection;
   }

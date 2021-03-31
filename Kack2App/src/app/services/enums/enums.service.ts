@@ -10,11 +10,17 @@ export enum EnumRoles {
     admin = "admin",
     trainee = "trainee",
 }
+
+export enum EnumMeetingTypes {
+
+  practicalMeeting = "Praxisanleitung",
+  singleMeeting = "Einzelgespräch",
+  applyVacation = "Urlaub beantragen",
+  notificationOfIlness = "Krankmeldung",
+}
 @Injectable({
   providedIn: 'root'
 })
-// enum IRoles {
-//   admin = "ss"}
 
 
 export class EnumsService {

@@ -58,6 +58,7 @@ import { NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
 import { CalendarDialogComponent } from './calendar-dialog/calendar-dialog.component';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
+import { CalendarService } from './services/calendar/calendar.service';
 
 @NgModule({
   declarations: [
@@ -114,7 +115,9 @@ import { MatNativeDateModule } from '@angular/material/core';
    MatNativeDateModule
   //  CalendarComponent,
   ],
-  providers: [AuthService, GlobalstringsService, FirestoreService, MatDatepickerModule, MatNativeDateModule],
+  providers: [AuthService, GlobalstringsService, 
+    FirestoreService, MatDatepickerModule,
+    MatNativeDateModule, CalendarService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -19,33 +19,6 @@ export class FirestoreService {
     return this.afs.collection(collection);
   }
 
-  // getMainFacility(collection: string): Array<{}>{
-
-  //   let usedFacilities: Array<{}> = [];
-
-  //   this.afs.collection(collection)
-  //     .get()
-  //     .toPromise().then( trainee => {
-  //       trainee.docs.forEach(element => {
-  //         usedFacilities.push(element.get("Stammeinrichtung"));
-  //       });
-  //       console.log(usedFacilities); // Array mit den Stammeinrichtungen
-  //    });
-
-  //    return usedFacilities;
-  // }    
-
-  // getExistingFacilities(collection: string, field:string):Array<any> {
-  //   let list: any[] = [];
-  //   this.afs.collection(collection)
-  //     .get().toPromise().then(ss => {
-  //       ss.docs.forEach(doc => { 
-  //         list.push(doc.get("Name"));
-  //       })
-  //     })
-  //     return list;
-  // }
-
   getFieldsFromCollection(collection: string, field: string):Array<any> {
     let fieldList: Array<{}> = [];
     this.afs.collection(collection)
@@ -57,7 +30,7 @@ export class FirestoreService {
       return fieldList;
   }
 
-  getUserData = (user: any, subscriptionList: Subscription[]): Promise<any> => {
+  getUserData = (user: any, subscriptionList?: Subscription[]): Promise<any> => {
     var docRef = this.afs.collection("usersCollection").doc(`/${user.uid}`);
     return docRef.ref.get().then((doc) => {
       return doc.data();
@@ -67,6 +40,12 @@ export class FirestoreService {
 // Setting up user and facilities
  createDocument(collection: string, objData: any) {
   this.afs.collection(collection).doc(objData.ID).set(objData).then(res => {
+  }).catch(error => {
+    console.log(error);
+  });
+}
+updateDocument(collection: string, objDatass: any) {
+  this.afs.collection(collection).doc(objDatass.ID).set({objDatass}, {merge: true}).then(res => {
   }).catch(error => {
     console.log(error);
   });
@@ -88,8 +67,13 @@ export class FirestoreService {
       );
   }
 
-  createID(objData: any){
-    return objData.ID = this.afs.createId();
+  createID(objData?: any){
+    if(objData){
+      return objData.ID = this.afs.createId();
+    }
+    else{
+      return this.afs.createId();
+    }
   }
 
   updateCollection(collection: string, facility: Facility) {

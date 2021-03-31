@@ -25,7 +25,7 @@ export class TraineeDialogComponent implements OnInit {
     this.facilityList =  this.fireStoreService.getFieldsFromCollection( this.collectionService.facilityCollection, "Name")
       console.log("Das sind die Data im Dialog", this.facilityList);
     // this.onQuery( this.firestore.collection('users', ref => ref
-    // .where("roles.trainee", "==", true)));
+    // .where("roles", "==", trainee)));
   }
 
   createTrainee() {

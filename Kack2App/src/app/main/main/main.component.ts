@@ -15,7 +15,9 @@ export class MainComponent implements OnInit {
   constructor(private router: Router, public authService: AuthService) {
   }
 
-  logOut() { this.authService.SignOut(); }
+  logOut() { 
+    this.authService.SignOut();
+   }
 
   ngOnInit(): void {
     this.authService.user$.subscribe();

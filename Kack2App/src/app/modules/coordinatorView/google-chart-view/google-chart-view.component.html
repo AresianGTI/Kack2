@@ -3,10 +3,10 @@
         <h2 class="example-h2">Kapazitäten im Verbund</h2>
 
         <section class="example-section" *ngFor="let facility of facilityArray">
-            <mat-label class="label">{{facility.Name}}</mat-label>
-            <mat-progress-bar class="example-margin" color="primary" [mode]="mode" [value]="facility.VerwendeteKapazitaet / facility.Kapazitaet * 100">
+            <mat-label class="label">{{facility.name}}</mat-label>
+            <mat-progress-bar class="example-margin" color="primary" [mode]="mode" [value]="facility.usedCapacity / facility.capacity * 100">
             </mat-progress-bar>
-            <mat-label class ="capacity_label">Maximale Kapazität: {{facility.Kapazitaet}} Verwendete Kapazität: {{facility.VerwendeteKapazitaet}}</mat-label>
+            <mat-label class ="capacity_label">Maximale Kapazität: {{facility.capacity}} Verwendete Kapazität: {{facility.usedCapacity}}</mat-label>
         </section>
 
     </mat-card-content>

@@ -3,7 +3,7 @@ import { AngularFireAuth } from "@angular/fire/auth";
 import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firestore';
 import { Router } from "@angular/router";
 import firebase from 'firebase';
-import { Trainee } from '../models/user';
+import { Coordinator, Trainee } from '../models/user';
 import { Observable, of, Subscription } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { switchMap, take } from 'rxjs/operators/';
@@ -13,6 +13,7 @@ import { FirestoreService } from '../services/firestore/firestore.service';
 import { CollectionsService } from '../services/collections/collections.service';
 import { IUser } from '../models/user';
 import { EnumRoles } from '../services/enums/enums.service';
+import { IUserFirebaseStructure} from '../models/firestoreModels'
 
 const secondaryApp = firebase.initializeApp(environment.firebaseConfig, 'Secondary');
 @Injectable({
@@ -43,7 +44,7 @@ export class AuthService {
         this.getUserDataFromFirestore(user);
         localStorage.setItem('user', JSON.stringify(user));
         JSON.parse(localStorage.getItem('user')!);
-        return this.afs.doc<any>(`usersCollection/${user.uid}`).valueChanges()
+        return this.afs.doc<any>(this.collectionService.userCollection+`/${user.uid}`).valueChanges() //Mal schauen ob Kaki recht hat ...
       } else {
         localStorage.setItem('user', this.userData);
         localStorage.getItem('user');
@@ -69,18 +70,18 @@ export class AuthService {
     })
   }
   
-  SignUp(email: string, password: string, data?: any) {
+  SignUpCoordinator(email: string, password: string, userData: Coordinator) {
     return this.afAuth.createUserWithEmailAndPassword(email, password)
       .then((result) => {
         this.firestoreService.createDocument(this.collectionService.userCollection, 
-          this.setUserData(result.user!, data));
+          this.setUserData(result.user!, userData));
       })
       .catch(e => this.errorMessage = e.message);
   }
 
   // Sign up with email/password
-  SignUpTrainees(email: string, password: string, data?: Trainee, 
-    collection = this.collectionService.userCollection) {
+  SignUpTrainees(email: string, password: string, data: Trainee, 
+    ) {
       //Create Authentication User
     return secondaryApp.auth().createUserWithEmailAndPassword(email, password)
       //Create Trainee Document
@@ -134,19 +135,20 @@ export class AuthService {
   //       window.alert(error)
   //     })
   // }
-  setUserData(user: any, data?: any) {
-    const userFirebaseStructure: any = {
+
+  setUserData(user: any, data: IUser) {
+    const userStructure: IUserFirebaseStructure = {
       ID: user.uid,
       email: user.email!,
       displayName: user.displayName!,
       emailVerified: user.emailVerified,
-      role: data?.role,
-      homeFacility: data?.homeFacility.name || "No Homefacility",
+      role: data.role || "Error, no Role", 
+      homeFacility: data.homeFacility.name || "No Homefacility",
       name: data?.name || "No Value",
       firstName: data?.firstName || "No Value"
     }
     // Updates existing Documents in a non-destructive way
-    return userFirebaseStructure;
+    return userStructure;
   }
   SignOutCreatedUser() {
     return this.afAuth.signOut().then(() => {

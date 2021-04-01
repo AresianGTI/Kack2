@@ -14,6 +14,7 @@ import { AuthService } from 'src/app/core/auth.service';
 import { DialogBoxComponent } from '../../../modules/dialog-box/dialog-box.component';
 import { SubscriptionCollectionService } from 'src/app/services/subscription-collection.service';
 import { FirestoreService } from 'src/app/services/firestore/firestore.service';
+import { CollectionsService } from 'src/app/services/collections/collections.service';
 @Component({
   selector: 'app-admin-main-view',
   templateUrl: './admin-main-view.component.html',
@@ -26,6 +27,7 @@ import { FirestoreService } from 'src/app/services/firestore/firestore.service';
     ]),
   ],
 })
+
 export class AdminMainViewComponent implements OnInit, OnDestroy {
 
   expandedElement!: IFacility;
@@ -33,14 +35,33 @@ export class AdminMainViewComponent implements OnInit, OnDestroy {
   
   //for subscriptions and unsubscriptions
   subscriptions: Subscription[] = [];
-  displayedColumnsFacility: string[] = ['Einrichtungsart', 'Name', 'Kapazitaet'];
-  displayedColumnsTrainee: string[] = ['firstName', 'name', 'homeFacility'];
-  displayedColumnsCoordinators: string[] = ['Nachname', 'Vorname', 'test'];
-  buttonIsHidden = false;
-  dataSourceTest: any[] = [];
 
-  facilityCollection = new MatTableDataSource<Facility>([]);  // Elemente für die Einrichtungstabelle
-  traineeCollection = new MatTableDataSource<Trainee>([]);  // Elemente für die Azubitabelle
+  translatedColumnsFacility: string[] = [ 'Name', 'Einrichtungsart', 'Adresse', 'Kapazitaet'];
+  ColumnsFacility = [ 
+    {'translated': 'Name', 'field' : 'name'},
+    {'translated': 'Einrichtungsart', 'field' : 'type'},
+    {'translated': 'Adresse', 'field' : 'adress'},
+    {'translated': 'Kapazitaet', 'field' : 'capacity'}
+    ];
+
+  translatedColumnsTrainee: string[] = ['Vorname', 'Name', 'Stammeinrichtung'];
+  ColumnsTrainee = [
+    {'translated': 'Vorname', 'field' : 'firstName'},
+    {'translated': 'Name', 'field' : 'name'},
+    {'translated': 'Stammeinrichtung', 'field' : 'homeFacility'},
+  ];
+
+  translatedColumnsCoordinator: string[] = ['Nachname', 'Vorname', 'test'];
+  ColumnsCoordonator = [
+    {'translated': 'Vorname', 'field' : 'firstName'},
+    {'translated': 'Name', 'field' : 'name'},
+    {'translated': 'Stammeinrichtung', 'field' : 'homeFacility'},
+  ];
+
+  buttonIsHidden = false;
+
+  facilityContent = new MatTableDataSource<Facility>([]);  // Elemente für die Einrichtungstabelle
+  traineeContent = new MatTableDataSource<Trainee>([]);  // Elemente für die Azubitabelle
   CoordinatorCollection = new MatTableDataSource<Coordinator>([]);
 
   constructor(
@@ -48,14 +69,12 @@ export class AdminMainViewComponent implements OnInit, OnDestroy {
     public dialog: MatDialog,
     public authService: AuthService,
     public subscriptionService: SubscriptionCollectionService,
-    public firestoreService: FirestoreService) {
+    public firestoreService: FirestoreService,
+    private collectionService: CollectionsService) {
   }
 
   ngOnDestroy(): void {
-
-    // this.subscriptions.forEach(sub => sub.unsubscribe());
     this.subscriptionService.DestroySubscriptions(this.subscriptions);
-
   }
 
   setTab(tabChangeEvent: MatTabChangeEvent) {          // Hier wird der Label vom Tab in die Variable zugewiesen!!!
@@ -66,12 +85,12 @@ export class AdminMainViewComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.tab_selection = "Einrichtung";
-    this.refreshList1("facilityCollection", this.facilityCollection);
-    this.refreshList("usersCollection", this.traineeCollection);
+    this.refreshFacilityList(this.collectionService.facilityCollection, this.facilityContent); // Die Reihenfolge der beiden Methoden verändert es ganz 
+    this.refreshtTraineeList(this.collectionService.userCollection, this.traineeContent);      // merwürdig. Beim ersten Aufruf funktioniert es, wie es soll...
   }
 
-  refreshList1(p_facilityElements: string, collection: MatTableDataSource<any>) {
-    const collectionRef = this.store.collection(p_facilityElements);
+  refreshFacilityList(collection: string, tableContent: MatTableDataSource<any>) {
+    const collectionRef = this.store.collection(collection);
     const collectionInstance = collectionRef.valueChanges();
 
     this.subscriptions.push(
@@ -80,14 +99,14 @@ export class AdminMainViewComponent implements OnInit, OnDestroy {
           let ELEMENT_DATA: any[] = [];
           ss.forEach(element => {
             ELEMENT_DATA.push(element);
-            collection.data = ELEMENT_DATA;
-           
+            tableContent.data = ELEMENT_DATA;
           });
-          console.log("MyArray:",  collection.data);
+          // this.subscriptionService.DestroySubscriptions(this.subscriptions);
+          console.log("MyArrayInFacility:",  tableContent.data);
         }));
   }
-  refreshList(p_facilityElements: string, collection: MatTableDataSource<any>) {
-    const collectionRef = this.store.collection(p_facilityElements);
+  refreshtTraineeList(collection: string, tableContent: MatTableDataSource<any>) {
+    const collectionRef = this.store.collection(collection);
     const collectionInstance = collectionRef.valueChanges();
 
     this.subscriptions.push(
@@ -96,12 +115,13 @@ export class AdminMainViewComponent implements OnInit, OnDestroy {
           let ELEMENT_DATA: any[] = [];
           ss.forEach(element => {
             ELEMENT_DATA.push(element);
-            collection.data = ELEMENT_DATA;
-            
+            tableContent.data = ELEMENT_DATA;
           });
-          console.log("MyArray2:",  collection.data);
+          // this.subscriptionService.DestroySubscriptions(this.subscriptions);
+          console.log("MyArrayInTrainee:",  tableContent.data);
         }));
   }
+  
   ChooseDialog(action: any, obj?: { action?: any; }) {
     let dialogRef: any;
     let data;
@@ -141,7 +161,7 @@ export class AdminMainViewComponent implements OnInit, OnDestroy {
       dialogRef.afterClosed()
       .subscribe((result: { event: string; data: any; }) =>
        { this.firestoreService.deleteDocument(
-         result.data, "facilityCollection") });
+         result.data, this.collectionService.facilityCollection) });
     }
   }
 
@@ -152,22 +172,21 @@ export class AdminMainViewComponent implements OnInit, OnDestroy {
   getActiveTab(){
     let currentCollection: string = "";
     if(this.tab_selection == "Einrichtung") {
-    currentCollection = "facilityCollection";
+    currentCollection = this.collectionService.facilityCollection;
     }
     if(this.tab_selection == "Auszubildender"){
-      currentCollection = "usersCollection";
+      currentCollection = this.collectionService.userCollection;
     }
     return currentCollection;
 
   }
   deleteAll(){
-    this.firestoreService.deleteAllDocuments(this.facilityCollection,this.getActiveTab());
+    this.firestoreService.deleteAllDocuments(this.facilityContent,this.getActiveTab());
   }
 
   // }
 
   // -------- Methoden für Checkboxen in der Tabelle -----------
-
 
   // isAllSelected() {
   //   const numSelected = this.selection.selected.length;

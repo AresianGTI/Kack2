@@ -29,17 +29,17 @@
       <mat-select [(ngModel)]="selectedFacility">
         <mat-option *ngFor="let facility of dialogfacilityArray" [value]="facility">
           <!-- [value]="facility.Name" um hier mit der String zu arbeiten -->
-          {{facility.Name}}
+          {{facility.name}}
         </mat-option>
       </mat-select>
-      <mat-hint align="end" *ngIf = "selectedFacility">Verwendet {{selectedFacility.VerwendeteKapazitaet}} von {{selectedFacility.Kapazitaet}}</mat-hint>
+      <mat-hint align="end" *ngIf = "selectedFacility">Verwendet {{selectedFacility.usedCapacity}} von {{selectedFacility.capacity}}</mat-hint>
     </mat-form-field>
   </div>
 </mat-dialog-content>
-<mat-label style="color:crimson" *ngIf = " selectedFacility && (selectedFacility.VerwendeteKapazitaet >= selectedFacility.Kapazitaet)">Keine Kapazitäten mehr frei in dieser Einrichtung!</mat-label> 
+<mat-label style="color:crimson" *ngIf = " selectedFacility && (selectedFacility.usedCapacity >= selectedFacility.capacity)">Keine Kapazitäten mehr frei in dieser Einrichtung!</mat-label> 
 
 <mat-dialog-actions align="End">
   <button mat-raised-button color="primary" mat-dialog-close>Abbrechen</button>
   <button mat-raised-button (click)="createTrainee()" color="primary" [disabled]="!traineeObj.firstName || !traineeObj.name || !traineeObj.email ||
-  !selectedFacility || (selectedFacility.VerwendeteKapazitaet >= selectedFacility.Kapazitaet)">Erstellen</button>
+  !selectedFacility || (selectedFacility.usedCapacity >= selectedFacility.capacity)">Erstellen</button>
 </mat-dialog-actions>

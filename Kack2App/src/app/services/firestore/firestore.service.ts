@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firestore';
 import { Observable, Subject, Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
-import { Facility } from 'src/app/models/facility';
+import { Facility, IFacility } from 'src/app/models/facility';
+import { IFacilityFirebaseStructure } from 'src/app/models/firestoreModels';
 import { CollectionsService } from '../collections/collections.service';
 import { GlobalstringsService } from '../globalstrings/globalstrings.service';
 
@@ -65,21 +66,24 @@ export class FirestoreService {
     return objData.ID = this.afs.createId();
   }
 
-  updateCollection(collection: string, facilityObj: Facility) {
+  updateFacilityCollection(collection: string, facilityObj: Facility) {
     return this.afs.collection(collection).doc(facilityObj.ID).update(
       {
-        Name: facilityObj.name,
-        Adresse: facilityObj.adress,
-        Einrichtungsart: facilityObj.type.typeName,
-        Kapazitaet: facilityObj.capacity 
+        //Updateable fields in update-dialog
+        name: facilityObj.name,
+        adress: facilityObj.adress,
+        type: facilityObj.type.typeName, //this does not change anything in the update-dialog, but also should not change in real case
+        capacity: facilityObj.capacity 
       }
     );
   }
   
-  updateUsedCapacity(collection: string, facilityObj: any) //getFactilityStructure Klasse
-  {
-    return this.afs.collection(collection).doc(facilityObj.ID).update(
-      {VerwendeteKapazitaet: facilityObj.VerwendeteKapazitaet+ 1}
-    );
+  updateUsedCapacity(collection: string, facilityObj: IFacility | undefined): void {
+  
+    if(facilityObj){
+       this.afs.collection(collection).doc(facilityObj.ID).update(
+        {usedCapacity: facilityObj.usedCapacity + 1}
+      );
+    }
   }
 }

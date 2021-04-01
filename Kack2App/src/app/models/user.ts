@@ -16,6 +16,7 @@ export interface IUser {
     role: string,
     name: string;
     firstName: string;
+    homeFacility: Facility;
 }
 
 export class User implements IUser {

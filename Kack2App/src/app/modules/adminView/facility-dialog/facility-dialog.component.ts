@@ -2,6 +2,7 @@ import { Component, Inject, OnInit, Optional } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Facility, IfacilityType } from 'src/app/models/facility';
+import { IFacilityFirebaseStructure } from 'src/app/models/firestoreModels';
 import { CollectionsService } from 'src/app/services/collections/collections.service';
 import { FirestoreService } from 'src/app/services/firestore/firestore.service';
 
@@ -46,10 +47,10 @@ export class FacilityDialogComponent implements OnInit {
     //get the current fields for editing facilities
     if (this.local_data) {
       this.facilityObj.ID = this.local_data.ID;
-      this.facilityObj.name = this.local_data.Name;
-      this.facilityObj.type.typeName = this.local_data.Einrichtungsart;
-      this.facilityObj.capacity = this.local_data.Kapazitaet;
-      this.facilityObj.adress = this.local_data.Adresse;
+      this.facilityObj.name = this.local_data.name;
+      this.facilityObj.type.typeName = this.local_data.type;
+      this.facilityObj.capacity = this.local_data.capacity;
+      this.facilityObj.adress = this.local_data.adress;
     }
   }
 
@@ -59,7 +60,7 @@ export class FacilityDialogComponent implements OnInit {
 
   chooseFunction() {
     if (this.action == "Update") {
-      this.firestoreService.updateCollection(this.collectionService.facilityCollection, this.facilityObj)
+      this.firestoreService.updateFacilityCollection(this.collectionService.facilityCollection, this.facilityObj)
     }
     else if (this.action == "Create") {
       
@@ -82,14 +83,13 @@ export class FacilityDialogComponent implements OnInit {
    */
   getFacilityStructure() {
     this.facilityObj.ID = this.firestoreService.createID(this.facilityObj);
-    let facilityStructureObj =
-    {
+    let facilityStructureObj: IFacilityFirebaseStructure = {
       ID: this.facilityObj.ID,
-      Name: this.facilityObj.name,
-      Kapazitaet: this.facilityObj.capacity,
-      VerwendeteKapazitaet : 0,
-      Adresse: this.facilityObj.adress,
-      Einrichtungsart: this.facilityObj.type.typeName
+      name: this.facilityObj.name,
+      capacity: this.facilityObj.capacity,
+      usedCapacity: 0,
+      adress: this.facilityObj.adress,
+      type: this.facilityObj.type.typeName
     }
     return facilityStructureObj;
   }

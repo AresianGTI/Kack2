@@ -4,70 +4,62 @@
     <mat-tab label="Einrichtung" textLabel="tab_selection">
         <ng-template matTabContent>
 
-        
-        <table mat-table [dataSource]="facilityCollection" multiTemplateDataRows class="mat-elevation-z8">
-            <ng-container matColumnDef="{{column}}" *ngFor="let column of displayedColumnsFacility">
-                <th mat-header-cell *matHeaderCellDef> {{column}} </th>
-                <td mat-cell *matCellDef="let element"> {{element[column]}} </td>
-            </ng-container>
+            <table mat-table [dataSource]="facilityContent" multiTemplateDataRows class="mat-elevation-z8">
+                <ng-container matColumnDef="{{column.translated}}" *ngFor="let column of ColumnsFacility">
+                    <th mat-header-cell *matHeaderCellDef> {{column.translated}} </th>
+                    <td mat-cell *matCellDef="let element"> {{element[column.field]}} </td>
+                </ng-container>
 
-            <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
-            <ng-container matColumnDef="expandedDetail">
-                <td mat-cell *matCellDef="let element" [attr.colspan]="displayedColumnsFacility.length">
-                    <div class="example-element-detail"
-                        [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
-                        <div class="example-element-diagram">
-                            <div class="example-element-name"> Ich bins, der {{element.Name}}
-                                <button mat-raised-button color="primary" (click)="openDialog('Update', element)">Edit</button> |
-                                <button mat-raised-button color="primary" (click)="openDialog('Delete',element)">Delete</button>
+                <ng-container matColumnDef="expandedDetail">
+                    <td mat-cell *matCellDef="let element" [attr.colspan]="ColumnsFacility.length">
+                        <div class="example-element-detail"
+                            [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
+                            <div class="example-element-diagram">
+                                <div class="example-element-name"> Ich bins, der {{element.Name}}
+                                    <button mat-raised-button color="primary" (click)="openDialog('Update', element)">Edit</button> |
+                                    <button mat-raised-button color="primary" (click)="openDialog('Delete',element)">Delete</button>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </td>
-            </ng-container>
+                    </td>
+                </ng-container>
 
-            <tr mat-header-row *matHeaderRowDef="displayedColumnsFacility"></tr>
-            <tr mat-row *matRowDef="let element; columns: displayedColumnsFacility;" class="example-element-row"
-                [class.example-expanded-row]="expandedElement == element"
-                (click)="expandedElement = expandedElement == element ? null : element">
-            </tr>
-            <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
-        </table>
-    </ng-template>
+                <tr mat-header-row *matHeaderRowDef="translatedColumnsFacility"></tr>
+                <tr mat-row *matRowDef="let element; columns: translatedColumnsFacility;" class="example-element-row"
+                    [class.example-expanded-row]="expandedElement == element"
+                    (click)="expandedElement = expandedElement == element ? null : element">
+                </tr>
+                <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
+            </table>
+        </ng-template>
 
     </mat-tab>
-
-
-
-
 
     <mat-tab label="Auszubildender">
         <ng-template matTabContent>
-            
-       
-        <table mat-table [dataSource]="traineeCollection" class="mat-elevation-z8">
-            <ng-container *ngFor="let column of displayedColumnsTrainee" [matColumnDef]="column">
-                <th mat-header-cell *matHeaderCellDef> {{column}} </th>
-                <td mat-cell *matCellDef="let element"> {{element[column]}} </td>
-            </ng-container>
-            <tr mat-header-row *matHeaderRowDef="displayedColumnsTrainee"></tr>
-            <tr mat-row *matRowDef="let row; columns: displayedColumnsTrainee"></tr>
-        </table>
-    </ng-template>
+
+
+            <table mat-table [dataSource]="traineeContent" class="mat-elevation-z8">
+                <ng-container [matColumnDef]="column.translated" *ngFor="let column of ColumnsTrainee">
+                    <th mat-header-cell *matHeaderCellDef> {{column.translated}} </th>
+                    <td mat-cell *matCellDef="let element"> {{element[column.field]}} </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="translatedColumnsTrainee"></tr>
+                <tr mat-row *matRowDef="let row; columns: translatedColumnsTrainee"></tr>
+            </table>
+        </ng-template>
     </mat-tab>
 
     <mat-tab label="Koordinatoren">
-        <table mat-table [dataSource]="CoordinatorCollection" class="mat-elevation-z8">
+        <!-- <table mat-table [dataSource]="CoordinatorCollection" class="mat-elevation-z8">
             <ng-container *ngFor="let column of displayedColumnsCoordinators" [matColumnDef]="column">
                 <th mat-header-cell *matHeaderCellDef> {{column}} </th>
                 <td mat-cell *matCellDef="let element"> {{element[column]}} </td>
             </ng-container>
             <tr mat-header-row *matHeaderRowDef="displayedColumnsCoordinators"></tr>
             <tr mat-row *matRowDef="let row; columns: displayedColumnsCoordinators"></tr>
-        </table>
-    </mat-tab>
-
-    <mat-tab label="test">
+        </table> -->
 
     </mat-tab>
 

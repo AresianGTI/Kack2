@@ -24,6 +24,7 @@ import { EnumMeetingTypes } from '../enums/enums.service';
 import { FirestoreService } from '../firestore/firestore.service';
 import { AuthService } from 'src/app/core/auth.service';
 import { AngularFirestore } from '@angular/fire/firestore';
+import { FormControl } from '@angular/forms';
 const colors: any = {
   red: {
     primary: '#ad2121',
@@ -58,16 +59,18 @@ export class CalendarService {
     action: string;
     event: CalendarEvent;
   };
-
+  date = new FormControl(new Date());
   refresh: Subject<any> = new Subject();
   events: CalendarEvent[] = [];
   eventData(type: string, color: any) {
     let menmen: any = {
-      UID: this.authService.userData?.ID,
+      // UID: this.authService.userData?.ID,
       ID: this.firestoreService.createID(),
       // start: subDays(startOfDay(new Date(),1),
       start: startOfDay(new Date()),
       end: endOfDay(new Date()),
+      // start: startOfDay(new Date()),
+      // end: endOfDay(new Date()),
       // end: addDays(new Date(),1),
       title: type,
       color: color,
@@ -77,6 +80,25 @@ export class CalendarService {
         afterEnd: true,
       }
     }
+    return menmen;
+  }
+  eventDataTest(event:any ) {
+    let menmen: any = {
+      // UID: this.authService.userData?.ID,
+      ID: event.ID,
+      // start: subDays(startOfDay(new Date(),1),
+      start: new Date (event.start.seconds * 1000),
+      end:   new Date (event.end.seconds * 1000),
+      // end: addDays(new Date(),1),
+      title: event.title,
+      color: event.color,
+      allDay: event.allDay,
+      resizable: {
+        beforeStart: true,
+        afterEnd: true,
+      }
+    }
+    console.log("MENMEN: ", menmen)
     return menmen;
   }
   traineeEvents: CalendarEvent[] = [
@@ -94,9 +116,8 @@ export class CalendarService {
   safeNewEvent() {
     this.events.filter((event) => {
       if (event.title != "") {
-        this.firestoreService.createDocument("CalendarMeetings", event);
-
-
+        // this.firestoreService.createDocument("Test", event);
+        this.setEventData(event);
       } else {
         alert("testoMets");
         this.deleteEvent(event);
@@ -109,15 +130,18 @@ export class CalendarService {
       this.eventData("", colors.black)
     ];
   }
-
+  addEventTest(event: any): void {
+    this.events = [
+      ...this.events,
+      this.eventDataTest(event)
+    ];
+  }
   deleteEvent(eventToDelete: CalendarEvent) {
-    this.events.filter((event) => this.firestoreService.deleteDocument(event, "CalendarMeetings"));
+    this.events.filter((event) => this.firestoreService.deleteDocument(event, "Test"));
     this.events = this.events.filter((event) => event !== eventToDelete);
   }
-  
 
-  stabil: any[] = []
-  item: any ={
+  item: any = {
     ID: this.firestoreService.createID(),
     // start: subDays(startOfDay(new Date(),1),
     start: startOfDay(new Date()),
@@ -133,68 +157,45 @@ export class CalendarService {
   }
   menmen: any = {
     UID: "",
-    items:{
+    items: {
     }
   }
- 
-  testData() {
-    
 
-      // this.getUserData(this.authService.userData).then((val) => {
-      //   if(val)
-      //   {
-          // console.log("Val ObjData: ", val);
-          // this.stabil.indexOf("")
-          let id = this.firestoreService.createID();
-            // this.stabil.push(menmen);
-            this.menmen.UID =this.authService.userData?.ID;
-            this.menmen.items["ItemID "+ id] = this.item;
-            console.log("stabil: ", this.menmen);
-          this.firestoreService.updateDocument("Test", this.menmen);
-      //   }
-      //   else
-      //   {
-      //     this.stabil = [menmen]
-      //     // this.stabil = [...this.stabil, menmen]
-      //     console.log("Else");
-      //     // this.firestoreService.updateDocument("Test", this.stabil);
-      //   }
-      // })
-   
-  }
-  gggg() {
-    let js = {
-      item:{
-        ff: 22,
-        sss: 1
-      }
-     
-    }
-    return js
+  setEventData(event: any) {
+    let id = this.firestoreService.createID();
+    this.menmen.UID = this.authService.userData?.ID;
+    this.menmen.items["ItemID " + id] = event;
+    console.log("stabil: ", this.menmen);
+    this.firestoreService.updateDocument("Test", this.menmen);
   }
   dataMata() {
-    this.getUserData(this.authService.userData);
+    this.getUserData(this.authService.userData).then((val) => {
+      console.log("val: ", val);
+      this.eventsTest = val;
+      console.log("events: ", this.eventsTest)
+      val.forEach((element: any) => {
+
+        console.log("Element: ", element[1])
+        this.addEventTest(element[1]);
+        this.refresh.next();
+      });
+    });
   }
   getUserData = (user: any): Promise<any> => {
+    this.events = [];
     var docRef = this.afs.collection("Test").doc(`${user.ID}`);
     return docRef.ref.get().then((doc) => {
-      console.log("Data des Kalenders:", doc.data());
-      console.log("UID:", user.ID);
-      return doc.data();
+      let arr = [];
+      let data: any = doc.data();
+      try {
+        for (const [key, value] of Object.entries(data.items)) {
+          arr.push([key, value]);
+        }
+      }
+      catch {
+        console.log("keine Daten in der Datenbank")
+      }
+      return arr;
     })
   }
-  // getDocFromCollection(collection: string, data: any):Array<any> {
-  //   let fieldList: Array<{}> = [];
-  //   this.afs.collection("collection", ref => ref.where("UID", "==", data.UID) )
-  //     .get().toPromise().then(snapshot => {
-  //       snapshot.docs.forEach(doc => { 
-  //         fieldList.push(doc.get());
-  //       })
-  //     })
-  //     return fieldList;
-  // }
-  // this.facilityList =  this.fireStoreService.getFieldsFromCollection( this.collectionService.facilityCollection, "Name")
-  // console.log("Das sind die Data im Dialog", this.facilityList);
-  // this.onQuery( this.firestore.collection('users', ref => ref
-  // .where("roles", "==", trainee)));
 }

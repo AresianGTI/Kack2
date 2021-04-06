@@ -198,4 +198,28 @@ export class CalendarService {
       return arr;
     })
   }
+
+   getAllCalendarData(collection: string) {
+    let fieldList: Array<{}> = [];
+    this.afs.collection(collection)
+      .get().toPromise().then(snapshot => {
+        snapshot.docs.forEach(doc => {
+          console.log("DocData: ", doc.data());
+          let arr = [];
+      let data: any = doc.data();
+      try {
+        for (const [key, value] of Object.entries(data.items)) {
+          arr.push([key, value]);
+        }
+      }
+      catch {
+        console.log("Sheesh")
+      }
+          // fieldList.push(doc.get(field));
+        })
+      })
+    // return fieldList;
+  }
+
+  //Events auf null setzen bei Destroy
 }

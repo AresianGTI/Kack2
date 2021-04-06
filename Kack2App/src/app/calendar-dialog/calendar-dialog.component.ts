@@ -19,7 +19,7 @@ export class CalendarDialogComponent implements OnInit {
     public calendarService: CalendarService,
     public authService: AuthService) { }
   ngOnInit(): void {
-    
+  
     // this.firestoreService.getUserData(this.authService.userData)
     console.log("Ich bin der User im Kalender:", this.authService.userData);
     if (this.authService.userData.role == "coordinator") {
@@ -34,5 +34,4 @@ export class CalendarDialogComponent implements OnInit {
   getEventData(event: any, evento: any) {
     event.color = evento.color
   }
-
 }

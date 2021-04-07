@@ -36,6 +36,13 @@ export class FirestoreService {
       return doc.data();
     })
   }
+  getData = (uid: string): Promise<any> => {
+    var docRef = this.afs.collection("usersCollection").doc(`/${uid}`);
+    return docRef.ref.get().then((doc) => {
+      console.log("DATA in Neuem getDAta:", doc.data())
+      return doc.data();
+    })
+  }
 
   // Setting up user and facilities
   createDocument(collection: string, objData: any) {
@@ -45,32 +52,12 @@ export class FirestoreService {
     });
   }
   updateDocument(collection: string, objData: any) {
-    let obj = Object.assign({}, [objData])
-  //   let elems: any[] = [];
-  // let id  = objData[0].UID;
-  //   objData.forEach((element: any) => {
-  //     elems.push(element);
-  //     console.log("Element: ", element)
-  //     console.log("UID: ", element.UID)
-  //     id = element.UID;
-  //   });
-  //   console.log("IDDDDD: ", id);
-  //    console.log("Elements: ", elems);
     this.afs.collection(collection).doc(objData.UID).set(objData).then(res => {
     }).catch(error => {
       console.log(error);
     });
   }
-  // setDocument(collection: string, objData: any) {
-  //   objData.forEach((element: any) => {
-  //     console.log("Element: ", element)
-  //     console.log("UID: ", element.UID)
-  //     this.afs.collection(collection).doc(element.UID).set(element).then(res => {
-  //     }).catch(error => {
-  //       console.log(error);
-  //     });
-  //   });
-  // }
+
   deleteDocument(data: any, collec: string) {
     return this.afs.collection(collec).doc(data.ID).delete();
   }
@@ -106,5 +93,47 @@ export class FirestoreService {
         Kapazitaet: facility.capacity
       }
     );
+  }
+  mapUserDataToObject = (user: any, collection: string, mapName: string): Promise<any> => {
+    var docRef = this.afs.collection(collection).doc(`${user.ID}`);
+    return docRef.ref.get().then((doc) => {
+      return this.mapFirebaseEntryToObject(doc.data(), collection, mapName);
+    })
+  }
+  mapFirebaseEntryToObject(data: any, collectionName: string, mapName: string) {
+    let arr = [];
+    try {
+      for (const [key, value] of Object.entries(data[mapName])) {
+        arr.push([key, value]);
+      }
+    }
+    catch {
+      console.log("Keine Daten in der Map ", mapName, " in der ausgewählten ",
+        collectionName, "vorhanden")
+    }
+    return arr;
+  }
+
+  getAllCollectionItems = (collection: string, mapName: string): Promise<any> => {
+    let arr: any = [];
+    return this.afs.collection(collection)
+      .get().toPromise().then(snapshot => {
+        snapshot.docs.forEach(doc => {
+          console.log("DocData: ", doc.data())
+          // let arr =  this.mapFirebaseEntryToObject(doc, collection, mapName)
+
+          let data: any = doc.data();
+          try {
+            for (const [key, value] of Object.entries(data[mapName])) {
+              arr.push([key, value]);
+            }
+            // console.log("aarrrr: ", arr)
+          }
+          catch {
+            console.log("Keine Daten in der Collection ", collection, " vorhanden")
+          }
+        })
+        return arr;
+      })
   }
 }

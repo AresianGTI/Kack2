@@ -56,7 +56,6 @@ export class AuthService {
       } else {
         localStorage.setItem('user', this.userData);
         localStorage.getItem('user');
-      
         return of(user);
       }
     }))

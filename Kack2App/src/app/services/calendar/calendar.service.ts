@@ -25,6 +25,7 @@ import { FirestoreService } from '../firestore/firestore.service';
 import { AuthService } from 'src/app/core/auth.service';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { FormControl } from '@angular/forms';
+import { ArrayType } from '@angular/compiler';
 const colors: any = {
   red: {
     primary: '#ad2121',
@@ -57,11 +58,14 @@ export class CalendarService {
   viewDate: Date = new Date();
   modalData!: {
     action: string;
-    event: CalendarEvent;
+    event: any;
   };
   date = new FormControl(new Date());
   refresh: Subject<any> = new Subject();
   events: CalendarEvent[] = [];
+
+
+
   eventData(type: string, color: any) {
     let menmen: any = {
       // UID: this.authService.userData?.ID,
@@ -75,6 +79,16 @@ export class CalendarService {
       title: type,
       color: color,
       allDay: true,
+      actions: [
+        {
+          label: "<i class=\"fas fa-fw fa-pencil-alt\"></i>",
+          a11yLabel: "Edit"
+        },
+        {
+          label: "<i class=\"fas fa-fw fa-trash-alt\"></i>",
+          a11yLabel: "Delete"
+        }
+      ],
       resizable: {
         beforeStart: true,
         afterEnd: true,
@@ -82,21 +96,32 @@ export class CalendarService {
     }
     return menmen;
   }
-  eventDataTest(event:any ) {
+  eventDataTest(event: any) {
     let menmen: any = {
       // UID: this.authService.userData?.ID,
       ID: event.ID,
       // start: subDays(startOfDay(new Date(),1),
-      start: new Date (event.start.seconds * 1000),
-      end:   new Date (event.end.seconds * 1000),
+      start: new Date(event.start.seconds * 1000),
+      end: new Date(event.end.seconds * 1000),
       // end: addDays(new Date(),1),
+      actions: [
+        {
+          label: "<i class=\"fas fa-fw fa-pencil-alt\"></i>",
+          a11yLabel: "Edit"
+        },
+        {
+          label: "<i class=\"fas fa-fw fa-trash-alt\"></i>",
+          a11yLabel: "Delete"
+        }
+      ],
       title: event.title,
       color: event.color,
       allDay: event.allDay,
       resizable: {
         beforeStart: true,
         afterEnd: true,
-      }
+      },
+      name: "MeinNameIst"
     }
     console.log("MENMEN: ", menmen)
     return menmen;
@@ -116,7 +141,6 @@ export class CalendarService {
   safeNewEvent() {
     this.events.filter((event) => {
       if (event.title != "") {
-        // this.firestoreService.createDocument("Test", event);
         this.setEventData(event);
       } else {
         alert("testoMets");
@@ -143,20 +167,30 @@ export class CalendarService {
 
   item: any = {
     ID: this.firestoreService.createID(),
-    // start: subDays(startOfDay(new Date(),1),
     start: startOfDay(new Date()),
     end: endOfDay(new Date()),
-    // end: addDays(new Date(),1),
     title: "type",
     color: colors.black,
     allDay: true,
     resizable: {
       beforeStart: true,
       afterEnd: true,
-    }
+    },
+    actions: [
+      {
+        label: "<i class=\"fas fa-fw fa-pencil-alt\"></i>",
+        a11yLabel: "Edit"
+      },
+      {
+        label: "<i class=\"fas fa-fw fa-trash-alt\"></i>",
+        a11yLabel: "Delete"
+      }
+    ],
+    name: "MeinNameIst"
   }
   menmen: any = {
     UID: "",
+    // Name: "",
     items: {
     }
   }
@@ -164,62 +198,77 @@ export class CalendarService {
   setEventData(event: any) {
     let id = this.firestoreService.createID();
     this.menmen.UID = this.authService.userData?.ID;
+    this.menmen.Name = this.authService.userData?.name;
     this.menmen.items["ItemID " + id] = event;
     console.log("stabil: ", this.menmen);
     this.firestoreService.updateDocument("Test", this.menmen);
   }
-  dataMata() {
-    this.getUserData(this.authService.userData).then((val) => {
-      console.log("val: ", val);
-      this.eventsTest = val;
-      console.log("events: ", this.eventsTest)
-      val.forEach((element: any) => {
-
-        console.log("Element: ", element[1])
-        this.addEventTest(element[1]);
-        this.refresh.next();
+  loadEvents(action: string) {
+    this.events = [];
+    if (action == "coordinator") {
+      this.firestoreService.mapUserDataToObject(this.authService.userData, "Test", "items").then((val) => {
+        this.addElementsToEventList(val)
       });
+    }
+    else if (action == "trainee") {
+      this.firestoreService.mapUserDataToObject(this.authService.userData, "Test", "items").then((val) => {
+        this.addElementsToEventList(val)
+      });
+    }
+  }
+  addElementsToEventList(val: any) {
+    this.eventsTest = val;
+    this.eventsTest.forEach((element: any) => {
+      this.addEventTest(element[1]);
+      this.refresh.next();
     });
   }
-  getUserData = (user: any): Promise<any> => {
+
+  async getAllEventsFromAllUser() {
     this.events = [];
-    var docRef = this.afs.collection("Test").doc(`${user.ID}`);
-    return docRef.ref.get().then((doc) => {
-      let arr = [];
-      let data: any = doc.data();
-      try {
-        for (const [key, value] of Object.entries(data.items)) {
-          arr.push([key, value]);
-        }
-      }
-      catch {
-        console.log("keine Daten in der Datenbank")
-      }
-      return arr;
+    this.firestoreService.getAllCollectionItems("Test", "items").then((arr) => {
+      this.addElementsToEventList(arr);
+
     })
   }
+  // getUserData = (user: any, collection: string, mapName: string): Promise<any> => {
+  //   var docRef = this.afs.collection(collection).doc(`${user.ID}`);
+  //   return docRef.ref.get().then((doc) => {
+  //     return this.mapFirebaseEntryToObject(doc.data(), collection, mapName);
+  //   })
+  // }
+  // mapFirebaseEntryToObject(data: any, collectionName: string, mapName: string) {
+  //   let arr = [];
+  //   try {
+  //     for (const [key, value] of Object.entries(data[mapName])) {
+  //       arr.push([key, value]);
+  //     }
+  //   }
+  //   catch {
+  //     console.log("Keine Daten in der Map ", mapName, " in der ausgewählten ",
+  //       collectionName, "vorhanden")
+  //   }
+  //   return arr;
+  // }
 
-   getAllCalendarData(collection: string) {
-    let fieldList: Array<{}> = [];
-    this.afs.collection(collection)
-      .get().toPromise().then(snapshot => {
-        snapshot.docs.forEach(doc => {
-          console.log("DocData: ", doc.data());
-          let arr = [];
-      let data: any = doc.data();
-      try {
-        for (const [key, value] of Object.entries(data.items)) {
-          arr.push([key, value]);
-        }
-      }
-      catch {
-        console.log("Sheesh")
-      }
-          // fieldList.push(doc.get(field));
-        })
-      })
-    // return fieldList;
-  }
-
-  //Events auf null setzen bei Destroy
+  // getAllCollectionItems = async (collection: string, mapName: string): Promise<any> => {
+  //   let arr: any = [];
+  //   const snapshot = await this.afs.collection(collection)
+  //     .get().toPromise();
+  //   snapshot.docs.forEach(doc => {
+  //     console.log("DocData: ", doc.data());
+  //     // let arr =  this.mapFirebaseEntryToObject(doc, collection, mapName)
+  //     let data: any = doc.data();
+  //     try {
+  //       for (const [key, value] of Object.entries(data[mapName])) {
+  //         arr.push([key, value]);
+  //       }
+  //       // console.log("aarrrr: ", arr)
+  //     }
+  //     catch {
+  //       console.log("Keine Daten in der Collection ", collection, " vorhanden");
+  //     }
+  //   });
+  //   return arr;
+  // }
 }

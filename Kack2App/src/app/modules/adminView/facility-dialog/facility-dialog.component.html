@@ -1,4 +1,4 @@
-<h2 mat-dialog-title>Einrichtung erstellen</h2>
+<h2 mat-dialog-title *ngIf="action =='Create'">Neue Einrichtung erstellen</h2><h2 mat-dialog-title *ngIf="action=='Update'">Einrichtung bearbeiten</h2>
 <mat-dialog-content class="mat-typography">
   <p>
     Geben Sie bitte den Namen, die Adresse und die Art der Einrichtung an.<br />

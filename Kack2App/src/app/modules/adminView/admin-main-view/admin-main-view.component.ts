@@ -3,7 +3,7 @@ import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/fire
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
 import { FacilityDialogComponent } from '../facility-dialog/facility-dialog.component';
-import { Trainee } from 'src/app/models/user';
+import { IUser, Trainee } from 'src/app/models/user';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { TraineeDialogComponent } from '../trainee-dialog/trainee-dialog.component';
 import { Facility, IFacility, IfacilityType } from 'src/app/models/facility';
@@ -30,7 +30,8 @@ import { CollectionsService } from 'src/app/services/collections/collections.ser
 
 export class AdminMainViewComponent implements OnInit, OnDestroy {
 
-  expandedElement!: IFacility;
+  expandedFacility!: IFacility;
+  expandedTrainee!: IUser;
   tab_selection!: string;
   
   //for subscriptions and unsubscriptions

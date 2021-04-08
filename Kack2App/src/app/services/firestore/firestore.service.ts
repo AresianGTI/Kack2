@@ -49,17 +49,28 @@ export class FirestoreService {
     return this.afs.collection(collec).doc(data.ID).delete();
   }
 
-  deleteAllDocuments(collection: any, collectionName: string) {
-    this.afs.collection(collectionName)
+  deleteAllFacilities(collection: string) {
+    this.afs.collection(collection)
       .get()
       .toPromise()
       .then(querySnapshot => {
-        collection.data.length = 0;
-        querySnapshot.forEach((doc) => this.afs.collection(collectionName).doc(doc.id).delete())
+        querySnapshot.forEach((doc) => this.afs.collection(collection).doc(doc.id).delete())
         console.log("Es hat funktioniert");
       })
-      .catch((error) => console.error("Error removing document: ", error)
+      .catch((error) => console.error("Error removing facility: ", error)
       );
+  }
+
+  deleteAllUserWithDesiredRole(collection: string, role: string){
+    this.afs.collection(collection,  ref => ref.where('role', '==', role)) // only deletes users with role 'trainee'
+    .get()
+    .toPromise()
+    .then(querySnapshot => {
+      querySnapshot.forEach((doc) => this.afs.collection(collection).doc(doc.id).delete())
+      console.log("Es hat funktioniert");
+    })
+    .catch((error) => console.error("Error removing Users: ", error)
+    );
   }
 
   createID(objData: any){

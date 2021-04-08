@@ -7,32 +7,32 @@
         <!-- Feld für den Azubinamen -->
         <mat-form-field hintLabel="Maximal 30 Zeichen" appearance="fill">
             <mat-label>Name des Koordinators</mat-label>
-            <input matInput #input maxlength="30" [(ngModel)]="coordinator.firstName">
-            <mat-hint align="end">{{input.value?.length || 0}}/30</mat-hint>
+            <input matInput #firstNameInput maxlength="30" [(ngModel)]="coordinator.firstName">
+            <mat-hint align="end">{{firstNameInput.value?.length || 0}}/30</mat-hint>
         </mat-form-field>
         <!-- Feld für den Nachnamn des Azubis -->
         <mat-form-field hintLabel="Maximal 30 Zeichen" appearance="fill">
             <mat-label>Nachname des Koordinator</mat-label>
-            <input matInput #input maxlength="30" [(ngModel)]="coordinator.name">
-            <mat-hint align="end">{{input.value?.length || 0}}/30</mat-hint>
+            <input matInput #nameInput maxlength="30" [(ngModel)]="coordinator.name">
+            <mat-hint align="end">{{nameInput.value?.length || 0}}/30</mat-hint>
         </mat-form-field>
         <!-- Feld für die E-Mail Adresse des Azubis -->
         <mat-form-field hintLabel="Maximal 30 Zeichen" appearance="fill">
             <mat-label>E-Mail Adresse des Koordinators</mat-label>
-            <input matInput #input maxlength="30" [(ngModel)]="coordinator.email">
-            <mat-hint align="end">{{input.value?.length || 0}}/30</mat-hint>
+            <input matInput #mailInput maxlength="30" [(ngModel)]="coordinator.email">
+            <mat-hint align="end">{{mailInput.value?.length || 0}}/30</mat-hint>
         </mat-form-field>
         <!-- Feld für das Passwort  -->
         <mat-form-field hintLabel="Maximal 30 Zeichen" appearance="fill">
             <mat-label>Geben Sie ihr Passwort für den Login ein</mat-label>
-            <input matInput #input maxlength="20" [(ngModel)]="password">
-            <mat-hint align="end">{{input.value?.length || 0}}/20</mat-hint>
+            <input matInput #pwInput maxlength="20" [(ngModel)]="password">
+            <mat-hint align="end">{{pwInput.value?.length || 0}}/20</mat-hint>
         </mat-form-field>
         <!-- Feld für die Stammeinrichtung  -->
         <mat-form-field hintLabel="Maximal 30 Zeichen" appearance="fill">
             <mat-label>Geben Sie ihre Stammeinrichtung ein</mat-label>
-            <input matInput #input maxlength="30" [(ngModel)]="coordinator.homeFacility.name">
-            <mat-hint align="end">{{input.value?.length || 0}}/30</mat-hint>
+            <input matInput #homeFacilityInput maxlength="30" [(ngModel)]="coordinator.homeFacility.name">
+            <mat-hint align="end">{{homeFacilityInput.value?.length || 0}}/30</mat-hint>
         </mat-form-field>
 
     </div>

@@ -8,27 +8,27 @@
     <!-- Feld für den Azubinamen -->
     <mat-form-field hintLabel="Maximal 30 Zeichen" appearance="fill">
       <mat-label>Name des Azubis</mat-label>
-      <input matInput #input maxlength="30" [(ngModel)]="traineeObj.firstName">
-      <mat-hint align="end">{{input.value?.length || 0}}/30</mat-hint>
+      <input matInput #firstNameInput maxlength="30" [(ngModel)]="traineeObj.firstName">
+      <mat-hint align="end">{{firstNameInput.value?.length || 0}}/30</mat-hint>
     </mat-form-field>
     <!-- Feld für den Nachnamn des Azubis -->
     <mat-form-field hintLabel="Maximal 30 Zeichen" appearance="fill">
       <mat-label>Nachname des Azubis</mat-label>
-      <input matInput #input maxlength="30" [(ngModel)]="traineeObj.name">
-      <mat-hint align="end">{{input.value?.length || 0}}/30</mat-hint>
+      <input matInput #nameInput maxlength="30" [(ngModel)]="traineeObj.name">
+      <mat-hint align="end">{{nameInput.value?.length || 0}}/30</mat-hint>
     </mat-form-field>
     <!-- Feld für die E-Mail Adresse des Azubis -->
     <mat-form-field hintLabel="Maximal 30 Zeichen" appearance="fill">
       <mat-label>E-Mail Adresse des Azubis</mat-label>
-      <input matInput #input maxlength="30" [(ngModel)]="traineeObj.email">
-      <mat-hint align="end">{{input.value?.length || 0}}/30</mat-hint>
+      <input matInput #adressInput maxlength="30" [(ngModel)]="traineeObj.email">
+      <mat-hint align="end">{{adressInput.value?.length || 0}}/30</mat-hint>
     </mat-form-field>
     <!-- Feld für die Stammeinrichtung -->
     <mat-form-field appearance="fill">
       <mat-label>Stammeinrichtung wählen</mat-label>
       <mat-select [(ngModel)]="selectedFacility">
         <mat-option *ngFor="let facility of dialogfacilityArray" [value]="facility">
-          <!-- [value]="facility.Name" um hier mit der String zu arbeiten -->
+          <!--HINWEIS: [value]="facility.Name" um hier mit der String zu arbeiten -->
           {{facility.name}}
         </mat-option>
       </mat-select>

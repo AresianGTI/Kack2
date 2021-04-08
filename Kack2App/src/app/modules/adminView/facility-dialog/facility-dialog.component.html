@@ -7,13 +7,14 @@
     <!-- Feld für den Einrichtungsnamen -->
     <mat-form-field hintLabel="Maximal 30 Zeichen" appearance="fill">
       <mat-label>Name der Einrichtung</mat-label>
-      <input matInput #input maxlength="30" [(ngModel)]="facilityObj.name">
-      <mat-hint align="end">{{input.value?.length || 0}}/30</mat-hint>
+      <input matInput #nameInput maxlength="30" [(ngModel)]="facilityObj.name">
+      <mat-hint align="end">{{nameInput.value?.length || 0}}/30</mat-hint>
     </mat-form-field>
+        <!-- Feld für die Adresse -->
     <mat-form-field hintLabel="Maximal 30 Zeichen" appearance="fill">
       <mat-label>Adresse</mat-label>
-      <input matInput #input maxlength="30" [(ngModel)]="facilityObj.adress">
-      <mat-hint align="end">{{input.value?.length || 0}}/30</mat-hint>
+      <input matInput #adressInput maxlength="30" [(ngModel)]="facilityObj.adress">
+      <mat-hint align="end">{{adressInput.value?.length || 0}}/30</mat-hint>
     </mat-form-field>
     <!-- Feld für die Einrichtungsart -->
     <mat-form-field appearance="fill" *ngIf="action == 'Create' ">
@@ -22,7 +23,6 @@
         <mat-option *ngFor="let facilityType of facilityTypes" [value]="facilityType.typeName">
           {{facilityType.typeName}}
         </mat-option>
-        <!-- <mat-option value="option">{{facValues}}</mat-option> -->
       </mat-select>
       <mat-hint align="end">Wählen Sie eine Einrichtungsart aus</mat-hint>
     </mat-form-field>

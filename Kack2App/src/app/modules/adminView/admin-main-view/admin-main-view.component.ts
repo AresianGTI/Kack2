@@ -15,6 +15,7 @@ import { DialogBoxComponent } from '../../../modules/dialog-box/dialog-box.compo
 import { SubscriptionCollectionService } from 'src/app/services/subscription-collection.service';
 import { FirestoreService } from 'src/app/services/firestore/firestore.service';
 import { CollectionsService } from 'src/app/services/collections/collections.service';
+import { EnumRoles } from 'src/app/services/enums/enums.service';
 @Component({
   selector: 'app-admin-main-view',
   templateUrl: './admin-main-view.component.html',
@@ -32,7 +33,7 @@ export class AdminMainViewComponent implements OnInit, OnDestroy {
 
   expandedFacility!: IFacility;
   expandedTrainee!: IUser;
-  tab_selection!: string;
+  selectedTab!: string;
   
   //for subscriptions and unsubscriptions
   subscriptions: Subscription[] = [];
@@ -78,14 +79,13 @@ export class AdminMainViewComponent implements OnInit, OnDestroy {
     this.subscriptionService.DestroySubscriptions(this.subscriptions);
   }
 
-  setTab(tabChangeEvent: MatTabChangeEvent) {          // Hier wird der Label vom Tab in die Variable zugewiesen!!!
-    this.tab_selection = tabChangeEvent.tab.textLabel;
-    if (this.tab_selection == "Koordinatoren") this.buttonIsHidden = true
-    else this.buttonIsHidden = false;
+  setSelectedTab(tabChangeEvent: MatTabChangeEvent) {          // Hier wird der Label vom Tab in die Variable zugewiesen!!!
+    this.selectedTab = tabChangeEvent.tab.textLabel;
+    console.log("Aktueller Tab: ", this.selectedTab);
   }
 
   ngOnInit() {
-    this.tab_selection = "Einrichtung";
+    this.selectedTab = "Einrichtung";
     this.refreshFacilityList(this.collectionService.facilityCollection, this.facilityContent); // Die Reihenfolge der beiden Methoden verändert es ganz 
     this.refreshtTraineeList(this.collectionService.userCollection, this.traineeContent);      // merwürdig. Beim ersten Aufruf funktioniert es, wie es soll...
   }
@@ -133,7 +133,7 @@ export class AdminMainViewComponent implements OnInit, OnDestroy {
     else {
       data = action;
     }
-    switch (this.tab_selection) {
+    switch (this.selectedTab) {
       case ("Einrichtung"): {
         dialogRef = this.dialog.open(FacilityDialogComponent, { data: data });
         break;
@@ -170,19 +170,44 @@ export class AdminMainViewComponent implements OnInit, OnDestroy {
    * get the active Tab to return the right Collection.
    * @returns currentCollection : string
    */
-  getActiveTab(){
-    let currentCollection: string = "";
-    if(this.tab_selection == "Einrichtung") {
-    currentCollection = this.collectionService.facilityCollection;
+  getUserRole(){
+    let role: string = "";
+    if(this.selectedTab == "Auszubildender"){
+      role = EnumRoles.trainee;
     }
-    if(this.tab_selection == "Auszubildender"){
-      currentCollection = this.collectionService.userCollection;
+    else if (this.selectedTab == "Koordinatoren"){
+      role = EnumRoles.coordinator;
     }
-    return currentCollection;
+    else if (this.selectedTab == "Traeger"){
+      role = EnumRoles.teacher;
+    }
+    return role;
 
   }
   deleteAll(){
-    this.firestoreService.deleteAllDocuments(this.facilityContent,this.getActiveTab());
+    switch(this.selectedTab){
+      case 'Einrichtung':{
+        this.firestoreService.deleteAllFacilities(this.collectionService.facilityCollection);
+        // this.facilityContent = undefined; // muss anders geleert werden
+        break;
+      }
+      case 'Auszubildender':{
+        this.firestoreService.deleteAllUserWithDesiredRole(this.collectionService.userCollection, this.getUserRole());
+        break;
+      }
+      case 'Koordinatoren':{
+        // this.firestoreService.deleteAllUserWithDesiredRole(this.collectionService.userCollection, this.getUserRole());
+        break;
+      }
+      case 'Traeger':{
+        // this.firestoreService.deleteAllUserWithDesiredRole(this.collectionService.userCollection, this.getUserRole());
+        break;
+      }
+      default:{
+        alert('Something went wrong. :/ ');
+        break;
+      }
+    }
   }
 
   // }

@@ -57,7 +57,31 @@
     </mat-icon>
   </button>
 
-  <button  mat-raised-button color="primary" class="btn btn-danger" (click)="calendarService.getAllEventsFromAllUser()"
-  (click)="calendarService.refresh.next()">
-    GetDataFrom User
-  </button>
+
+  <div class="">
+    <button  mat-raised-button color="primary" class="btn btn-danger" (click)="calendarService.getAllEventsFromAllUser()"
+    >
+       GetDataFrom User
+     </button>
+     <button  mat-raised-button color="primary" class="btn btn-danger" (click)="calendarService.getOwnData()"
+     >
+        Own Events
+      </button>
+   
+     <mat-form-field appearance="fill">
+       <mat-label>Azubi</mat-label>
+       <mat-select >
+         <mat-option *ngFor="let trainee of calendarService.traineesInFacility" [value]="trainee" (click)="calendarService.getTraineeEvents(trainee)">
+           {{trainee.name}}
+         </mat-option>
+         <!-- <mat-option value="option">{{facValues}}</mat-option> -->
+       </mat-select>
+       <mat-hint align="end">Wählen Sie eine Einrichtungsart aus</mat-hint>
+     </mat-form-field>
+     <mat-dialog-content class="mat-typography">
+  </mat-dialog-content>
+  <button  mat-raised-button color="primary" class="btn btn-danger" (click)="calendarService.logEventData()">
+     Logger
+   </button>
+  </div>
+ 

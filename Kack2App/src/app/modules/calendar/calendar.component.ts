@@ -72,6 +72,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
   viewDate: Date = new Date();
   activeDayIsOpen: boolean = true;
 test: string = "";
+// guard : boolean = false;
   constructor(private modal: NgbModal,
     public dialog: MatDialog,
     public calendarService: CalendarService,
@@ -85,14 +86,19 @@ test: string = "";
     this.authService.getValue().subscribe().unsubscribe();
   }
   ngOnInit(): void {
-    console.log("Ich bin der User im Kalender:", this.authService.userData);
+   
     this.authService.getValue().subscribe((value) =>{
-
+      if(value){
+        console.log("Ich bin der User im Kalender:", value);
         this.calendarService.loadEvents(value.role);
-        // this.calendarService.getAllCollectionItems("Test", "items");
+      }
+     
     })
     console.log("OnInit CalenderComponent");
   }
+  // getGuard():boolean{
+  //   return this.guard;
+  // }
 
   eventTimesChanged({
     event,

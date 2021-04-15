@@ -1,5 +1,5 @@
 import {
-  Injectable
+  Injectable, IterableDiffers
 } from '@angular/core';
 import {
   startOfDay,
@@ -47,12 +47,13 @@ const colors: any = {
   providedIn: 'root'
 })
 export class CalendarService {
-
+  
   constructor(
     public dialog: MatDialog,
     public firestoreService: FirestoreService,
     public authService: AuthService,
-    public afs: AngularFirestore) { }
+    public afs: AngularFirestore) {
+     }
   view: CalendarView = CalendarView.Month;
   CalendarView = CalendarView;
   viewDate: Date = new Date();
@@ -63,32 +64,17 @@ export class CalendarService {
   date = new FormControl(new Date());
   refresh: Subject<any> = new Subject();
   events: CalendarEvent[] = [];
+  ownEvents: CalendarEvent[] = [];
+  eventsTest: CalendarEvent[] = [];
+  public traineesInFacility: any[]= [];
 
-
-
-  eventData(type: string, color: any) {
+  predefinedEvents(type: string, color: any) {
     let menmen: any = {
-      // UID: this.authService.userData?.ID,
-      ID: this.firestoreService.createID(),
-      // start: subDays(startOfDay(new Date(),1),
       start: startOfDay(new Date()),
       end: endOfDay(new Date()),
-      // start: startOfDay(new Date()),
-      // end: endOfDay(new Date()),
-      // end: addDays(new Date(),1),
       title: type,
       color: color,
       allDay: true,
-      actions: [
-        {
-          label: "<i class=\"fas fa-fw fa-pencil-alt\"></i>",
-          a11yLabel: "Edit"
-        },
-        {
-          label: "<i class=\"fas fa-fw fa-trash-alt\"></i>",
-          a11yLabel: "Delete"
-        }
-      ],
       resizable: {
         beforeStart: true,
         afterEnd: true,
@@ -98,22 +84,8 @@ export class CalendarService {
   }
   eventDataTest(event: any) {
     let menmen: any = {
-      // UID: this.authService.userData?.ID,
-      ID: event.ID,
-      // start: subDays(startOfDay(new Date(),1),
       start: new Date(event.start.seconds * 1000),
       end: new Date(event.end.seconds * 1000),
-      // end: addDays(new Date(),1),
-      actions: [
-        {
-          label: "<i class=\"fas fa-fw fa-pencil-alt\"></i>",
-          a11yLabel: "Edit"
-        },
-        {
-          label: "<i class=\"fas fa-fw fa-trash-alt\"></i>",
-          a11yLabel: "Delete"
-        }
-      ],
       title: event.title,
       color: event.color,
       allDay: event.allDay,
@@ -126,47 +98,86 @@ export class CalendarService {
     console.log("MENMEN: ", menmen)
     return menmen;
   }
+  // loadEventData(event: any) {
+  //   let menmen: any = {
+  //     start: new Date(event.start.seconds * 1000),
+  //     end: new Date(event.end.seconds * 1000),
+  //     title: event.title,
+  //     color: event.color,
+  //     allDay: event.allDay,
+  //     resizable: {
+  //       beforeStart: true,
+  //       afterEnd: true,
+  //     },
+  //     name: "MeinNameIst"
+  //   }
+  //   console.log("LoadEventData: ", menmen)
+  //   return menmen;
+  // }
+
   traineeEvents: CalendarEvent[] = [
-    this.eventData(EnumMeetingTypes.applyVacation, colors.red),
-    this.eventData(EnumMeetingTypes.notificationOfIlness, colors.green)
+    this.predefinedEvents(EnumMeetingTypes.applyVacation, colors.red),
+    this.predefinedEvents(EnumMeetingTypes.notificationOfIlness, colors.green)
   ];
 
   coordinatorEvents: CalendarEvent[] = [
-    this.eventData(EnumMeetingTypes.practicalMeeting, colors.blue),
-    this.eventData(EnumMeetingTypes.singleMeeting, colors.yellow)
+    this.predefinedEvents(EnumMeetingTypes.practicalMeeting, colors.blue),
+    this.predefinedEvents(EnumMeetingTypes.singleMeeting, colors.yellow)
   ]
-  eventsTest: CalendarEvent[] = [
-  ];
-
   safeNewEvent() {
+    console.log("OwnEvetns in Safe: ", this.events)
     this.events.filter((event) => {
-      if (event.title != "") {
+      if (event.title != "" )  {
         this.setEventData(event);
       } else {
-        alert("testoMets");
+        console.log("testoMets");
         this.deleteEvent(event);
       }
     })
   }
+
+
+  // addNewEvent(): void {
+  //   this.events = [
+  //     ...this.events,
+  //     this.eventData("", colors.black)
+  //   ];
+  //   console.log("AddEvent: ", this.events)
+  // }
   addEvent(): void {
     this.events = [
       ...this.events,
-      this.eventData("", colors.black)
+      this.predefinedEvents("", colors.black)
     ];
+    console.log("AddEvent: ", this.events)
   }
-  addEventTest(event: any): void {
+  // addOwnEvents(event: any) {
+  //   this.ownEvents = [
+  //     ...this.ownEvents,
+  //     this.loadEventData(event)
+  //   ];
+  //   console.log("AddOwnEvents: ", event)
+
+  // }
+  addEventTest(event: any) {
+
+    event.start = new Date(event.start.seconds * 1000);
+    event.end  = new Date(event.end.seconds * 1000);
     this.events = [
       ...this.events,
-      this.eventDataTest(event)
+      event
+    //  this.loadEventData(event)
     ];
+    console.log("AddEventTEst: ", event)
+
   }
   deleteEvent(eventToDelete: CalendarEvent) {
     this.events.filter((event) => this.firestoreService.deleteDocument(event, "Test"));
+    // this.events = this.ownEvents.filter((event) => event !== eventToDelete);
     this.events = this.events.filter((event) => event !== eventToDelete);
   }
 
   item: any = {
-    ID: this.firestoreService.createID(),
     start: startOfDay(new Date()),
     end: endOfDay(new Date()),
     title: "type",
@@ -176,21 +187,10 @@ export class CalendarService {
       beforeStart: true,
       afterEnd: true,
     },
-    actions: [
-      {
-        label: "<i class=\"fas fa-fw fa-pencil-alt\"></i>",
-        a11yLabel: "Edit"
-      },
-      {
-        label: "<i class=\"fas fa-fw fa-trash-alt\"></i>",
-        a11yLabel: "Delete"
-      }
-    ],
     name: "MeinNameIst"
   }
   menmen: any = {
     UID: "",
-    // Name: "",
     items: {
     }
   }
@@ -206,69 +206,82 @@ export class CalendarService {
   loadEvents(action: string) {
     this.events = [];
     if (action == "coordinator") {
+      // guard= true;
       this.firestoreService.mapUserDataToObject(this.authService.userData, "Test", "items").then((val) => {
         this.addElementsToEventList(val)
       });
     }
     else if (action == "trainee") {
       this.firestoreService.mapUserDataToObject(this.authService.userData, "Test", "items").then((val) => {
+        // this.addElementsToEventList(val)
         this.addElementsToEventList(val)
       });
     }
+    this.getTrainees();
+  }
+  addElementsToOwnEventList(val: any) {
+    this.ownEvents= val;
+    
+    // this.ownEvents.forEach((element: any) => {
+    //   this.addOwnEvents(element[1]);
+      
+    // });
+    // 
+    // this.events= this.ownEvents;
+    this.events= this.ownEvents;
+    console.log("OwnEvents: ", this.events)
+    this.refresh.next();
+    // console.log("EVENTSLAN: ", this.events)
   }
   addElementsToEventList(val: any) {
-    this.eventsTest = val;
+    this.eventsTest= val;
+    console.log("AllEvents: ", this.eventsTest)
     this.eventsTest.forEach((element: any) => {
       this.addEventTest(element[1]);
       this.refresh.next();
     });
   }
 
-  async getAllEventsFromAllUser() {
+  getTrainees(){
+       this.firestoreService.getbbb(this.authService.userData).then((val) => {
+        console.log("Returned: ", val)
+        this.traineesInFacility = val;
+      })
+  }
+  getTraineeEvents(trainee: any){
+ this.events = [];
+    this.firestoreService.mapUserDataToObject(trainee, "Test", "items").then((val) => {
+      this.addElementsToEventList(val)
+    });
+  }
+  getOwnData(){
+    // this.ownEvents = [];
     this.events = [];
-    this.firestoreService.getAllCollectionItems("Test", "items").then((arr) => {
-      this.addElementsToEventList(arr);
+    this.firestoreService.mapUserDataToObject(this.authService.userData, "Test", "items").then((val) => {
+      this.addElementsToEventList(val)
+    });
+  }
+ 
+  getAllEventsFromAllUser() {
+    this.events = [];
+    this.firestoreService.mapUserDataToObject(this.authService.userData, "Test", "items").then((val) => {
+      this.addElementsToEventList(val)
+    });
 
+    this.firestoreService.getbbb(this.authService.userData).then((val) => {
+      console.log("Returned Array: ", val)
+      this.traineesInFacility = val;
+      val.forEach((element: any) => {
+        this.firestoreService.getAllCollectionItems(element, "Test", "items").then((arr) => {
+          this.addElementsToEventList(arr);
+      });
+    })
     })
   }
-  // getUserData = (user: any, collection: string, mapName: string): Promise<any> => {
-  //   var docRef = this.afs.collection(collection).doc(`${user.ID}`);
-  //   return docRef.ref.get().then((doc) => {
-  //     return this.mapFirebaseEntryToObject(doc.data(), collection, mapName);
-  //   })
-  // }
-  // mapFirebaseEntryToObject(data: any, collectionName: string, mapName: string) {
-  //   let arr = [];
-  //   try {
-  //     for (const [key, value] of Object.entries(data[mapName])) {
-  //       arr.push([key, value]);
-  //     }
-  //   }
-  //   catch {
-  //     console.log("Keine Daten in der Map ", mapName, " in der ausgewählten ",
-  //       collectionName, "vorhanden")
-  //   }
-  //   return arr;
-  // }
-
-  // getAllCollectionItems = async (collection: string, mapName: string): Promise<any> => {
-  //   let arr: any = [];
-  //   const snapshot = await this.afs.collection(collection)
-  //     .get().toPromise();
-  //   snapshot.docs.forEach(doc => {
-  //     console.log("DocData: ", doc.data());
-  //     // let arr =  this.mapFirebaseEntryToObject(doc, collection, mapName)
-  //     let data: any = doc.data();
-  //     try {
-  //       for (const [key, value] of Object.entries(data[mapName])) {
-  //         arr.push([key, value]);
-  //       }
-  //       // console.log("aarrrr: ", arr)
-  //     }
-  //     catch {
-  //       console.log("Keine Daten in der Collection ", collection, " vorhanden");
-  //     }
-  //   });
-  //   return arr;
-  // }
+  
+  logEventData(){
+    console.log("EventTest: ", this.eventsTest);
+    console.log("events: ", this.events);
+    console.log("OwnEvents: ", this.ownEvents);
+  }
 }

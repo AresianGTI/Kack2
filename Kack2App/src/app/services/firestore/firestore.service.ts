@@ -2,7 +2,10 @@ import { Injectable } from '@angular/core';
 import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firestore';
 import { Observable, Subject, Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
+import { AuthService } from 'src/app/core/auth.service';
 import { Facility } from 'src/app/models/facility';
+import { Trainee } from 'src/app/models/trainee';
+import { User } from 'src/app/models/user';
 import { CollectionsService } from '../collections/collections.service';
 import { GlobalstringsService } from '../globalstrings/globalstrings.service';
 
@@ -36,8 +39,8 @@ export class FirestoreService {
       return doc.data();
     })
   }
-  getData = (uid: string): Promise<any> => {
-    var docRef = this.afs.collection("usersCollection").doc(`/${uid}`);
+  getData = (user: any): Promise<any> => {
+    var docRef = this.afs.collection("Test").doc(`/${user.uid}`);
     return docRef.ref.get().then((doc) => {
       console.log("DATA in Neuem getDAta:", doc.data())
       return doc.data();
@@ -94,6 +97,14 @@ export class FirestoreService {
       }
     );
   }
+  // updateTrainees(collection: string, data:any) {
+
+  //   return this.afs.collection(collection).doc(data.ID).update(
+  //     {
+  //       homeFacility: data.homeFacility
+  //     }
+  //   );
+  // }
   mapUserDataToObject = (user: any, collection: string, mapName: string): Promise<any> => {
     var docRef = this.afs.collection(collection).doc(`${user.ID}`);
     return docRef.ref.get().then((doc) => {
@@ -113,10 +124,31 @@ export class FirestoreService {
     }
     return arr;
   }
-
-  getAllCollectionItems = (collection: string, mapName: string): Promise<any> => {
+  getbbb(user: User): Promise<any>
+  {
     let arr: any = [];
-    return this.afs.collection(collection)
+    let data: any;
+   return this.afs.collection("usersCollection", ref => (ref
+      .where("homeFacility", "==", user.homeFacility))
+      .where("role", "==", "trainee"))
+      // this.afs.collection("usersCollection", ref => ref.where("role", "==", "trainee"))
+      .get().toPromise().then(snapshot => {
+        snapshot.docs.forEach(doc => {
+          console.log("Trainees: ", doc.data())
+          arr.push(doc.data())
+        })
+        return arr;
+      });
+  }
+
+  getAllCollectionItems = (data: any , collection: string, mapName: string): Promise<any> => {
+    let arr: any = [];
+    console.log("data in getAllCollectionItems: ", data.ID)
+      // data sind unten undefined weil asyncrhon läuft
+// data.forEach(element => {
+//   console.log("Elem UID: ", element.uid)
+// });
+    return this.afs.collection(collection, ref => ref.where("UID", "==", data.ID))
       .get().toPromise().then(snapshot => {
         snapshot.docs.forEach(doc => {
           console.log("DocData: ", doc.data())

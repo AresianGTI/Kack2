@@ -62,6 +62,11 @@ export class FacilityDialogComponent implements OnInit {
   chooseFunction() {
     if (this.action == "Update") {
       this.firestoreService.updateCollection(this.collectionService.facilityCollection, this.facilityObj)
+      // .then((val) => {
+      //   console.log("ICH BIN DAS VALUE IN FACILITY DIAOLOG: ", val)
+      //   this.firestoreService.updateTrainees("usersCollection", val);
+      // });
+
     }
     else if (this.action == "Create") {
       

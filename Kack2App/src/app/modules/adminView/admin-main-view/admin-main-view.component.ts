@@ -9,13 +9,13 @@ import { TraineeDialogComponent } from '../trainee-dialog/trainee-dialog.compone
 import { Facility, IFacility, IfacilityType } from 'src/app/models/facility';
 import { Coordinator } from 'src/app/models/user';
 import { Observable, of, Subject, Subscription } from 'rxjs';
-import {  animate,  state,  style, transition,  trigger} from "@angular/animations";
+import { animate, state, style, transition, trigger } from "@angular/animations";
 import { AuthService } from 'src/app/core/auth.service';
 import { DialogBoxComponent } from '../../../modules/dialog-box/dialog-box.component';
 import { SubscriptionCollectionService } from 'src/app/services/subscription-collection.service';
 import { FirestoreService } from 'src/app/services/firestore/firestore.service';
 import { CollectionsService } from 'src/app/services/collections/collections.service';
-import { EnumRoles } from 'src/app/services/enums/enums.service';
+import { EnumDialogBoxTypes, EnumRoles } from 'src/app/services/enums/enums.service';
 @Component({
   selector: 'app-admin-main-view',
   templateUrl: './admin-main-view.component.html',
@@ -34,30 +34,31 @@ export class AdminMainViewComponent implements OnInit, OnDestroy {
   expandedFacility!: IFacility;
   expandedTrainee!: IUser;
   selectedTab!: string;
-  
+  dialogbox!: DialogBoxComponent;
+
   //for subscriptions and unsubscriptions
   subscriptions: Subscription[] = [];
 
-  translatedColumnsFacility: string[] = [ 'Name', 'Einrichtungsart', 'Adresse', 'Kapazitaet'];
-  ColumnsFacility = [ 
-    {'translated': 'Name', 'field' : 'name'},
-    {'translated': 'Einrichtungsart', 'field' : 'type'},
-    {'translated': 'Adresse', 'field' : 'adress'},
-    {'translated': 'Kapazitaet', 'field' : 'capacity'}
-    ];
+  translatedColumnsFacility: string[] = ['Name', 'Einrichtungsart', 'Adresse', 'Kapazitaet'];
+  ColumnsFacility = [
+    { 'translated': 'Name', 'field': 'name' },
+    { 'translated': 'Einrichtungsart', 'field': 'type' },
+    { 'translated': 'Adresse', 'field': 'adress' },
+    { 'translated': 'Kapazitaet', 'field': 'capacity' }
+  ];
 
   translatedColumnsTrainee: string[] = ['Vorname', 'Name', 'Stammeinrichtung'];
   ColumnsTrainee = [
-    {'translated': 'Vorname', 'field' : 'firstName'},
-    {'translated': 'Name', 'field' : 'name'},
-    {'translated': 'Stammeinrichtung', 'field' : 'homeFacility'},
+    { 'translated': 'Vorname', 'field': 'firstName' },
+    { 'translated': 'Name', 'field': 'name' },
+    { 'translated': 'Stammeinrichtung', 'field': 'homeFacility' },
   ];
 
   translatedColumnsCoordinator: string[] = ['Nachname', 'Vorname', 'test'];
   ColumnsCoordonator = [
-    {'translated': 'Vorname', 'field' : 'firstName'},
-    {'translated': 'Name', 'field' : 'name'},
-    {'translated': 'Stammeinrichtung', 'field' : 'homeFacility'},
+    { 'translated': 'Vorname', 'field': 'firstName' },
+    { 'translated': 'Name', 'field': 'name' },
+    { 'translated': 'Stammeinrichtung', 'field': 'homeFacility' },
   ];
 
   buttonIsHidden = false;
@@ -67,12 +68,13 @@ export class AdminMainViewComponent implements OnInit, OnDestroy {
   CoordinatorCollection = new MatTableDataSource<Coordinator>([]);
 
   constructor(
+
     private store: AngularFirestore,
     public dialog: MatDialog,
     public authService: AuthService,
     public subscriptionService: SubscriptionCollectionService,
-    public firestoreService: FirestoreService,
-    private collectionService: CollectionsService) {
+    public firestoreService: FirestoreService) {
+
   }
 
   ngOnDestroy(): void {
@@ -86,8 +88,8 @@ export class AdminMainViewComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.selectedTab = "Einrichtung";
-    this.refreshFacilityList(this.collectionService.facilityCollection, this.facilityContent); // Die Reihenfolge der beiden Methoden verändert es ganz 
-    this.refreshtTraineeList(this.collectionService.userCollection, this.traineeContent);      // merwürdig. Beim ersten Aufruf funktioniert es, wie es soll...
+    this.refreshFacilityList(CollectionsService.facilityCollection, this.facilityContent); // Die Reihenfolge der beiden Methoden verändert es ganz 
+    this.refreshtTraineeList(CollectionsService.userCollection, this.traineeContent);      // merwürdig. Beim ersten Aufruf funktioniert es, wie es soll...
   }
 
   refreshFacilityList(collection: string, tableContent: MatTableDataSource<any>) {
@@ -103,7 +105,7 @@ export class AdminMainViewComponent implements OnInit, OnDestroy {
             tableContent.data = ELEMENT_DATA;
           });
           // this.subscriptionService.DestroySubscriptions(this.subscriptions);
-          console.log("MyArrayInFacility:",  tableContent.data);
+          console.log("MyArrayInFacility:", tableContent.data);
         }));
   }
   refreshtTraineeList(collection: string, tableContent: MatTableDataSource<any>) {
@@ -119,10 +121,10 @@ export class AdminMainViewComponent implements OnInit, OnDestroy {
             tableContent.data = ELEMENT_DATA;
           });
           // this.subscriptionService.DestroySubscriptions(this.subscriptions);
-          console.log("MyArrayInTrainee:",  tableContent.data);
+          console.log("MyArrayInTrainee:", tableContent.data);
         }));
   }
-  
+
   ChooseDialog(action: any, obj?: { action?: any; }) {
     let dialogRef: any;
     let data;
@@ -148,7 +150,7 @@ export class AdminMainViewComponent implements OnInit, OnDestroy {
     }
   }
 
-  openDialog(action: any, obj?: { action?: any; }) {
+  openDialog(action: any, obj?: { action?: any, dialogContent: string }) {
     if (action == "Update") {
       this.ChooseDialog(action, obj);
     }
@@ -158,80 +160,61 @@ export class AdminMainViewComponent implements OnInit, OnDestroy {
     else if (action == "Delete") {
       let dialogRef: any;
       obj!.action = action;
+      obj!.dialogContent = EnumDialogBoxTypes.deletingRow;
+
+      // this.dialogbox.dialogContent = EnumDialogBoxTypes.deleteAllFacilities;
       dialogRef = this.dialog.open(DialogBoxComponent, { data: obj });
       dialogRef.afterClosed()
-      .subscribe((result: { event: string; data: any; }) =>
-       { this.firestoreService.deleteDocument(
-         result.data, this.collectionService.facilityCollection) });
+        .subscribe((result: { event: string; data: any; }) => {
+          if (this.selectedTab == 'Einrichtung')
+            this.firestoreService.deleteDocument(
+              result.data, CollectionsService.facilityCollection);
+          if (this.selectedTab == 'Auszubildender')
+            this.firestoreService.deleteDocument(
+              result.data, CollectionsService.userCollection);
+        });
     }
   }
 
-  /**
-   * get the active Tab to return the right Collection.
-   * @returns currentCollection : string
-   */
-  getUserRole(){
-    let role: string = "";
-    if(this.selectedTab == "Auszubildender"){
-      role = EnumRoles.trainee;
-    }
-    else if (this.selectedTab == "Koordinatoren"){
-      role = EnumRoles.coordinator;
-    }
-    else if (this.selectedTab == "Traeger"){
-      role = EnumRoles.teacher;
-    }
-    return role;
+  openWarningDialog(action: string) {
 
+    let dialogRef: any;
+    let propertiesForDialog: {
+      action: string,
+      dialogContent: string,
+      selectedTab: string
+    } = { action: '', dialogContent: '', selectedTab: this.selectedTab };
+
+    propertiesForDialog.dialogContent = EnumDialogBoxTypes.deleteAllFacilities;
+    propertiesForDialog.action = action;
+    dialogRef = this.dialog.open(DialogBoxComponent, { data: propertiesForDialog });
+    
   }
-  deleteAll(){
-    switch(this.selectedTab){
-      case 'Einrichtung':{
-        this.firestoreService.deleteAllFacilities(this.collectionService.facilityCollection);
+
+  deleteAll() {
+    switch (this.selectedTab) {
+      case 'Einrichtung': {
+        this.firestoreService.deleteAllFacilities(CollectionsService.facilityCollection, CollectionsService.userCollection);
         // this.facilityContent = undefined; // muss anders geleert werden
         break;
       }
-      case 'Auszubildender':{
-        this.firestoreService.deleteAllUserWithDesiredRole(this.collectionService.userCollection, this.getUserRole());
+      case 'Auszubildender': {
+        this.firestoreService.deleteAllUserWithDesiredRole(CollectionsService.userCollection, EnumRoles.trainee);
         break;
       }
-      case 'Koordinatoren':{
-        // this.firestoreService.deleteAllUserWithDesiredRole(this.collectionService.userCollection, this.getUserRole());
+      case 'Koordinatoren': {
+        // this.firestoreService.deleteAllUserWithDesiredRole(CollectionsService.userCollection, EnumRoles.coordinator);
         break;
       }
-      case 'Traeger':{
-        // this.firestoreService.deleteAllUserWithDesiredRole(this.collectionService.userCollection, this.getUserRole());
+      case 'Traeger': {
+        // this.firestoreService.deleteAllUserWithDesiredRole(CollectionsService.userCollection, EnumRoles.teacher);
         break;
       }
-      default:{
+      default: {
         alert('Something went wrong. :/ ');
         break;
       }
     }
   }
-
-  // }
-
-  // -------- Methoden für Checkboxen in der Tabelle -----------
-
-  // isAllSelected() {
-  //   const numSelected = this.selection.selected.length;
-  //   const numRows = this.facilityCollection.length;
-  //   return numSelected === numRows;
-  // }
-
-  //Selektiert alles, wenn nicht alle ausgewählt sind, andernfalls alles entwählen
-  // masterToggle() {
-  //   this.isAllSelected() ?
-  //       //if true
-  //       this.selection.clear() :  
-  //       //if false
-  //       this.facilityCollection.data.forEach(fac => this.selection.select()); //fac
-  // }
-
-  //Das Label für die cCheckbox in der übergebenen Zeile ???
-  // checkboxLabel(row?: IFacility): string {
-  //   return "yoho";
-  //  }
-
+  
 }

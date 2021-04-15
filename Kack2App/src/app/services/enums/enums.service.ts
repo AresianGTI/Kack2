@@ -1,8 +1,5 @@
 import { Injectable } from '@angular/core';
 
-
-
-
 export enum EnumRoles {
 
     teacher = "teacher",
@@ -10,12 +7,19 @@ export enum EnumRoles {
     admin = "admin",
     trainee = "trainee",
 }
+
+export enum EnumDialogBoxTypes {
+
+    deletingRow = "deletingSingleRow",
+    deleteAllFacilities = "deleteAllFacilities"
+}
+
+
 @Injectable({
   providedIn: 'root'
 })
 // enum IRoles {
 //   admin = "ss"}
-
 
 export class EnumsService {
 

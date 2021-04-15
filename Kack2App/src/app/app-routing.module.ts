@@ -6,9 +6,6 @@ import { AngularFireAuthGuard, redirectUnauthorizedTo, canActivate, redirectLogg
 import { MainComponent } from './main/main/main.component';
 import { FacilityDialogComponent } from './modules/adminView/facility-dialog/facility-dialog.component'
 import { TraineeDialogComponent } from './modules/adminView/trainee-dialog/trainee-dialog.component';
-
-// Verstehe ich nicht richtig!!!!
-// import { AuthGuard } from "./shared/guard/auth.guard";
 import { TraineeInformationComponent } from './modules/trainee-Info/trainee-information/trainee-information.component';
 import { GoogleChartViewComponent } from './modules/coordinatorView/google-chart-view/google-chart-view.component';
 // import { CanReadGuard } from './core/can-read.guard';

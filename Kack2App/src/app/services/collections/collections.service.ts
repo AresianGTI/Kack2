@@ -3,16 +3,10 @@ import { Injectable } from '@angular/core';
 @Injectable({
   providedIn: 'root'
 })
-export class CollectionsService {
-  private _userCollection = "usersCollectionOnur";
-  public get userCollection() {
-    return this._userCollection;
-  }
+export abstract class CollectionsService {
 
-  private _facilityCollection = "facilityCollectionOnur";
-  public get facilityCollection() {
-    return this._facilityCollection;
-  }
+  public static userCollection = "usersCollectionOnur";
+  public static facilityCollection = "facilityCollectionOnur";
 
   constructor() { }
 }

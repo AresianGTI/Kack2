@@ -20,7 +20,7 @@ export class FacilityDialogComponent implements OnInit {
   selectedFormControl = new FormControl(0);
 
   constructor(
-    public firestoreService: FirestoreService,
+    public fireStoreService: FirestoreService,
     public collectionService: CollectionsService,
     public dialogRef: MatDialogRef<FacilityDialogComponent>,
     //@Optional() is used to prevent error if no data is passed
@@ -60,16 +60,15 @@ export class FacilityDialogComponent implements OnInit {
 
   chooseFunction() {
     if (this.action == "Update") {
-      this.firestoreService.updateFacilityCollection(this.collectionService.facilityCollection, this.facilityObj)
+      this.fireStoreService.updateFacilityCollection(CollectionsService.facilityCollection, this.facilityObj)
     }
     else if (this.action == "Create") {
       
-      this.firestoreService.createDocument(
-        this.collectionService.facilityCollection,
-        this.getFacilityStructure());
+      this.fireStoreService.createDocument(CollectionsService.facilityCollection, this.getFacilityStructure());
       this.emptyFacilityObject();
     }
   }
+
   emptyFacilityObject() {
     this.facilityObj.name = "";
     this.facilityObj.adress = "";
@@ -78,11 +77,11 @@ export class FacilityDialogComponent implements OnInit {
   }
 
   /**
-   * Document-structure for the firebase facilityCollection
+   * Get the structure for documents in the facilityCollection
    * @returns facilityObj
    */
   getFacilityStructure() {
-    this.facilityObj.ID = this.firestoreService.createID(this.facilityObj);
+    this.facilityObj.ID = this.fireStoreService.createID(this.facilityObj);
     let facilityStructureObj: IFacilityFirebaseStructure = {
       ID: this.facilityObj.ID,
       name: this.facilityObj.name,

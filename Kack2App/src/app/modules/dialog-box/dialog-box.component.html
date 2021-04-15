@@ -1,48 +1,32 @@
 <!-- dialog-box.component.html -->
-<!-- <h1 mat-dialog-title>Row Action :: <strong>{{action}}</strong></h1>
-<div mat-dialog-content  class="example-container">
-  <mat-form-field *ngIf="action != 'Delete'; else elseTemplate">
-    <input placeholder="{{action}} Name" matInput [(ngModel)]="local_data.name">
-  </mat-form-field>
-  <ng-template #elseTemplate>
-    Sure to delete <b>{{local_data.name}}</b>?
-  </ng-template>
-</div>
-<div mat-dialog-actions>
-  <button mat-button (click)="doAction()">{{action}}</button>
-  <button mat-button (click)="closeDialog()" mat-flat-button color="warn">Cancel</button>
-</div>
- -->
+<h1 mat-dialog-title><strong>Achtung</strong></h1>
 
-<!-- dialog-box.component.html -->
-<h1 mat-dialog-title>Row Action :: <strong>{{action}}</strong></h1>
-<div mat-dialog-content>
+<!-- Delete expended row -->
+<div mat-dialog-content *ngIf="dialogContent=='deletingSingleRow'">
   <mat-form-field *ngIf="action != 'Delete'; else elseTemplate">
     <input placeholder="{{action}} Name" matInput [(ngModel)]="local_data.Name">
   </mat-form-field>
   <ng-template #elseTemplate>
-    Sure to delete <b>{{local_data.Name}}</b>?
+   Sind Sie sicher, dass Sie das Element löschen möchten? <b>{{local_data.Name}}</b>
   </ng-template>
-</div>
-<div mat-dialog-actions>
-  <button mat-button (click)="doAction()">{{action}}</button>
-  <button mat-button (click)="closeDialog()" mat-flat-button color="warn">Cancel</button>
-</div>
-
-<!-- <mat-form-field>
-    <mat-label>Test</mat-label>
-    <textarea matInput [(ngModel)]="cedula" placeholder="ula"> </textarea>
-  </mat-form-field>
-  
   <div mat-dialog-actions>
-    <button mat-button>OK</button>
-    <button mat-button [mat-dialog-close]="{ task: data.task }">OK</button>
-<button mat-button (click)="cancel()">Cancel</button>
-    <button
-    mat-fab
-    color ="primary"
-    aria-label="Delete">
-    <mat-icon>delete</mat-icon>
+    <button mat-button (click)="doAction()" mat-flat-button color="warn">{{action}}</button>
+    <button mat-button (click)="closeDialog()" >Abbrechen</button>
+  </div>
+</div>
 
-</button>
-  </div> -->
+<!-- Warning for deleting all facilities -->
+<div mat-dialog-content *ngIf="dialogContent=='deleteAllFacilities'">
+  <mat-label>
+    Sind Sie sicher, dass Sie alle Einrichtungen löschen möchten?
+     Die Azubis der Einrichtung werden ebenfalls gelöscht.
+     Dieser Vorgang kann  <strong>nicht rückgängig</strong> gemacht werden <b>{{local_data.Name}}</b>
+  </mat-label>
+  <div mat-dialog-actions>
+    <button mat-button (click)="deleteAll()" mat-flat-button color="warn">Alle löschen</button>
+    <button mat-button (click)="closeDialog()" >Abbrechen</button>
+  </div>
+</div>
+
+
+

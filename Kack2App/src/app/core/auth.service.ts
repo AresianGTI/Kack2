@@ -34,9 +34,7 @@ export class AuthService {
     public ngZone: NgZone,
     public stringService: GlobalstringsService,
     public subscriptionService: SubscriptionCollectionService,
-    public firestoreService: FirestoreService,
-    public collectionService: CollectionsService // NgZone service to remove outside scope warning
-  ) {
+    public firestoreService: FirestoreService) {
     
     // Authentifizierung wird beim Laden der Seite nicht gespeichert
       this.user$ = this.afAuth.authState.pipe(take(1),switchMap(user => {
@@ -44,7 +42,7 @@ export class AuthService {
         this.getUserDataFromFirestore(user);
         localStorage.setItem('user', JSON.stringify(user));
         JSON.parse(localStorage.getItem('user')!);
-        return this.afs.doc<any>(this.collectionService.userCollection+`/${user.uid}`).valueChanges() //Mal schauen ob Kaki recht hat ...
+        return this.firestoreService.afs.doc<any>(CollectionsService.userCollection+`/${user.uid}`).valueChanges() //Mal schauen ob Kaki recht hat ...
       } else {
         localStorage.setItem('user', this.userData);
         localStorage.getItem('user');
@@ -58,22 +56,23 @@ export class AuthService {
     return this.afAuth.signInWithEmailAndPassword(email, password)
       .then((result) => {
       this.getUserDataFromFirestore(result.user);
-      this.router.navigate(['/' + this.stringService.overview]);
+      this.router.navigate(['/' + GlobalstringsService.overview]);
       })  
       .catch(e => this.errorMessage = e.message);
   }
+
   getUserDataFromFirestore(result: any){
     this.firestoreService.getUserData(result, this.loginSubscriptions)
     .then((data) => {
       this.userData = data;
       
     })
-  }
+  } 
   
   SignUpCoordinator(email: string, password: string, userData: Coordinator) {
     return this.afAuth.createUserWithEmailAndPassword(email, password)
       .then((result) => {
-        this.firestoreService.createDocument(this.collectionService.userCollection, 
+        this.firestoreService.createDocument(CollectionsService.userCollection, 
           this.setUserData(result.user!, userData));
       })
       .catch(e => this.errorMessage = e.message);
@@ -86,7 +85,7 @@ export class AuthService {
     return secondaryApp.auth().createUserWithEmailAndPassword(email, password)
       //Create Trainee Document
       .then((result) => {
-        this.firestoreService.createDocument(this.collectionService.userCollection, 
+        this.firestoreService.createDocument(CollectionsService.userCollection, 
           this.setUserData(result.user!, data));
         secondaryApp.auth().signOut();
       })
@@ -159,7 +158,7 @@ export class AuthService {
    await this.afAuth.signOut().then(() => {
       this.subscriptionService.DestroySubscriptions(this.loginSubscriptions)
       localStorage.removeItem('user');
-      this.router.navigate(['/' + this.stringService.loginView]);
+      this.router.navigate(['/' + GlobalstringsService.loginView]);
     })
   }
   

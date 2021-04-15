@@ -9,9 +9,7 @@ import { AuthService } from 'src/app/core/auth.service';
   styleUrls: ['./main.component.scss']
 })
 export class MainComponent implements OnInit {
-
-  username?: string | null;
-
+  
   constructor(private router: Router, public authService: AuthService) {
   }
 

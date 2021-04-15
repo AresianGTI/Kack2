@@ -26,7 +26,7 @@ export class GoogleChartViewComponent implements OnInit, OnDestroy {
     }
 
   ngOnInit(): void {
-    const facilityCol = this.firestoreService.getAllFacilities(this.collectionService.facilityCollection);
+    const facilityCol = this.firestoreService.getAllFacilities(CollectionsService.facilityCollection);
     const facilityObservableArray =  facilityCol.valueChanges();
 
     this.subscription.push(facilityObservableArray.subscribe((facility) => {
@@ -50,7 +50,7 @@ export class GoogleChartViewComponent implements OnInit, OnDestroy {
   //   //calculate the used mainfacility for progress-bar value
   //   this.facilityArray.forEach(facility => {
   //    facility.VerwendeteKapazitaet = 0;
-  //    this.usedFacilities.forEach(uF =>{  //      this.usedFacilities = this.firestoreService.getFieldsFromCollection(this.collectionService.userCollection, "homeFacility" )
+  //    this.usedFacilities.forEach(uF =>{  //      this.usedFacilities = this.firestoreService.getFieldsFromCollection(CollectionsService.userCollection, "homeFacility" )
   //      if(uF == facility.Name)
   //        facility.VerwendeteKapazitaet++;             
   //    });

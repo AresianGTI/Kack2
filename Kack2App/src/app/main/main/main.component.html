@@ -2,13 +2,21 @@
   <mat-sidenav #drawer class="sidenav" fixedInViewport mode="side" [opened]="true">
     <mat-toolbar>Menü</mat-toolbar>
     <mat-nav-list>
-      <a mat-list-item matTooltip="Hier finden Sie die Übersicht" routerLink="/overview" routerLinkActive="active-link">Übersicht</a>
-      <!-- Die '?' werden benötigt, damit kein Error auftaucht, wenn die userData Aufrufe schneler sind als die subscription -->
-      <a mat-list-item matTooltip="Hier finden Sie die Stammdaten" *ngIf="this.authService?.userData?.role == 'coordinator'" routerLink="/Stammdaten"  routerLinkActive="active-link">Stammdaten</a>
-      <a mat-list-item matTooltip="Hier finden Sie die Zeitplan" routerLink="/Calendar"  routerLinkActive="active-link" >Zeitplan</a>
-      <a mat-list-item matTooltip="Hier finden Sie Ihre Einsatzplanung" *ngIf="this.authService?.userData?.role == 'trainee'" routerLink="/GoogleCharts/facility-chart/trainee-chart"  routerLinkActive="active-link">Einsatzplanung</a>
-      <a mat-list-item matTooltip="Hier finden Sie eine die verfügbaren Kapazitaeten der Einrichtungen"   *ngIf="this.authService?.userData?.role =='coordinator'" routerLink="/GoogleCharts"  routerLinkActive="active-link">Kapazitäten</a>
-    
+      <a mat-list-item matTooltip="Hier finden Sie die Übersicht" routerLink="/overview"
+        routerLinkActive="active-link">Übersicht</a>
+      <!-- The '?' at this point are necessary, cause calling the userData is faster than the supsciption or else there will be errors-->
+      <a mat-list-item matTooltip="Hier finden Sie die Stammdaten"
+        *ngIf="this.authService?.userData?.role == 'coordinator'" routerLink="/Stammdaten"
+        routerLinkActive="active-link">Stammdaten</a>
+      <a mat-list-item matTooltip="Hier finden Sie die Zeitplan" routerLink="/Calendar"
+        routerLinkActive="active-link">Zeitplan</a>
+      <a mat-list-item matTooltip="Hier finden Sie Ihre Einsatzplanung"
+        *ngIf="this.authService?.userData?.role == 'trainee'" routerLink="/GoogleCharts/facility-chart/trainee-chart"
+        routerLinkActive="active-link">Einsatzplanung</a>
+      <a mat-list-item matTooltip="Hier finden Sie eine die verfügbaren Kapazitaeten der Einrichtungen"
+        *ngIf="this.authService?.userData?.role =='coordinator'" routerLink="/GoogleCharts"
+        routerLinkActive="active-link">Kapazitäten</a>
+
       <a mat-list-item matTooltip="Hier finden Sie die Einstellungen" routerLink="#">Einstellungen</a>
     </mat-nav-list>
   </mat-sidenav>
@@ -16,7 +24,9 @@
     <mat-toolbar color="primary">
       <h1 style=color:azure>Mainview</h1>
       <span class="logout-button"> </span>
-      <mat-label style=color:azure>Du bist angemeldet als {{username}}</mat-label>
+      <mat-label *ngIf="authService.userData as user" style=color:azure>
+        Du bist angemeldet als {{user.firstName}} {{user.name}} 
+      </mat-label>
       <button class="l_btn" mat-raised-button (click)="logOut()" color="primary">Logout</button>
     </mat-toolbar>
     <router-outlet></router-outlet>

@@ -1,4 +1,4 @@
-<h2 mat-dialog-title>Azubi erstellen</h2>
+<h2 mat-dialog-title *ngIf="action =='Create'">Neuen Azubi erstellen</h2><h2 mat-dialog-title *ngIf="action=='Update'">Azubi bearbeiten</h2>
 <mat-dialog-content class="mat-typography">
   <p>
     Geben Sie bitte den Namen, den Nachnamen und die Stammeinrichtung des Azubis an.<br />
@@ -18,7 +18,7 @@
       <mat-hint align="end">{{nameInput.value?.length || 0}}/30</mat-hint>
     </mat-form-field>
     <!-- Feld für die E-Mail Adresse des Azubis -->
-    <mat-form-field hintLabel="Maximal 30 Zeichen" appearance="fill">
+    <mat-form-field hintLabel="Maximal 30 Zeichen" appearance="fill" *ngIf="action == 'Create' ">
       <mat-label>E-Mail Adresse des Azubis</mat-label>
       <input matInput #adressInput maxlength="30" [(ngModel)]="traineeObj.email">
       <mat-hint align="end">{{adressInput.value?.length || 0}}/30</mat-hint>
@@ -28,7 +28,8 @@
       <mat-label>Stammeinrichtung wählen</mat-label>
       <mat-select [(ngModel)]="selectedFacility">
         <mat-option *ngFor="let facility of dialogfacilityArray" [value]="facility">
-          <!--HINWEIS: [value]="facility.Name" um hier mit der String zu arbeiten -->
+          <!--HINWEIS: [value]="facility.name", um nicht ein Objekt, sondern nur die String auszuwählen-->
+          <!-- HINWEIS: [value] wird benötigt, damit der ausgewählte Wert ausgewählt bleibt -->
           {{facility.name}}
         </mat-option>
       </mat-select>
@@ -40,6 +41,6 @@
 
 <mat-dialog-actions align="End">
   <button mat-raised-button color="primary" mat-dialog-close>Abbrechen</button>
-  <button mat-raised-button (click)="createTrainee()" color="primary" [disabled]="!traineeObj.firstName || !traineeObj.name || !traineeObj.email ||
-  !selectedFacility || (selectedFacility.usedCapacity >= selectedFacility.capacity)">Erstellen</button>
+  <button mat-raised-button (click)="createOrUpdate()" color="primary" [disabled]="!traineeObj.firstName || !traineeObj.name || !traineeObj.email ||
+  !selectedFacility || (selectedFacility.usedCapacity >= selectedFacility.capacity)">{{action}}</button>
 </mat-dialog-actions>

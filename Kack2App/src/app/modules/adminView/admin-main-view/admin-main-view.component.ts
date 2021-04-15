@@ -169,9 +169,11 @@ export class AdminMainViewComponent implements OnInit, OnDestroy {
           if (this.selectedTab == 'Einrichtung')
             this.firestoreService.deleteDocument(
               result.data, CollectionsService.facilityCollection);
+              //hier müssen wieder alle Azubis der expanded Einrichtung gelöscht werden
           if (this.selectedTab == 'Auszubildender')
             this.firestoreService.deleteDocument(
               result.data, CollectionsService.userCollection);
+              //hier muss usedCapacity runtergezählt werden
         });
     }
   }

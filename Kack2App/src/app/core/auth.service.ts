@@ -13,7 +13,7 @@ import { FirestoreService } from '../services/firestore/firestore.service';
 import { CollectionsService } from '../services/collections/collections.service';
 import { IUser } from '../models/user';
 import { EnumRoles } from '../services/enums/enums.service';
-import { IUserFirebaseStructure} from '../models/firestoreModels'
+import { ICoordinatorFireBaseStructure, IUserFirebaseStructure } from '../models/firestoreModels'
 
 const secondaryApp = firebase.initializeApp(environment.firebaseConfig, 'Secondary');
 @Injectable({
@@ -26,7 +26,7 @@ export class AuthService {
   loginSubscriptions: Subscription[] = [];
   user$: Observable<any>;
 
-  
+
   constructor(
     public afs: AngularFirestore,   // Inject Firestore service
     public afAuth: AngularFireAuth, // Inject Firebase auth service
@@ -35,14 +35,14 @@ export class AuthService {
     public stringService: GlobalstringsService,
     public subscriptionService: SubscriptionCollectionService,
     public firestoreService: FirestoreService) {
-    
+
     // Authentifizierung wird beim Laden der Seite nicht gespeichert
-      this.user$ = this.afAuth.authState.pipe(take(1),switchMap(user => {
+    this.user$ = this.afAuth.authState.pipe(take(1), switchMap(user => {
       if (user) {
         this.getUserDataFromFirestore(user);
         localStorage.setItem('user', JSON.stringify(user));
         JSON.parse(localStorage.getItem('user')!);
-        return this.firestoreService.afs.doc<any>(CollectionsService.userCollection+`/${user.uid}`).valueChanges() //Mal schauen ob Kaki recht hat ...
+        return this.firestoreService.afs.doc<any>(CollectionsService.userCollection + `/${user.uid}`).valueChanges() //Mal schauen ob Kaki recht hat ...
       } else {
         localStorage.setItem('user', this.userData);
         localStorage.getItem('user');
@@ -55,42 +55,41 @@ export class AuthService {
   SignIn(email: string, password: string) {
     return this.afAuth.signInWithEmailAndPassword(email, password)
       .then((result) => {
-      this.getUserDataFromFirestore(result.user);
-      this.router.navigate(['/' + GlobalstringsService.overview]);
-      })  
+        this.getUserDataFromFirestore(result.user);
+        this.router.navigate(['/' + GlobalstringsService.overview]);
+      })
       .catch(e => this.errorMessage = e.message);
   }
 
-  getUserDataFromFirestore(result: any){
+  getUserDataFromFirestore(result: any) {
     this.firestoreService.getUserData(result, this.loginSubscriptions)
-    .then((data) => {
-      this.userData = data;
-      
-    })
-  } 
-  
-  SignUpCoordinator(email: string, password: string, userData: Coordinator) {
+      .then((data) => {
+        this.userData = data;
+
+      })
+  }
+
+  SignUpCoordinator(email: string, password: string, coordinatorObjectData: Coordinator) {
     return this.afAuth.createUserWithEmailAndPassword(email, password)
       .then((result) => {
-        this.firestoreService.createDocument(CollectionsService.userCollection, 
-          this.setUserData(result.user!, userData));
+        this.firestoreService.createDocument(CollectionsService.userCollection,
+          this.setCoordinatorData(result.user!, coordinatorObjectData));
       })
       .catch(e => this.errorMessage = e.message);
   }
 
   // Sign up with email/password
-  SignUpTrainees(email: string, password: string, data: Trainee, 
-    ) {
-      //Create Authentication User
+  SignUpTrainees(email: string, password: string, userObjectData: Trainee, //Trainee-Typ muss zu User werden, wenn Teacher dazu kommen
+  ) {
+    //Create Authentication User
     return secondaryApp.auth().createUserWithEmailAndPassword(email, password)
       //Create Trainee Document
       .then((result) => {
-        this.firestoreService.createDocument(CollectionsService.userCollection, 
-          this.setUserData(result.user!, data));
+        this.firestoreService.createDocument(CollectionsService.userCollection,
+          this.setUserData(result.user!, userObjectData));
         secondaryApp.auth().signOut();
       })
   }
-
   // Send email verfificaiton when new user sign up
   // async SendVerificationMail() {
   //   return (await this.afAuth.currentUser)?.sendEmailVerification()
@@ -116,7 +115,7 @@ export class AuthService {
   }
 
   // Sign in with Google
-  GoogleAuth() { 
+  GoogleAuth() {
     // return this.AuthLogin(new auth.GoogleAuthProvider());
   }
 
@@ -135,45 +134,61 @@ export class AuthService {
   //     })
   // }
 
-  setUserData(user: any, data: IUser) {
+  setUserData(googleData: firebase.User, userObjectData: IUser) {
     const userStructure: IUserFirebaseStructure = {
-      ID: user.uid,
-      email: user.email!,
-      displayName: user.displayName!,
-      emailVerified: user.emailVerified,
-      role: data.role || "Error, no Role", 
-      homeFacility: data.homeFacility.name || "No Homefacility",
-      name: data?.name || "No Value",
-      firstName: data?.firstName || "No Value"
+      ID: googleData.uid,
+      email: googleData.email!,
+      displayName: googleData.displayName!,
+      emailVerified: googleData.emailVerified,
+      role: userObjectData.role || "Error, no Role",
+      homeFacility: userObjectData.homeFacility.name || "No Homefacility",
+      homeFacilityID: userObjectData.HOME_FACILITY_ID,
+      name: userObjectData?.name || "No Value",
+      firstName: userObjectData?.firstName || "No Value"
     }
     // Updates existing Documents in a non-destructive way
     return userStructure;
   }
+
+  setCoordinatorData(googleData: firebase.User, coordinatorData: IUser) {
+    const coordinatorStructure: ICoordinatorFireBaseStructure = {
+      ID: googleData.uid,
+      email: googleData.email!,
+      displayName: googleData.displayName!,
+      emailVerified: googleData.emailVerified,
+      role: coordinatorData.role || "Error, no Role",
+      homeFacility: coordinatorData.homeFacility.name || "No Homefacility",
+      name: coordinatorData?.name || "No Value",
+      firstName: coordinatorData?.firstName || "No Value"
+    }
+    // Updates existing Documents in a non-destructive way
+    return coordinatorStructure;
+  }
+
   SignOutCreatedUser() {
     return this.afAuth.signOut().then(() => {
       localStorage.removeItem('user');
     })
   }
- async SignOut() {
-   await this.afAuth.signOut().then(() => {
+  async SignOut() {
+    await this.afAuth.signOut().then(() => {
       this.subscriptionService.DestroySubscriptions(this.loginSubscriptions)
       localStorage.removeItem('user');
       this.router.navigate(['/' + GlobalstringsService.loginView]);
     })
   }
-  
+
   private checkAuthorization(user: any, allowedRoles: string[]): boolean {
     if (!user) return false
     let isAuthorized = false;
     allowedRoles.forEach(role => {
-    if(user.role == role)
-    {
-      isAuthorized = true;
-    }
-  });
-  return isAuthorized;
-   }
-     
+      if (user.role == role) {
+        isAuthorized = true;
+      }
+    });
+    return isAuthorized;
+  }
+
   canRead(user: any): boolean {
     const allowedRoles = [EnumRoles.admin, EnumRoles.coordinator, EnumRoles.trainee, EnumRoles.teacher];
     return this.checkAuthorization(user, allowedRoles)

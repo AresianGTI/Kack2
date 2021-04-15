@@ -71,17 +71,19 @@ export class TraineeDialogComponent implements OnInit, OnDestroy {
   }
 
   createOrUpdate() {
-    if (this.action == "Update") {
-      this.fireStoreService.updateTraineeCollection(CollectionsService.userCollection, this.traineeObj)
-    }
-    else if (this.action == "Create") {
+    if (this.action == "Create") {
       this.createTrainee();
+    }
+    else if (this.action == "Update") {
+      this.fireStoreService.updateTraineeCollection(CollectionsService.userCollection, this.traineeObj)
     }
   }
 
   createTrainee() {
-    if(this.selectedFacility)
-    this.traineeObj.homeFacility.name = this.selectedFacility.name; //set homeFacility for the trainee
+    if(this.selectedFacility){
+      this.traineeObj.homeFacility.name = this.selectedFacility.name; //set homeFacility for the trainee
+      this.traineeObj._HOME_FACILITY_ID = this.selectedFacility?.ID;  //set facilityID for the trainee
+    }
     
     this.authService.SignUpTrainees(this.traineeObj.email, "hund111", this.traineeObj).then(() => {
       this.fireStoreService.updateUsedCapacity(CollectionsService.facilityCollection, this.selectedFacility)

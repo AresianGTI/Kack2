@@ -60,7 +60,7 @@ export class FacilityDialogComponent implements OnInit {
 
   chooseFunction() {
     if (this.action == "Update") {
-      this.fireStoreService.updateFacilityCollection(CollectionsService.facilityCollection, this.facilityObj)
+      this.fireStoreService.updateFacility(CollectionsService.facilityCollection, this.facilityObj);
     }
     else if (this.action == "Create") {
       

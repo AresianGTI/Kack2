@@ -17,9 +17,11 @@ export interface IUser {
     name: string;
     firstName: string;
     homeFacility: Facility;
+    HOME_FACILITY_ID: string;
 }
 
 export class User implements IUser {
+    _HOME_FACILITY_ID!: string;
     _ID!: string;
     _email!: string;
     _displayName!: string;
@@ -27,8 +29,14 @@ export class User implements IUser {
     _name!: string;
     _firstName!: string;
     _role!: string;
-    private _homeFacility = new Facility();
+    private _homeFacility = new Facility(); //speichern wir so nicht in der Datenbank, sondern nur den Namen...
 
+    public get HOME_FACILITY_ID(): string {
+        return this._HOME_FACILITY_ID;
+    }
+    public set HOME_FACILITY_ID(value: string) {
+        this._HOME_FACILITY_ID = value;
+    }
     public get homeFacility() {
         return this._homeFacility;
     }

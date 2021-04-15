@@ -33,7 +33,7 @@ export class FirestoreService {
     return fieldList;
   }
 
-  getUserData (user: any, subscriptionList: Subscription[]): Promise<any> {
+  getUserData(user: any, subscriptionList: Subscription[]): Promise<any> {
     var docRef = this.afs.collection(CollectionsService.userCollection).doc(`/${user.uid}`);
     return docRef.ref.get().then((doc) => {
       return doc.data();
@@ -45,15 +45,15 @@ export class FirestoreService {
     return objData.ID = this.afs.createId();
   }
   // Setting up user and facilities
-   createDocument(collection: string, objData: any) {
-    this.afs.collection(collection).doc(objData.ID).set(objData).then(res => {
+  createDocument(collection: string, objectStructure: any) {
+    this.afs.collection(collection).doc(objectStructure.ID).set(objectStructure).then(res => {
     }).catch(error => {
       console.log(error);
     });
   }
 
   //---DELETE REGION---
-   deleteDocument(data: any, collection: string) {
+  deleteDocument(data: any, collection: string) {
     this.afs.collection(collection).doc(data.ID).delete();
   }
 
@@ -61,7 +61,7 @@ export class FirestoreService {
    * Deletes all facilities and all trainees inside the facilities   
    *@returns No return value
    */
-   deleteAllFacilities(facilityCollection: string, userCollection: string): void {
+  deleteAllFacilities(facilityCollection: string, userCollection: string): void {
     //Delete every single facility by using the ID
     this.afs.collection(facilityCollection)
       .get()
@@ -79,17 +79,17 @@ export class FirestoreService {
       );
   }
 
-   deleteAllTraineesInsideFacility(homeFacility: string){
-    let userCollection =  CollectionsService.userCollection;
+  deleteAllTraineesInsideFacility(homeFacility: string) {
+    let userCollection = CollectionsService.userCollection;
     this.afs.collection(userCollection, ref => ref.where('homeFacility', '==', homeFacility))
-    .get().toPromise().then(querySnapshot => {
-      querySnapshot.forEach((doc) => this.afs.collection(userCollection).doc(doc.id).delete())
-    })
-    .catch((error) => console.error("Error removing Users: ", error)
-    );
+      .get().toPromise().then(querySnapshot => {
+        querySnapshot.forEach((doc) => this.afs.collection(userCollection).doc(doc.id).delete())
+      })
+      .catch((error) => console.error("Error removing Users: ", error)
+      );
   }
 
-   deleteAllUserWithDesiredRole(collection: string, role: string) {
+  deleteAllUserWithDesiredRole(collection: string, role: string) {
     this.afs.collection(collection, ref => ref.where('role', '==', role)) // only deletes users with role 'trainee'
       .get()
       .toPromise()
@@ -104,7 +104,7 @@ export class FirestoreService {
 
 
   //---UPDATE REGION---
-   updateFacilityCollection(collection: string, facilityObj: Facility) {
+  updateFacility(collection: string, facilityObj: Facility) {
     return this.afs.collection(collection).doc(facilityObj.ID).update(
       {
         //Updateable fields in update-dialog
@@ -114,10 +114,21 @@ export class FirestoreService {
         type: facilityObj.type.typeName, //this does not change anything in the update-dialog, but also should not change in real case
         capacity: facilityObj.capacity
       }
-    );
+      //also update the facilityname for the users
+    ).then(() => {
+      this.afs.collection(CollectionsService.userCollection, ref =>
+        ref.where('homeFacilityID', '==', facilityObj.ID))
+        .get()
+        .toPromise()
+        .then(querSnapshot => {
+          querSnapshot.forEach((document) => this.afs.collection(CollectionsService.userCollection).doc(document.id).update({
+            homeFacility: facilityObj.name
+          }))
+        })
+    });
   }
 
-   updateTraineeCollection(collection: string, traineeObj: Trainee) {
+  updateTraineeCollection(collection: string, traineeObj: Trainee) {
     this.afs.collection(collection).doc(traineeObj.ID).update({
       //hardcoded... besser: ganzes Object mit der Datenbankstruktur übergeben
       firstName: traineeObj.firstName,
@@ -126,7 +137,7 @@ export class FirestoreService {
     });
   }
 
-   updateUsedCapacity(collection: string, facilityObj: IFacility | undefined): void {
+  updateUsedCapacity(collection: string, facilityObj: IFacility | undefined): void {
 
     if (facilityObj) {
       this.afs.collection(collection).doc(facilityObj.ID).update(

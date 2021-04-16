@@ -25,11 +25,11 @@ export class CalendarDialogComponent implements OnInit {
     // this.firestoreService.getUserData(this.authService.userData)
     console.log("Ich bin der User im Kalender:", this.authService.userData);
     if (this.authService.userData.role == "coordinator") {
-      this.calendarService.eventsTest = this.calendarService.coordinatorEvents;
+      this.calendarService.existingRoleEvents = this.calendarService.coordinatorEvents;
       
     }
     else if (this.authService.userData.role == "trainee") {
-      this.calendarService.eventsTest = this.calendarService.traineeEvents;
+      this.calendarService.existingRoleEvents = this.calendarService.traineeEvents;
       // this.calendarService.events = this.calendarService.ownEvents;
     }
     // this.calendarService.getOwnData();

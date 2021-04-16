@@ -97,14 +97,6 @@ export class FirestoreService {
       }
     );
   }
-  // updateTrainees(collection: string, data:any) {
-
-  //   return this.afs.collection(collection).doc(data.ID).update(
-  //     {
-  //       homeFacility: data.homeFacility
-  //     }
-  //   );
-  // }
   mapUserDataToObject = (user: any, collection: string, mapName: string): Promise<any> => {
     var docRef = this.afs.collection(collection).doc(`${user.ID}`);
     return docRef.ref.get().then((doc) => {
@@ -124,42 +116,31 @@ export class FirestoreService {
     }
     return arr;
   }
-  getbbb(user: User): Promise<any>
-  {
+  getTraineesInFacility(user: User): Promise<any> {
     let arr: any = [];
-    let data: any;
-   return this.afs.collection("usersCollection", ref => (ref
+    return this.afs.collection("usersCollection", ref => (ref
       .where("homeFacility", "==", user.homeFacility))
       .where("role", "==", "trainee"))
-      // this.afs.collection("usersCollection", ref => ref.where("role", "==", "trainee"))
       .get().toPromise().then(snapshot => {
         snapshot.docs.forEach(doc => {
-          // console.log("Trainees: ", doc.data())
           arr.push(doc.data())
         })
         return arr;
       });
   }
 
-  getAllCollectionItems = (data: any , collection: string, mapName: string): Promise<any> => {
+  getAllCollectionItems = (data: any, collection: string, mapName: string): Promise<any> => {
     let arr: any = [];
-    console.log("User IDs",data.ID, " in actual Facility")
-      // data sind unten undefined weil asyncrhon läuft
-// data.forEach(element => {
-//   console.log("Elem UID: ", element.uid)
-// });
+    console.log("User IDs", data.ID, " in actual Facility")
     return this.afs.collection(collection, ref => ref.where("UID", "==", data.ID))
       .get().toPromise().then(snapshot => {
         snapshot.docs.forEach(doc => {
           console.log("DocData: ", doc.data())
-          // let arr =  this.mapFirebaseEntryToObject(doc, collection, mapName)
-
           let data: any = doc.data();
           try {
             for (const [key, value] of Object.entries(data[mapName])) {
               arr.push([key, value]);
             }
-            // console.log("aarrrr: ", arr)
           }
           catch {
             console.log("Keine Daten in der Collection ", collection, " vorhanden")

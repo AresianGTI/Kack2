@@ -48,40 +48,16 @@ import { CustomEventTitleFormatter } from './custom-event-title-formatter.provid
 })
 export class CalendarComponent implements OnInit, OnDestroy {
 
-  //  actions: CalendarEventAction[] = [
-  //   {
-  //     label: '<i class="fas fa-fw fa-pencil-alt"></i>',
-  //     a11yLabel: 'Edit',
-  //     onClick: ({ event }: { event: CalendarEvent }): void => {
-  //       this.handleEvent('Edited', event);
-  //     },
-  //   },
-  //   {
-  //     label: '<i class="fas fa-fw fa-trash-alt"></i>',
-  //     a11yLabel: 'Delete',
-  //     onClick: ({ event }: { event: CalendarEvent }): void => {
-  //       this.calendarService.events = this.calendarService.events.filter((iEvent) => iEvent !== event);
-  //       this.handleEvent('Deleted', event);
-  //     },
-  //   },
-  // ];
   @ViewChild('modalContent', { static: true })
   modalContent!: TemplateRef<any>;
   view: CalendarView = CalendarView.Month;
   CalendarView = CalendarView;
   viewDate: Date = new Date();
   activeDayIsOpen: boolean = true;
-test: string = "";
-// guard : boolean = false;
   constructor(private modal: NgbModal,
     public dialog: MatDialog,
     public calendarService: CalendarService,
-    public authService: AuthService) {
-      console.log("Constructor Calendar Component");
-      
-    
-
-     }
+    public authService: AuthService) { }
   ngOnDestroy(): void {
     this.authService.getValue().subscribe().unsubscribe();
   }
@@ -90,16 +66,10 @@ test: string = "";
     this.calendarService.ownEvents =  [];
     this.authService.getValue().subscribe((value) =>{
       if(value){
-        // console.log("Ich bin der User im Kalender:", value);
         this.calendarService.loadEvents(value.role);
       }
-     
     })
-    console.log("OnInit CalenderComponent");
   }
-  // getGuard():boolean{
-  //   return this.guard;
-  // }
 
   eventTimesChanged({
     event,
@@ -111,7 +81,7 @@ test: string = "";
         return {
           ...event,
           start: newStart,
-          end: newEnd,
+          end: newEnd
         };
       }
       return iEvent;

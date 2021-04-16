@@ -14,24 +14,31 @@ import { FirestoreService } from '../services/firestore/firestore.service';
 })
 export class CalendarDialogComponent implements OnInit {
 
+  
   constructor(private modal: NgbModal,
     public dialog: MatDialog,
     public calendarService: CalendarService,
     public authService: AuthService) { }
   ngOnInit(): void {
-  
+    // this.calendarService.events = [] ;
+    // this.calendarService.ownEvents = [] ;
     // this.firestoreService.getUserData(this.authService.userData)
     console.log("Ich bin der User im Kalender:", this.authService.userData);
     if (this.authService.userData.role == "coordinator") {
       this.calendarService.eventsTest = this.calendarService.coordinatorEvents;
+      
     }
     else if (this.authService.userData.role == "trainee") {
       this.calendarService.eventsTest = this.calendarService.traineeEvents;
+      // this.calendarService.events = this.calendarService.ownEvents;
     }
+    // this.calendarService.getOwnData();
+    console.log("OWN Events in OnInit: ", this.calendarService.ownEvents)
     // this.calendarService.addEvent();
   }
   
   getEventData(event: any, evento: any) {
     event.color = evento.color
+    event.title = evento.title
   }
 }

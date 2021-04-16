@@ -134,7 +134,7 @@ export class FirestoreService {
       // this.afs.collection("usersCollection", ref => ref.where("role", "==", "trainee"))
       .get().toPromise().then(snapshot => {
         snapshot.docs.forEach(doc => {
-          console.log("Trainees: ", doc.data())
+          // console.log("Trainees: ", doc.data())
           arr.push(doc.data())
         })
         return arr;
@@ -143,7 +143,7 @@ export class FirestoreService {
 
   getAllCollectionItems = (data: any , collection: string, mapName: string): Promise<any> => {
     let arr: any = [];
-    console.log("data in getAllCollectionItems: ", data.ID)
+    console.log("User IDs",data.ID, " in actual Facility")
       // data sind unten undefined weil asyncrhon läuft
 // data.forEach(element => {
 //   console.log("Elem UID: ", element.uid)

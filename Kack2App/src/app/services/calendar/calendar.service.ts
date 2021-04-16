@@ -26,6 +26,7 @@ import { AuthService } from 'src/app/core/auth.service';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { FormControl } from '@angular/forms';
 import { ArrayType } from '@angular/compiler';
+import { Console } from 'node:console';
 const colors: any = {
   red: {
     primary: '#ad2121',
@@ -66,10 +67,12 @@ export class CalendarService {
   events: CalendarEvent[] = [];
   ownEvents: CalendarEvent[] = [];
   eventsTest: CalendarEvent[] = [];
+  newEvents: any[] = [];
   public traineesInFacility: any[]= [];
 
   predefinedEvents(type: string, color: any) {
-    let menmen: any = {
+    let event: any = {
+      id: this.firestoreService.createID(),
       start: startOfDay(new Date()),
       end: endOfDay(new Date()),
       title: type,
@@ -80,26 +83,11 @@ export class CalendarService {
         afterEnd: true,
       }
     }
-    return menmen;
+    return event;
   }
-  eventDataTest(event: any) {
-    let menmen: any = {
-      start: new Date(event.start.seconds * 1000),
-      end: new Date(event.end.seconds * 1000),
-      title: event.title,
-      color: event.color,
-      allDay: event.allDay,
-      resizable: {
-        beforeStart: true,
-        afterEnd: true,
-      },
-      name: "MeinNameIst"
-    }
-    console.log("MENMEN: ", menmen)
-    return menmen;
-  }
-  // loadEventData(event: any) {
+  // eventDataTest(event: any) {
   //   let menmen: any = {
+  //     id: this.firestoreService.createID(),
   //     start: new Date(event.start.seconds * 1000),
   //     end: new Date(event.end.seconds * 1000),
   //     title: event.title,
@@ -111,85 +99,76 @@ export class CalendarService {
   //     },
   //     name: "MeinNameIst"
   //   }
-  //   console.log("LoadEventData: ", menmen)
+  //   console.log("MENMEN: ", menmen)
   //   return menmen;
   // }
-
   traineeEvents: CalendarEvent[] = [
     this.predefinedEvents(EnumMeetingTypes.applyVacation, colors.red),
     this.predefinedEvents(EnumMeetingTypes.notificationOfIlness, colors.green)
   ];
-
   coordinatorEvents: CalendarEvent[] = [
     this.predefinedEvents(EnumMeetingTypes.practicalMeeting, colors.blue),
     this.predefinedEvents(EnumMeetingTypes.singleMeeting, colors.yellow)
   ]
   safeNewEvent() {
-    console.log("OwnEvetns in Safe: ", this.events)
-    this.events.filter((event) => {
-      if (event.title != "" )  {
+    this.ownEvents = [
+      ...this.ownEvents,
+      ...this.newEvents
+    ];
+    this.newEvents.filter((event) => {
+      if (event.title != "" ){
         this.setEventData(event);
       } else {
         console.log("testoMets");
         this.deleteEvent(event);
       }
     })
+    this.newEvents = [];
   }
-
-
-  // addNewEvent(): void {
-  //   this.events = [
-  //     ...this.events,
-  //     this.eventData("", colors.black)
-  //   ];
-  //   console.log("AddEvent: ", this.events)
-  // }
   addEvent(): void {
-    this.events = [
-      ...this.events,
-      this.predefinedEvents("", colors.black)
-    ];
-    console.log("AddEvent: ", this.events)
+    this.newEvents = [...this.newEvents,
+    this.predefinedEvents("", colors.black)];
   }
-  // addOwnEvents(event: any) {
-  //   this.ownEvents = [
-  //     ...this.ownEvents,
-  //     this.loadEventData(event)
-  //   ];
-  //   console.log("AddOwnEvents: ", event)
-
-  // }
+  addOwnEvents(event: any) {
+    event.start = new Date(event.start.seconds * 1000);
+    event.end  = new Date(event.end.seconds * 1000);
+    this.ownEvents = [
+      ...this.ownEvents,
+      event
+    ];
+    this.events = this.ownEvents
+  }
   addEventTest(event: any) {
-
     event.start = new Date(event.start.seconds * 1000);
     event.end  = new Date(event.end.seconds * 1000);
     this.events = [
       ...this.events,
       event
-    //  this.loadEventData(event)
     ];
     console.log("AddEventTEst: ", event)
-
+    console.log("Events: ", this.events)
   }
+
   deleteEvent(eventToDelete: CalendarEvent) {
-    this.events.filter((event) => this.firestoreService.deleteDocument(event, "Test"));
-    // this.events = this.ownEvents.filter((event) => event !== eventToDelete);
-    this.events = this.events.filter((event) => event !== eventToDelete);
+    // this.ownEvents.filter((event) => this.firestoreService.deleteDocument(event, "Test"));
+    this.ownEvents=  this.ownEvents.filter((event) => event !== eventToDelete);
+    this.events = this.ownEvents;
   }
 
-  item: any = {
-    start: startOfDay(new Date()),
-    end: endOfDay(new Date()),
-    title: "type",
-    color: colors.black,
-    allDay: true,
-    resizable: {
-      beforeStart: true,
-      afterEnd: true,
-    },
-    name: "MeinNameIst"
-  }
-  menmen: any = {
+  // item: any = {
+  //   id: this.firestoreService.createID(),
+  //   start: startOfDay(new Date()),
+  //   end: endOfDay(new Date()),
+  //   title: "type",
+  //   color: colors.black,
+  //   allDay: true,
+  //   resizable: {
+  //     beforeStart: true,
+  //     afterEnd: true,
+  //   },
+  //   name: "MeinNameIst"
+  // }
+  firestoreDocument: any = {
     UID: "",
     items: {
     }
@@ -197,49 +176,31 @@ export class CalendarService {
 
   setEventData(event: any) {
     let id = this.firestoreService.createID();
-    this.menmen.UID = this.authService.userData?.ID;
-    this.menmen.Name = this.authService.userData?.name;
-    this.menmen.items["ItemID " + id] = event;
-    console.log("stabil: ", this.menmen);
-    this.firestoreService.updateDocument("Test", this.menmen);
+    this.firestoreDocument.UID = this.authService.userData?.ID;
+    this.firestoreDocument.Name = this.authService.userData?.name;
+    this.firestoreDocument.items = this.ownEvents;
+    this.firestoreService.updateDocument("Test", this.firestoreDocument);
+    this.events = this.ownEvents;
   }
   loadEvents(action: string) {
     this.events = [];
-    if (action == "coordinator") {
-      // guard= true;
       this.firestoreService.mapUserDataToObject(this.authService.userData, "Test", "items").then((val) => {
-        this.addElementsToEventList(val)
+        this.addElementsToOwnEventList(val)
       });
-    }
-    else if (action == "trainee") {
-      this.firestoreService.mapUserDataToObject(this.authService.userData, "Test", "items").then((val) => {
-        // this.addElementsToEventList(val)
-        this.addElementsToEventList(val)
-      });
-    }
     this.getTrainees();
   }
-  addElementsToOwnEventList(val: any) {
-    this.ownEvents= val;
-    
-    // this.ownEvents.forEach((element: any) => {
-    //   this.addOwnEvents(element[1]);
-      
-    // });
-    // 
-    // this.events= this.ownEvents;
-    this.events= this.ownEvents;
-    console.log("OwnEvents: ", this.events)
+  addElementsToOwnEventList(val: any) { 
+    val.forEach((element: any) => {
+      this.addOwnEvents(element[1]);
+    });
     this.refresh.next();
-    // console.log("EVENTSLAN: ", this.events)
   }
   addElementsToEventList(val: any) {
-    this.eventsTest= val;
-    console.log("AllEvents: ", this.eventsTest)
-    this.eventsTest.forEach((element: any) => {
+    val.forEach((element: any) => {
       this.addEventTest(element[1]);
-      this.refresh.next();
+      
     });
+    this.refresh.next();
   }
 
   getTrainees(){
@@ -250,30 +211,35 @@ export class CalendarService {
   }
   getTraineeEvents(trainee: any){
  this.events = [];
+//  this.ownEvents = [];
+ //Wenn addElementsToOwnEveentList --> Werden
     this.firestoreService.mapUserDataToObject(trainee, "Test", "items").then((val) => {
       this.addElementsToEventList(val)
     });
   }
   getOwnData(){
-    // this.ownEvents = [];
+    this.ownEvents = [];
     this.events = [];
     this.firestoreService.mapUserDataToObject(this.authService.userData, "Test", "items").then((val) => {
-      this.addElementsToEventList(val)
+      // console.log("WARuM macht der soviele: ", val)
+      this.addElementsToOwnEventList(val)
     });
   }
- 
   getAllEventsFromAllUser() {
     this.events = [];
+    // this.ownEvents= [];
     this.firestoreService.mapUserDataToObject(this.authService.userData, "Test", "items").then((val) => {
       this.addElementsToEventList(val)
     });
-
     this.firestoreService.getbbb(this.authService.userData).then((val) => {
       console.log("Returned Array: ", val)
       this.traineesInFacility = val;
-      val.forEach((element: any) => {
+      this.traineesInFacility.forEach((element: any) => {
         this.firestoreService.getAllCollectionItems(element, "Test", "items").then((arr) => {
-          this.addElementsToEventList(arr);
+          if(arr)
+          {
+            this.addElementsToEventList(arr);
+          }
       });
     })
     })
@@ -283,5 +249,6 @@ export class CalendarService {
     console.log("EventTest: ", this.eventsTest);
     console.log("events: ", this.events);
     console.log("OwnEvents: ", this.ownEvents);
+    console.log("NewEvents: ", this.newEvents);
   }
 }

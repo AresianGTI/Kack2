@@ -7,13 +7,13 @@
             </tr>
         </thead>
         <tbody>
-            <tr *ngFor="let event of calendarService.events">
+            <tr *ngFor="let event of calendarService.newEvents">
                 <mat-form-field appearance="fill">
                     <mat-label>Terminart auswählen</mat-label>
                     <mat-select [(ngModel)]="event.title">
                         <mat-option *ngFor="let evento of calendarService.eventsTest" [value]="evento.title"
                             (click)="getEventData(event, evento)"
-                            (click)="calendarService.refresh.next()">
+                           >
                             {{evento.title}}
                         </mat-option>
                     </mat-select>

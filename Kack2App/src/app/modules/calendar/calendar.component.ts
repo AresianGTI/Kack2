@@ -48,23 +48,23 @@ import { CustomEventTitleFormatter } from './custom-event-title-formatter.provid
 })
 export class CalendarComponent implements OnInit, OnDestroy {
 
-   actions: CalendarEventAction[] = [
-    {
-      label: '<i class="fas fa-fw fa-pencil-alt"></i>',
-      a11yLabel: 'Edit',
-      onClick: ({ event }: { event: CalendarEvent }): void => {
-        this.handleEvent('Edited', event);
-      },
-    },
-    {
-      label: '<i class="fas fa-fw fa-trash-alt"></i>',
-      a11yLabel: 'Delete',
-      onClick: ({ event }: { event: CalendarEvent }): void => {
-        this.calendarService.events = this.calendarService.events.filter((iEvent) => iEvent !== event);
-        this.handleEvent('Deleted', event);
-      },
-    },
-  ];
+  //  actions: CalendarEventAction[] = [
+  //   {
+  //     label: '<i class="fas fa-fw fa-pencil-alt"></i>',
+  //     a11yLabel: 'Edit',
+  //     onClick: ({ event }: { event: CalendarEvent }): void => {
+  //       this.handleEvent('Edited', event);
+  //     },
+  //   },
+  //   {
+  //     label: '<i class="fas fa-fw fa-trash-alt"></i>',
+  //     a11yLabel: 'Delete',
+  //     onClick: ({ event }: { event: CalendarEvent }): void => {
+  //       this.calendarService.events = this.calendarService.events.filter((iEvent) => iEvent !== event);
+  //       this.handleEvent('Deleted', event);
+  //     },
+  //   },
+  // ];
   @ViewChild('modalContent', { static: true })
   modalContent!: TemplateRef<any>;
   view: CalendarView = CalendarView.Month;
@@ -86,10 +86,11 @@ test: string = "";
     this.authService.getValue().subscribe().unsubscribe();
   }
   ngOnInit(): void {
-   
+    this.calendarService.events =[];
+    this.calendarService.ownEvents =  [];
     this.authService.getValue().subscribe((value) =>{
       if(value){
-        console.log("Ich bin der User im Kalender:", value);
+        // console.log("Ich bin der User im Kalender:", value);
         this.calendarService.loadEvents(value.role);
       }
      

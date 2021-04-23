@@ -5,6 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { CalendarService } from '../services/calendar/calendar.service';
 import { AuthService } from '../core/auth.service';
 import { FirestoreService } from '../services/firestore/firestore.service';
+import { CalendarAddTraineesDialogComponent } from '../calendar-add-trainees-dialog/calendar-add-trainees-dialog.component';
 
 // @Injectable()
 @Component({
@@ -36,7 +37,9 @@ export class CalendarDialogComponent implements OnInit {
     console.log("OWN Events in OnInit: ", this.calendarService.ownEvents)
     // this.calendarService.addEvent();
   }
-  
+  sendEventToTrainee(){
+    this.dialog.open(CalendarAddTraineesDialogComponent);
+  }
   getEventData(event: any, evento: any) {
     event.color = evento.color
     event.title = evento.title

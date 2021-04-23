@@ -100,6 +100,7 @@ export class FirestoreService {
   mapUserDataToObject = (user: any, collection: string, mapName: string): Promise<any> => {
     var docRef = this.afs.collection(collection).doc(`${user.ID}`);
     return docRef.ref.get().then((doc) => {
+      console.log("DocData: ", doc.data())
       return this.mapFirebaseEntryToObject(doc.data(), collection, mapName);
     })
   }
@@ -114,6 +115,7 @@ export class FirestoreService {
       console.log("Keine Daten in der Map ", mapName, " in der ausgewählten ",
         collectionName, "vorhanden")
     }
+    console.log("Returned Array: ", arr)
     return arr;
   }
   getTraineesInFacility(user: User): Promise<any> {
@@ -146,6 +148,7 @@ export class FirestoreService {
             console.log("Keine Daten in der Collection ", collection, " vorhanden")
           }
         })
+        console.log("Returned Array: ", arr)
         return arr;
       })
   }

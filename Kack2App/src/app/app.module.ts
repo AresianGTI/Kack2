@@ -59,6 +59,7 @@ import { CalendarDialogComponent } from './calendar-dialog/calendar-dialog.compo
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { CalendarService } from './services/calendar/calendar.service';
+import { CalendarAddTraineesDialogComponent } from './calendar-add-trainees-dialog/calendar-add-trainees-dialog.component';
 
 @NgModule({
   declarations: [
@@ -74,7 +75,8 @@ import { CalendarService } from './services/calendar/calendar.service';
     TraineeChartComponent,
     CalendarComponent,
     DialogBoxComponent,
-    CalendarDialogComponent
+    CalendarDialogComponent,
+    CalendarAddTraineesDialogComponent
     
   ],
   imports: [

@@ -91,7 +91,8 @@ export class CalendarComponent implements OnInit, OnDestroy {
 
   handleEvent(action: string, event: CalendarEvent): void {
     this.calendarService.modalData = { event, action };
-    console.log("was diesse kake lan: ", this.calendarService.modalData)
+    // console.log("was diesse kake lan: ", this.calendarService.modalData)
+    this.calendarService.deleteSingleEvent(event);
     this.modal.open(this.modalContent, { size: 'lg'});
   }
   dayClicked({ date, events }: { date: Date; events: CalendarEvent[] }): void {

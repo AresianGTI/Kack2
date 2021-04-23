@@ -32,7 +32,13 @@
                 </td>
                 <td>
                     <button mat-raised-button color="primary" class="btn btn-danger"
-                        (click)="calendarService.deleteEvent(event)" (click)="calendarService.refresh.next()">
+                        (click)="sendEventToTrainee()">
+                        Send to:
+                    </button>
+                </td>
+                <td>
+                    <button mat-raised-button color="primary" class="btn btn-danger"
+                        (click)="calendarService.deleteSingleEvent(event)" (click)="calendarService.refresh.next()">
                         Delete
                     </button>
                 </td>

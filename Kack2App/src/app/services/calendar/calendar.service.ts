@@ -8,6 +8,7 @@ import { FirestoreService } from '../firestore/firestore.service';
 import { AuthService } from 'src/app/core/auth.service';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { FormControl } from '@angular/forms';
+import { Trainee } from 'src/app/models/trainee';
 const colors: any = {
   red: {
     primary: '#ad2121',
@@ -47,6 +48,9 @@ export class CalendarService {
   refresh: Subject<any> = new Subject();
   events: CalendarEvent[] = [];
   ownEvents: CalendarEvent[] = [];
+
+  eventFromCoordinator: CalendarEvent[] = [];
+  eventReceiver: Trainee[] = [];
   existingRoleEvents: CalendarEvent[] = [];
   newEvents: any[] = [];
   public traineesInFacility: any[] = [];
@@ -82,9 +86,20 @@ export class CalendarService {
     ];
     this.newEvents.filter((event) => {
       if (event.title != "") {
-        this.setEventData(event);
+        if(this.eventReceiver)
+        {
+          this.eventReceiver.forEach(element => {
+            // this.eventFromCoordinator = []
+            this.setEventData(element);
+            // Die Events vom Coordinator müssen irgendwie in der Liste gespeichert werden
+            // this.eventFromCoordinator = [
+            //   ...this.eventFromCoordinator]
+
+          });
+        }
+        this.setEventData(this.authService.userData);
       } else {
-        this.deleteEvent(event);
+        this.deleteSingleEvent(event);
       }
     })
     this.newEvents = [];
@@ -113,23 +128,43 @@ export class CalendarService {
     ];
   }
 
-  deleteEvent(eventToDelete: CalendarEvent) {
-    // this.ownEvents.filter((event) => this.firestoreService.deleteDocument(event, "Test"));
-    this.ownEvents = this.ownEvents.filter((event) => event !== eventToDelete);
-    this.events = this.ownEvents;
+  // deleteEvent(eventToDelete: CalendarEvent) {
+  //   this.ownEvents = this.ownEvents.filter((event) => event !== eventToDelete);
+  //   this.refresh.next();
+  //   this.events = this.ownEvents;
+  //   this.setEventData();
+  // }
+deleteAllEvents(){
+  this.firestoreService.deleteDocument(this.authService.userData, "Test")
+  this.refresh.next()
+  this.events = []
+}
+deleteSingleEvent(eventToDelete: any){
+  if(this.ownEvents.indexOf(eventToDelete) !== -1){
+    this.ownEvents = this.ownEvents.filter((event) => event !== eventToDelete); 
+    this.setEventData(this.authService.userData)
+    //darf nicht von own events sein --> für jeden User der müssen seine Events geladen 
+    // werden und hinzufgegüt werden
+    // FireStoreDocument.receiver = []
+    // FireStoreDocument.sender = authService.userData. UID 
   }
-
+  else{
+    console.log("nichts gibts");
+  }
+ 
+}
   firestoreDocument: any = {
     UID: "",
     items: {
-    }
+    },
+    otherItems: {}
   }
 
-  setEventData(event: any) {
-    let id = this.firestoreService.createID();
-    this.firestoreDocument.UID = this.authService.userData?.ID;
-    this.firestoreDocument.Name = this.authService.userData?.name;
+  setEventData(user?: any) {
+    this.firestoreDocument.UID = user?.ID;
+    this.firestoreDocument.Name = user?.name;
     this.firestoreDocument.items = this.ownEvents;
+    this.firestoreDocument.otherItems = this.eventFromCoordinator;
     this.firestoreService.updateDocument("Test", this.firestoreDocument);
     this.events = this.ownEvents;
   }
@@ -165,6 +200,10 @@ export class CalendarService {
     this.firestoreService.mapUserDataToObject(trainee, "Test", "items").then((val) => {
       this.addElementsToEventList(val)
     });
+  }
+  sendEventToTrainee()
+  {
+
   }
   getOwnData() {
     this.ownEvents = [];

@@ -40,7 +40,7 @@ export class FirestoreService {
     })
   }
   getData = (user: any): Promise<any> => {
-    var docRef = this.afs.collection("Test").doc(`/${user.uid}`);
+    var docRef = this.afs.collection("Test").doc(`/${user.ID}`);
     return docRef.ref.get().then((doc) => {
       console.log("DATA in Neuem getDAta:", doc.data())
       return doc.data();
@@ -96,6 +96,12 @@ export class FirestoreService {
         Kapazitaet: facility.capacity
       }
     );
+  }
+  getCompleteDocument = (user: any, collection: string, mapName: string): Promise<any> => {
+    var docRef = this.afs.collection(collection).doc(`${user.ID}`);
+    return docRef.ref.get().then((doc) => {
+      return doc.data()})
+     
   }
   mapUserDataToObject = (user: any, collection: string, mapName: string): Promise<any> => {
     var docRef = this.afs.collection(collection).doc(`${user.ID}`);

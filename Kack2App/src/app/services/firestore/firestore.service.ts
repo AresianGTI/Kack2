@@ -103,10 +103,10 @@ export class FirestoreService {
       return doc.data()})
      
   }
+  //Brauch ich das überhaupt?
   mapUserDataToObject = (user: any, collection: string, mapName: string): Promise<any> => {
     var docRef = this.afs.collection(collection).doc(`${user.ID}`);
     return docRef.ref.get().then((doc) => {
-      console.log("DocData: ", doc.data())
       return this.mapFirebaseEntryToObject(doc.data(), collection, mapName);
     })
   }

@@ -68,7 +68,9 @@ export class CalendarService {
       resizable: {
         beforeStart: true,
         afterEnd: true,
-      }
+      },
+      sender: this.authService.userData,
+      receiver: this.eventReceiver
     }
     return event;
   }
@@ -88,24 +90,17 @@ export class CalendarService {
     ];
 
     this.setEventData(this.ownEvents, this.authService.userData);
-
     this.newEvents.filter((event) => {
-
-
       if (event.title != "") {
-        if (this.eventReceiver) {
+        if (event.receiver) {
 
-          this.eventReceiver.forEach(element => {
-            // this.getTraineeEvents(element);
-            // console.log("ElementReceiver: ", element)
+          event.receiver.forEach((element: any) => {
+         
             this.events = [...this.events, event];
-            if(this.getEventData(event, element))
-            {
-              console.log("if");
+            if(this.getEventData(event, element)){
               this.updateEventData(event, element)
             }
             else {
-              console.log("else");
               this.setEventData(this.events, element);
             }
           });
@@ -131,46 +126,35 @@ export class CalendarService {
       ...this.ownEvents,
       event
     ];
-    // console.log("OWNEVENT: ", event)
-
   }
   addEventTest(event: any) {
-    // console.log("EVENT1: ", event)
     event.start = new Date(event.start.seconds * 1000);
     event.end = new Date(event.end.seconds * 1000);
     this.events = [
       ...this.events,
       event
     ];
-    // console.log("EVENT2: ", event.start)
 
   }
-
-  // deleteEvent(eventToDelete: CalendarEvent) {
-  //   this.ownEvents = this.ownEvents.filter((event) => event !== eventToDelete);
-  //   this.refresh.next();
-  //   this.events = this.ownEvents;
-  //   this.setEventData();
-  // }
   deleteAllEvents() {
     this.firestoreService.deleteDocument(this.authService.userData, "Test")
     this.refresh.next()
     this.events = []
   }
   deleteSingleEvent(eventToDelete: any) {
-
-    if (this.ownEvents.indexOf(eventToDelete) !== -1) {
+    if (eventToDelete.sender.ID === this.authService.userData.ID) {
       this.ownEvents = this.ownEvents.filter((event) => event !== eventToDelete);
       this.setEventData(this.ownEvents, this.authService.userData)
-      //darf nicht von own events sein --> für jeden User der müssen seine Events geladen 
-      // werden und hinzufgegüt werden
-      // FireStoreDocument.receiver = []
-      // FireStoreDocument.sender = authService.userData. UID 
+      //alle Events mit der Selben EventID werden gelöscht-->
+      //getAll Dokumente in der Collection
+      //foreach item in items
+      //if item.id == eventToDelete.ID && item.sender == authService.userData.ID
+      //Dann lösche Item --> items.filter(item => item !=eventToDelet) -->
+      //updateFireStore des betroffenen Trainees mit neuem FirestoreDocument (entferne somit das Event)
     }
     else {
       console.log("nichts gibts");
     }
-
   }
   firestoreDocument: any = {
     UID: "",
@@ -182,12 +166,7 @@ export class CalendarService {
     try {
       this.firestoreService.getData(user).then((val) => {
         if (val) {
-          console.log("Dokument von: ", val)
           this.firestoreEnty.push(val);
-          // this.events = val.items;
-
-          console.log("Items von: ", this.firestoreEnty)
-          // return true;
         }
         else {
           this.setFirstData(event, user);
@@ -195,27 +174,19 @@ export class CalendarService {
         }
       });
       return true;
-      // this.firestoreEnty = [];
     } catch {
       console.log("Keine Dokument vorhanden")
       return false
     }
-
-
   }
   updateEventData(ding: any, user?: any) {
-    console.log("sssssss: ", this.firestoreDocument)
-    console.log("enty: ", this.firestoreEnty)
     this.firestoreEnty.forEach((element: { items: any; }) => {
       this.firestoreDocument.UID = user?.ID;
       this.firestoreDocument.Name = user?.name;
-    
       element.items.push(ding);
       this.firestoreDocument.items = element.items;
-      console.log("items: ", element.items)
       this.firestoreService.updateDocument("Test", this.firestoreDocument);
       this.events = this.ownEvents;
-      console.log("firedoc: ", this.firestoreDocument)
     });
     this.firestoreEnty = []
   }
@@ -223,12 +194,7 @@ export class CalendarService {
   setFirstData(ding: any, user?: any) {
     this.firestoreDocument.UID = user?.ID;
     this.firestoreDocument.Name = user?.name;
-    console.log("SetFirstData", ding);
     this.firestoreDocument.items = [ding];
-
-    // console.log("Eve: ", eve)
-
-    // this.firestoreDocument.otherItems = this.eventFromCoordinator;
     this.firestoreService.updateDocument("Test", this.firestoreDocument);
     this.events = this.ownEvents;
   }
@@ -236,8 +202,6 @@ export class CalendarService {
     this.firestoreDocument.UID = user?.ID;
     this.firestoreDocument.Name = user?.name;
     this.firestoreDocument.items = eve;
-
-    console.log("SetEventData: ", eve)
     this.firestoreService.updateDocument("Test", this.firestoreDocument);
     this.events = this.ownEvents;
   }
@@ -257,7 +221,6 @@ export class CalendarService {
   }
   addElementsToEventList(val: any) {
     val.forEach((element: any) => {
-      console.log("LOG ELEMENT: ", element[1]);
       this.addEventTest(element[1]);
     });
     this.refresh.next();
@@ -270,18 +233,11 @@ export class CalendarService {
     })
   }
 
-  //Die brauch ich !
   getTraineeEvents(trainee: any) {
     this.events = [];
     this.firestoreService.mapUserDataToObject(trainee, "Test", "items").then((val) => {
-      console.log("valueeeeey: ", val)
       this.addElementsToEventList(val)
-    }).then(() => {
-      console.log("eventsFrom Trainee: ", trainee.name, this.events);
     });
-  }
-  sendEventToTrainee() {
-
   }
   getOwnData() {
     this.ownEvents = [];

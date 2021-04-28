@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firestore';
+import { element } from 'protractor';
 import { Observable, Subject, Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { AuthService } from 'src/app/core/auth.service';
@@ -30,9 +31,29 @@ export class FirestoreService {
           fieldList.push(doc.get(field));
         })
       })
+      console.log("FieldList: ", fieldList)
     return fieldList;
   }
+  getFieldsFromCollectionTT(collection: string, field: string): Promise<any> {
+    let fieldList: any = [];
+    return this.afs.collection(collection)
+      .get().toPromise().then(snapshot => {
+        snapshot.docs.forEach(doc => {
+          fieldList.push(doc.get(field));
+        })
+        return fieldList;
+      })
+      // console.log("FieldList: ", fieldList)
+    // return fieldList;
+    // return true;
+  }
 
+
+
+
+  
+
+  
   getUserData = (user: any, subscriptionList?: Subscription[]): Promise<any> => {
     var docRef = this.afs.collection("usersCollection").doc(`/${user.uid}`);
     return docRef.ref.get().then((doc) => {
@@ -55,11 +76,30 @@ export class FirestoreService {
     });
   }
   updateDocument(collection: string, objData: any) {
+    console.log("OBJDATA: ", objData)
     this.afs.collection(collection).doc(objData.UID).set(objData).then(res => {
     }).catch(error => {
       console.log(error);
     });
   }
+  deleteFieldValue(collection: string, objData: any, itemToDelete : any) {
+    this.afs.collection(collection).doc(objData.UID)
+    .update({
+      items: itemToDelete  
+    }).then(res => {
+    }).catch(error => {
+      console.log(error);
+    });
+  }
+  // updateDocumentTT(collection: string, objData: any) {
+  //   console.log("OBJDATA: ", objData)
+  //   this.afs.collection(collection).doc(objData.UID).update({
+  //     objData: 
+  //   }).then(res => {
+  //   }).catch(error => {
+  //     console.log(error);
+  //   });
+  // }
 
   deleteDocument(data: any, collec: string) {
     return this.afs.collection(collec).doc(data.ID).delete();

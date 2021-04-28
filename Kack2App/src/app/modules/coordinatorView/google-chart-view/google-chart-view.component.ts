@@ -38,7 +38,7 @@ export class GoogleChartViewComponent implements OnInit {
 
   ngOnInit(): void {
      this.usedFacilities = this.firestoreService.getFieldsFromCollection(this.collectionService.userCollection, "homeFacility" )
-
+     console.log("UsedFacilites: ", this.usedFacilities)
     //get ALL facilities for the progress-bar (facilityname and capacity of facility)
     const facilityCol = this.firestoreService.getAllFacilities(this.collectionService.facilityCollection);
     const facilityObservableArray =  facilityCol.valueChanges();

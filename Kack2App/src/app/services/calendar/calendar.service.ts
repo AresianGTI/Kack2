@@ -10,6 +10,7 @@ import { AngularFirestore } from '@angular/fire/firestore';
 import { FormControl } from '@angular/forms';
 import { Trainee } from 'src/app/models/trainee';
 import { Console } from 'node:console';
+import { element } from 'protractor';
 const colors: any = {
   red: {
     primary: '#ad2121',
@@ -70,6 +71,7 @@ export class CalendarService {
         afterEnd: true,
       },
       sender: this.authService.userData,
+      // receiver für Azubis nicht relevant
       receiver: this.eventReceiver
     }
     return event;
@@ -95,9 +97,9 @@ export class CalendarService {
         if (event.receiver) {
 
           event.receiver.forEach((element: any) => {
-         
+
             this.events = [...this.events, event];
-            if(this.getEventData(event, element)){
+            if (this.getEventData(event, element)) {
               this.updateEventData(event, element)
             }
             else {
@@ -141,10 +143,63 @@ export class CalendarService {
     this.refresh.next()
     this.events = []
   }
-  deleteSingleEvent(eventToDelete: any) {
-    if (eventToDelete.sender.ID === this.authService.userData.ID) {
-      this.ownEvents = this.ownEvents.filter((event) => event !== eventToDelete);
-      this.setEventData(this.ownEvents, this.authService.userData)
+  async deleteSingleEvent(eventToDelete: any) {
+    let fug: any[] = [];
+    let del: any[] = [];
+    let counter = 0;
+    if (eventToDelete.sender.ID == this.authService.userData.ID) {
+      
+      eventToDelete.receiver.forEach((user: any) => {
+        this.firestoreService.getData(user).then((val) => {
+          let d: any[] = []
+          val.items.forEach((item: any) => {
+            if (item.id != eventToDelete.id) {
+              d.push(item);
+            }
+            counter++;
+          });
+          this.firestoreService.deleteFieldValue("Test", val, d)
+          console.log("ITEEEEM: ", d)
+          console.log("Value: ", val)
+        });
+        console.log("USER: ", user)
+      });
+
+        this.firestoreService.getData(this.authService.userData).then((val) => {
+          let d: any[] = []
+          val.items.forEach((item: any) => {
+            if (item.id != eventToDelete.id) {
+              d.push(item);
+            }
+            counter++;
+          });
+          this.firestoreService.deleteFieldValue("Test", val, d)
+          this.getOwnData();
+        });
+
+
+      // this.ownEvents = this.ownEvents.filter((event) => event !== eventToDelete);
+      // this.setEventData(this.ownEvents, this.authService.userData)
+      // let t = await this.firestoreService.getFieldsFromCollectionTT("Test", "items")
+      // console.log("Return T: ", t);
+      // t.forEach((element: any) => {
+      //   //     this.ownEvents = this.ownEvents.filter((event) => event !== eventToDelete);
+      //   // this.setEventData(this.ownEvents, this.authService.userData)
+      //   element.forEach((elem: any) => {
+      //     console.log("eventtodelet: ", eventToDelete.id)
+      //     console.log("eventID: ", elem.id)
+      //     if (elem.id == eventToDelete.id) {
+      //       fug.push(elem)
+      //     }
+      //     console.log("Elem: ", elem)
+      //   });
+      //   console.log("Fug: ", fug)
+      //   //  Lösche alle Events in fug
+      //   //  fug.filter((event) => event !== eventToDelete
+      //   //  );
+      // });
+
+      // this.setEventData(this.ownEvents, this.authService.userData)
       //alle Events mit der Selben EventID werden gelöscht-->
       //getAll Dokumente in der Collection
       //foreach item in items
@@ -162,7 +217,7 @@ export class CalendarService {
     }
   }
   firestoreEnty: any[] = [];
-  getEventData(event: any, user: any) : boolean{
+  getEventData(event: any, user: any): boolean {
     try {
       this.firestoreService.getData(user).then((val) => {
         if (val) {

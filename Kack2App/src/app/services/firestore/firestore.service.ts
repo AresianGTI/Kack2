@@ -176,7 +176,18 @@ export class FirestoreService {
         return arr;
       });
   }
-
+  getCoordinatorsInFacility(user: User): Promise<any> {
+    let arr: any = [];
+    return this.afs.collection("usersCollection", ref => (ref
+      .where("homeFacility", "==", user.homeFacility))
+      .where("role", "==", "coordinator"))
+      .get().toPromise().then(snapshot => {
+        snapshot.docs.forEach(doc => {
+          arr.push(doc.data())
+        })
+        return arr;
+      });
+  }
   getAllCollectionItems = (data: any, collection: string, mapName: string): Promise<any> => {
     let arr: any = [];
     console.log("User IDs", data.ID, " in actual Facility")

@@ -37,8 +37,14 @@ export class CalendarDialogComponent implements OnInit {
     console.log("OWN Events in OnInit: ", this.calendarService.ownEvents)
     // this.calendarService.addEvent();
   }
-  sendEventToTrainee(){
-    this.dialog.open(CalendarAddTraineesDialogComponent);
+  //HIER GEHTS WEITER!!!!!!
+  sendEventToTrainee(event: any){
+    this.dialog.open(CalendarAddTraineesDialogComponent, {data: event})
+    .afterClosed().subscribe((result: {data: any}) =>{
+    console.log("RESULT, damit muss ich weitermachen!:", result.data)
+    event.receiver = result.data.receiver;
+  }
+    )
   }
   getEventData(event: any, evento: any) {
     event.color = evento.color

@@ -57,7 +57,10 @@ export class CalendarComponent implements OnInit, OnDestroy {
   constructor(private modal: NgbModal,
     public dialog: MatDialog,
     public calendarService: CalendarService,
-    public authService: AuthService) { }
+    public authService: AuthService) {
+      // this.calendarService.getTrainees();
+      // this.calendarService.getCoordinators();
+     }
   ngOnDestroy(): void {
     this.authService.getValue().subscribe().unsubscribe();
   }
@@ -67,6 +70,8 @@ export class CalendarComponent implements OnInit, OnDestroy {
     this.authService.getValue().subscribe((value) =>{
       if(value){
         this.calendarService.loadEvents(value.role);
+       
+        // this.calendarService.setEvents();
       }
     })
   }

@@ -11,6 +11,7 @@ import { FormControl } from '@angular/forms';
 import { Trainee } from 'src/app/models/trainee';
 import { Console } from 'node:console';
 import { element } from 'protractor';
+import { async } from '@angular/core/testing';
 const colors: any = {
   red: {
     primary: '#ad2121',
@@ -60,16 +61,8 @@ export class CalendarService {
   public coordinatorsInFacility: any[] = [];
 
 
- predefinedEvents(type: string, color: any) {
-    let receiver: any[] =[]
-    // console.log("LOGGGG ROLE: ", this.authService.userData.role )
-    if(this.authService.userData.role== "coordinator")
-    {
-      receiver = this.traineesInFacility;
-    }
-    else if(this.authService.userData.role =="trainee"){
-      receiver = this.coordinatorsInFacility;
-    }
+  predefinedEvents(type: string, color: any, receiver?: any) {
+
     let event: any = {
       id: this.firestoreService.createID(),
       start: startOfDay(new Date()),
@@ -89,59 +82,78 @@ export class CalendarService {
   }
   traineeEvents: CalendarEvent[] = []
   coordinatorEvents: CalendarEvent[] = []
-setEvents(){
-this.traineeEvents= [
-    this.predefinedEvents(EnumMeetingTypes.applyVacation, colors.red),
-    this.predefinedEvents(EnumMeetingTypes.notificationOfIlness, colors.green)
-  ];
-  this.coordinatorEvents = [
-    this.predefinedEvents(EnumMeetingTypes.practicalMeeting, colors.blue),
-    this.predefinedEvents(EnumMeetingTypes.singleMeeting, colors.yellow)
-  ]
-}
-  
+  setEvents() {
+    this.traineeEvents = [
+      this.predefinedEvents(EnumMeetingTypes.applyVacation, colors.red),
+      this.predefinedEvents(EnumMeetingTypes.notificationOfIlness, colors.green)
+    ];
+    this.coordinatorEvents = [
+      this.predefinedEvents(EnumMeetingTypes.practicalMeeting, colors.blue),
+      this.predefinedEvents(EnumMeetingTypes.singleMeeting, colors.yellow)
+    ]
+  }
+
   safeNewEvent() {
+    let evo: any[] = []
     this.ownEvents = [
       ...this.ownEvents,
       ...this.newEvents
     ];
-
-    this.setEventData(this.ownEvents, this.authService.userData);
+    console.log("DAS SIND DIE NewEvents DIE GESPEICHERT WERDEN: ", this.newEvents)
     this.newEvents.filter((event) => {
       if (event.title != "") {
-        if(this.eventReceiver.length != 0){
-          console.log("TTTTEEEST:", this.eventReceiver)
-          event.receiver = this.eventReceiver;
-          this.eventReceiver = []
-        }
+        // if(this.eventReceiver.length != 0){
+        //   event.receiver = this.eventReceiver;
+        //   this.setEventData(this.ownEvents, this.authService.userData);
+        //   this.eventReceiver = []
+        // }
         if (event.receiver) {
 
-          event.receiver.forEach((element: any) => {
+          event.receiver.forEach((user: any) => {
+            // evo = [...evo, event];
+            // DER RETURNWERT kommt zu spät --> Deswehen geht er in die Methode rein
+            // if (this.getEventData(event, element)) {
+            //   this.updateEventData([event], element)
+            // }
 
-            this.events = [...this.events, event];
-            if (this.getEventData(event, element)) {
-              this.updateEventData(event, element)
-            }
-            else {
-              this.setEventData(this.events, element);
-            }
+            // else {
+            //   this.setEventData(event, element);
+
+            // }
+            // this.firestoreService.getData(user).then((val) => {
+
+
+            // })
+                  // this.updateEventData([event], element)
+            this.getEventData(event, element)
+            // this.setEventData([event], user)
           });
         }
       } else {
-        this.deleteSingleEvent(event);
+
+        this.deleteEvent(event);
       }
+
     })
+    this.setEventData(this.ownEvents, this.authService.userData);
+
+
+    console.log("DAS SIND DIE ÈVNETS DIE GESPEICHERT WERDEN: ", this.newEvents)
     this.firestoreEnty = [];
     this.eventReceiver = []
     this.newEvents = [];
   }
-  globalEvent: any;
+
   addEvent(): void {
-    let ev = this.predefinedEvents("", colors.black);
-    // this.globalEvent = ev;
+    let receiver: any[] = []
+    if (this.authService.userData.role == "coordinator") {
+      receiver = this.traineesInFacility;
+    }
+    else if (this.authService.userData.role == "trainee") {
+      receiver = this.coordinatorsInFacility;
+    }
+    let ev = this.predefinedEvents("", colors.black, receiver);
     this.newEvents = [...this.newEvents, ev];
-    ;
-   
   }
 
 
@@ -167,15 +179,14 @@ this.traineeEvents= [
     this.refresh.next()
     this.events = []
   }
-  async deleteSingleEvent(eventToDelete: any) {
-    let fug: any[] = [];
-    let del: any[] = [];
-    let counter = 0;
-    console.log("Sender EVENT-ID: ", eventToDelete.sender);
-    console.log("LOGGED IN USER_ID", this.authService.userData.ID);
 
+  deleteEvent(eventToDelete: any) {
+    this.newEvents = this.newEvents.filter((event) => event !== eventToDelete)
+  }
+  async deleteSingleEvent(eventToDelete: any) {
+    let counter = 0;
     if (eventToDelete.sender == this.authService.userData.ID) {
-      
+
       eventToDelete.receiver.forEach((user: any) => {
         this.firestoreService.getData(user).then((val) => {
           let d: any[] = []
@@ -186,23 +197,20 @@ this.traineeEvents= [
             counter++;
           });
           this.firestoreService.deleteFieldValue("Test", val, d)
-          console.log("ITEEEEM: ", d)
-          console.log("Value: ", val)
         });
-        console.log("USER: ", user)
       });
 
-        this.firestoreService.getData(this.authService.userData).then((val) => {
-          let d: any[] = []
-          val.items.forEach((item: any) => {
-            if (item.id != eventToDelete.id) {
-              d.push(item);
-            }
-            counter++;
-          });
-          this.firestoreService.deleteFieldValue("Test", val, d)
-          this.getOwnData();
+      this.firestoreService.getData(this.authService.userData).then((val) => {
+        let d: any[] = []
+        val.items.forEach((item: any) => {
+          if (item.id != eventToDelete.id) {
+            d.push(item);
+          }
+          counter++;
         });
+        this.firestoreService.deleteFieldValue("Test", val, d)
+        this.getOwnData();
+      });
     }
     else {
       console.log("nichts gibts");
@@ -214,54 +222,63 @@ this.traineeEvents= [
     }
   }
   firestoreEnty: any[] = [];
-  getEventData(event: any, user: any): boolean {
-    try {
-      this.firestoreService.getData(user).then((val) => {
-        if (val) {
-          this.firestoreEnty.push(val);
-        }
-        else {
-          this.setFirstData(event, user);
-          this.getEventData(event, user);
-        }
-      });
-      return true;
-    } catch {
-      console.log("Keine Dokument vorhanden")
-      return false
-    }
+  //PROBLEMFUNKTION --> Funktion wird erst später ausgeführt.
+  getEventData(event: any, user: any): Promise<any> {
+    let t: any;
+    return this.firestoreService.getData(user).then((val) => {
+      if (val) {
+        t = val
+        this.firestoreEnty.push(val);
+      }
+      else {
+        this.setEventData([event], user);
+        this.getEventData(event, user);
+      }
+    })
+
   }
   updateEventData(ding: any, user?: any) {
-    this.firestoreEnty.forEach((element: { items: any; }) => {
+    let t: any = []
+    this.firestoreEnty.forEach((element: any) => {
       this.firestoreDocument.UID = user?.ID;
       this.firestoreDocument.Name = user?.name;
       element.items.push(ding);
       this.firestoreDocument.items = element.items;
       this.firestoreService.updateDocument("Test", this.firestoreDocument);
+      this.firestoreEnty = []
       this.events = this.ownEvents;
+
     });
-    this.firestoreEnty = []
+
   }
 
-  setFirstData(ding: any, user?: any) {
+  // setFirstData(ding: any[], user?: any) {
+  //   this.firestoreDocument.UID = user?.ID;
+  //   this.firestoreDocument.Name = user?.name;
+  //   // this.firestoreDocument.items = [ding];
+  //   this.firestoreDocument.items = ding;
+  //   this.firestoreService.updateDocument("Test", this.firestoreDocument);
+  //   this.events = this.ownEvents;
+  //   console.log("setFirstData: ", this.events)
+  // }
+  setEventData(eve: any[], user?: any) {
+
+
     this.firestoreDocument.UID = user?.ID;
     this.firestoreDocument.Name = user?.name;
-    this.firestoreDocument.items = [ding];
-    this.firestoreService.updateDocument("Test", this.firestoreDocument);
-    this.events = this.ownEvents;
-  }
-  setEventData(eve: any, user?: any) {
-    this.firestoreDocument.UID = user?.ID;
-    this.firestoreDocument.Name = user?.name;
+
+    // this.firestoreDocument.items.push(eve);
     this.firestoreDocument.items = eve;
     this.firestoreService.updateDocument("Test", this.firestoreDocument);
     this.events = this.ownEvents;
+
+
   }
   loadEvents(action: string) {
     this.events = [];
     this.firestoreService.mapUserDataToObject(this.authService.userData, "Test", "items").then((val) => {
       this.addElementsToOwnEventList(val)
-    });
+    })
     this.getTrainees();
     this.getCoordinators();
     this.setEvents();
@@ -279,7 +296,7 @@ this.traineeEvents= [
     });
     this.refresh.next();
   }
-  getCoordinators(){
+  getCoordinators() {
     this.firestoreService.getCoordinatorsInFacility(this.authService.userData).then((val) => {
       this.coordinatorsInFacility = val;
     })
@@ -293,7 +310,7 @@ this.traineeEvents= [
 
   getTraineeEvents(trainee: any) {
     this.events = [];
-    this.firestoreService.mapUserDataToObject(trainee, "Test", "items").then((val) => {
+    return this.firestoreService.mapUserDataToObject(trainee, "Test", "items").then((val) => {
       this.addElementsToEventList(val)
     });
   }

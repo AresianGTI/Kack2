@@ -21,30 +21,25 @@ export class CalendarDialogComponent implements OnInit {
     public calendarService: CalendarService,
     public authService: AuthService) { }
   ngOnInit(): void {
-    // this.calendarService.events = [] ;
-    // this.calendarService.ownEvents = [] ;
-    // this.firestoreService.getUserData(this.authService.userData)
-    console.log("Ich bin der User im Kalender:", this.authService.userData);
     if (this.authService.userData.role == "coordinator") {
       this.calendarService.existingRoleEvents = this.calendarService.coordinatorEvents;
       
     }
     else if (this.authService.userData.role == "trainee") {
       this.calendarService.existingRoleEvents = this.calendarService.traineeEvents;
-      // this.calendarService.events = this.calendarService.ownEvents;
+
     }
-    // this.calendarService.getOwnData();
-    console.log("OWN Events in OnInit: ", this.calendarService.ownEvents)
-    // this.calendarService.addEvent();
   }
   //HIER GEHTS WEITER!!!!!!
   sendEventToTrainee(event: any){
     this.dialog.open(CalendarAddTraineesDialogComponent, {data: event})
     .afterClosed().subscribe((result: {data: any}) =>{
+
+
     console.log("RESULT, damit muss ich weitermachen!:", result.data)
     event.receiver = result.data.receiver;
-  }
-    )
+  })
+
   }
   getEventData(event: any, evento: any) {
     event.color = evento.color

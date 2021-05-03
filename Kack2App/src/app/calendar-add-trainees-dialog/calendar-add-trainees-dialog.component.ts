@@ -50,20 +50,15 @@ export class CalendarAddTraineesDialogComponent implements OnInit {
     return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row.position + 1}`;
   }
   getSelectedTrainees(){
-    let selectedTrainees = []
     this.data.receiver = []
-    // Speichern in einem KEY, Value Pair
     this.dataSource.data.forEach(row => {
    
       if(this.selection.isSelected(row))
       {
         this.data.receiver = [...this.data.receiver, row]
-        // this.firestoreService.getFieldsFromCollection()
-        // this.calendarService.eventReceiver.push(row);
         console.log("selected Row", row)
       }
     })
-    console.log("DAS IST DAS UASGEWÄHLTE EVENT", this.data);
     this.dialogRef.close({data: this.data})
   }
 }

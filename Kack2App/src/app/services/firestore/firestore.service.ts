@@ -60,9 +60,9 @@ export class FirestoreService {
       return doc.data();
     })
   }
-  getData = (user: any): Promise<any> => {
+  async getData (user: any): Promise<any>{
     var docRef = this.afs.collection("Test").doc(`/${user.ID}`);
-    return docRef.ref.get().then((doc) => {
+    await docRef.ref.get().then((doc) => {
       console.log("DATA in Neuem getDAta:", doc.data())
       return doc.data();
     })
@@ -172,7 +172,8 @@ export class FirestoreService {
       .get().toPromise().then(snapshot => {
         snapshot.docs.forEach(doc => {
           arr.push(doc.data())
-        })
+        });
+        console.log("AZUBIS IN EINRICHTUNG");
         return arr;
       });
   }

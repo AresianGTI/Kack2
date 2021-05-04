@@ -60,10 +60,10 @@ export class FirestoreService {
       return doc.data();
     })
   }
-  getData = (user: any): Promise<any> => {
+   getData (user: any): Promise<any> {
     var docRef = this.afs.collection("Test").doc(`/${user.ID}`);
     return docRef.ref.get().then((doc) => {
-      console.log("DATA in Neuem getDAta:", doc.data())
+      // console.log("DATA in Neuem getDAta:", doc.data())
       return doc.data();
     })
   }

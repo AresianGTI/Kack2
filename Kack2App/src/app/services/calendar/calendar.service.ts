@@ -99,15 +99,23 @@ this.traineeEvents= [
     this.predefinedEvents(EnumMeetingTypes.singleMeeting, colors.yellow)
   ]
 }
+
+deleteEvent(eventToDelete: any) {
+  this.newEvents = this.newEvents.filter((event) => event !== eventToDelete)
+}
   
-  safeNewEvent() {
+  async safeNewEvent() {
     this.ownEvents = [
       ...this.ownEvents,
       ...this.newEvents
     ];
 
     this.setEventData(this.ownEvents, this.authService.userData);
-    this.newEvents.filter((event) => {
+    for( const event of this.newEvents)
+    {
+
+    // }
+    // this.newEvents.filter(async (event) => {
       if (event.title != "") {
         if(this.eventReceiver.length != 0){
           console.log("TTTTEEEST:", this.eventReceiver)
@@ -115,22 +123,64 @@ this.traineeEvents= [
           this.eventReceiver = []
         }
         if (event.receiver) {
-
-          event.receiver.forEach((element: any) => {
-
-            this.events = [...this.events, event];
-            if (this.getEventData(event, element)) {
-              this.updateEventData(event, element)
+          this.events = [...this.events, event];
+          for(const user of event.receiver)
+          {
+           
+            await this.firestoreService.getData(user).then(async (val) =>{
+              console.log("VALUE: ", val)
+            if(val){
+              let items = [] ;
+                items = [...val.items, event]
+                
+              // let it= val.items.push(event)
+              this.setEventData(items, user)
+              // this.firestoreEnty.push(val);
             }
-            else {
-              this.setEventData(this.events, element);
+            else{
+              // this.setEventData([event], user);
+              // this.getEventData(event, user);
+              await this.firestoreService.getData(user).then((vall) =>{
+                console.log("VALUE: ", vall)
+              if(vall){
+                let items = [] ;
+                items = [...vall.items, event]
+                
+                console.log("ITEMS: ", items);
+                // let it = vall.items.push(event)
+                // console.log("IT: ", it);
+                this.setEventData(items, user)
+                // this.firestoreEnty.push(vall);
+              }
+              else{
+                 this.setEventData([event], user);
+              }
+              })
             }
-          });
+            })
+          }
+
+          // event.receiver.forEach((element: any) => {
+
+          //   this.events = [...this.events, event];
+          // //  this.getEventData(event, element);
+          // //   console.log("WARUM IST DIESE SO KAKE LAN");
+          //   this.firestoreService.getData(element).then((val) =>{
+          //     console.log("VALUE: ", val)
+          //   })
+            
+           
+          //               //  this.updateEventData(event, element)
+            
+            
+          //     // this.setEventData(this.events, element);
+            
+          // });
         }
       } else {
-        this.deleteSingleEvent(event);
+        this.deleteEvent(event);
       }
-    })
+    }
     this.firestoreEnty = [];
     this.eventReceiver = []
     this.newEvents = [];
@@ -214,22 +264,19 @@ this.traineeEvents= [
     }
   }
   firestoreEnty: any[] = [];
-  getEventData(event: any, user: any): boolean {
-    try {
-      this.firestoreService.getData(user).then((val) => {
-        if (val) {
-          this.firestoreEnty.push(val);
-        }
-        else {
-          this.setFirstData(event, user);
-          this.getEventData(event, user);
-        }
-      });
-      return true;
-    } catch {
-      console.log("Keine Dokument vorhanden")
-      return false
-    }
+   getEventData(event: any, user: any){
+      this.firestoreService.getData(user).then((val) =>{
+        console.log("VALUE: ", val)
+      })
+      // .then((val) => {
+        // if () {
+        //   this.firestoreEnty.push(t);
+        // }
+        // else {
+        //   this.setFirstData([event], user);
+        //   this.getEventData(event, user);
+        // }
+
   }
   updateEventData(ding: any, user?: any) {
     this.firestoreEnty.forEach((element: { items: any; }) => {
@@ -243,14 +290,14 @@ this.traineeEvents= [
     this.firestoreEnty = []
   }
 
-  setFirstData(ding: any, user?: any) {
-    this.firestoreDocument.UID = user?.ID;
-    this.firestoreDocument.Name = user?.name;
-    this.firestoreDocument.items = [ding];
-    this.firestoreService.updateDocument("Test", this.firestoreDocument);
-    this.events = this.ownEvents;
-  }
-  setEventData(eve: any, user?: any) {
+  // setFirstData(ding: any, user?: any) {
+  //   this.firestoreDocument.UID = user?.ID;
+  //   this.firestoreDocument.Name = user?.name;
+  //   this.firestoreDocument.items = ding;
+  //   this.firestoreService.updateDocument("Test", this.firestoreDocument);
+  //   this.events = this.ownEvents;
+  // }
+  setEventData(eve: any[], user?: any) {
     this.firestoreDocument.UID = user?.ID;
     this.firestoreDocument.Name = user?.name;
     this.firestoreDocument.items = eve;

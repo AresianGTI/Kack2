@@ -6,7 +6,6 @@ import { CalendarService } from '../services/calendar/calendar.service';
 import { AuthService } from '../core/auth.service';
 import { FirestoreService } from '../services/firestore/firestore.service';
 import { CalendarAddTraineesDialogComponent } from '../calendar-add-trainees-dialog/calendar-add-trainees-dialog.component';
-
 // @Injectable()
 @Component({
   selector: 'app-calendar-dialog',
@@ -14,7 +13,7 @@ import { CalendarAddTraineesDialogComponent } from '../calendar-add-trainees-dia
   styleUrls: ['./calendar-dialog.component.scss']
 })
 export class CalendarDialogComponent implements OnInit {
-
+  test: any;
   
   constructor(private modal: NgbModal,
     public dialog: MatDialog,

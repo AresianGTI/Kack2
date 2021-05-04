@@ -12,6 +12,7 @@
   },
   "private": true,
   "dependencies": {
+    "@angular-material-components/datetime-picker": "^5.1.0",
     "@angular-material-extensions/link-preview": "^1.1.1",
     "@angular/animations": "~11.2.0",
     "@angular/cdk": "^11.2.0",
@@ -36,6 +37,7 @@
     "flatpickr": "^4.6.9",
     "google-calendar": "^1.3.2",
     "ngb-modal": "^2.0.3",
+    "ngx-material-timepicker": "^5.5.3",
     "rxjs": "~6.6.0",
     "rxjs-es": "^5.0.0-beta.12",
     "tslib": "^2.0.0",

@@ -1,13 +1,13 @@
 <div class="table-responsive">
     <table class="table table-bordered">
         <thead>
-            <tr>
-                <th>Title</th>
-                <th>Date</th>
-            </tr>
         </thead>
         <tbody>
             <tr *ngFor="let event of calendarService.newEvents">
+
+
+
+
                 <mat-form-field appearance="fill">
                     <mat-label>Terminart auswählen</mat-label>
                     <mat-select [(ngModel)]="event.title">
@@ -18,16 +18,25 @@
                     </mat-select>
                 </mat-form-field>
                 <td>
-                    <mat-form-field appearance="fill">
-                        <mat-label>Enter a date range</mat-label>
-                        <mat-date-range-input [rangePicker]="picker">
-                            <input matStartDate placeholder="Start date" [(ngModel)]="event.start"
-                                (ngModelChange)="calendarService.refresh.next()">
-                            <input matEndDate placeholder="End date" [(ngModel)]="event.end"
-                                (ngModelChange)="calendarService.refresh.next()">
-                        </mat-date-range-input>
-                        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                        <mat-date-range-picker #picker></mat-date-range-picker>
+                </td>
+                <td>
+                    <mat-form-field>
+                        <input matInput [ngxMatDatetimePicker]="pickerFrom" placeholder="From date & time"
+                            [(ngModel)]="event.start">
+
+                        <mat-datepicker-toggle matSuffix [for]="pickerFrom"></mat-datepicker-toggle>
+
+                        <ngx-mat-datetime-picker #pickerFrom></ngx-mat-datetime-picker>
+                    </mat-form-field>
+                   
+                    <br>
+                    <mat-form-field>
+                        <input matInput [ngxMatDatetimePicker]="pickerTo" placeholder="To date & time"
+                            [(ngModel)]="event.end" [min]="event.start" [value]="event.start">
+
+                        <mat-datepicker-toggle matSuffix [for]="pickerTo"></mat-datepicker-toggle>
+
+                        <ngx-mat-datetime-picker #pickerTo ></ngx-mat-datetime-picker>
                     </mat-form-field>
                 </td>
                 <td>

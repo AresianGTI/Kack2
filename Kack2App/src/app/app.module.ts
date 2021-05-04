@@ -60,6 +60,11 @@ import {MatDatepickerModule} from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { CalendarService } from './services/calendar/calendar.service';
 import { CalendarAddTraineesDialogComponent } from './calendar-add-trainees-dialog/calendar-add-trainees-dialog.component';
+import {
+  NgxMatDatetimePickerModule, 
+  NgxMatNativeDateModule, 
+  NgxMatTimepickerModule 
+} from '@angular-material-components/datetime-picker';
 
 @NgModule({
   declarations: [
@@ -114,7 +119,10 @@ import { CalendarAddTraineesDialogComponent } from './calendar-add-trainees-dial
   //  GoogleChartsModule
    CalendarModule.forRoot({ provide: DateAdapter, useFactory: adapterFactory }),
    MatDatepickerModule,
-   MatNativeDateModule
+   MatNativeDateModule,
+   NgxMatDatetimePickerModule, 
+   NgxMatNativeDateModule, 
+   NgxMatTimepickerModule 
   //  CalendarComponent,
   ],
   providers: [AuthService, GlobalstringsService, 

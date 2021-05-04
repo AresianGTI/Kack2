@@ -11,6 +11,7 @@ import { FormControl } from '@angular/forms';
 import { Trainee } from 'src/app/models/trainee';
 import { Console } from 'node:console';
 import { element } from 'protractor';
+import { ThisReceiver } from '@angular/compiler';
 const colors: any = {
   red: {
     primary: '#ad2121',
@@ -81,7 +82,10 @@ export class CalendarService {
         beforeStart: true,
         afterEnd: true,
       },
-      sender: this.authService.userData.ID,
+      sender:{
+       id: this.authService.userData.ID,
+       name: this.authService.userData.name
+      },
       // receiver für Azubis nicht relevant
       receiver: receiver
     }
@@ -221,10 +225,10 @@ deleteEvent(eventToDelete: any) {
     let fug: any[] = [];
     let del: any[] = [];
     let counter = 0;
-    console.log("Sender EVENT-ID: ", eventToDelete.sender);
+    console.log("Sender EVENT-ID: ", eventToDelete.sender.id);
     console.log("LOGGED IN USER_ID", this.authService.userData.ID);
 
-    if (eventToDelete.sender == this.authService.userData.ID) {
+    if (eventToDelete.sender.id == this.authService.userData.ID) {
       
       eventToDelete.receiver.forEach((user: any) => {
         this.firestoreService.getData(user).then((val) => {

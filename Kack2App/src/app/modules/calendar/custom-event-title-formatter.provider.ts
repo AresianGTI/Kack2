@@ -17,19 +17,24 @@ export class CustomEventTitleFormatter extends CalendarEventTitleFormatter {
 
   // you can override any of the methods defined in the parent class
 
-  month(event: CalendarEvent): string {
+  month(event: any): string {
+    console.log("EVENT: ", event)
     let text;
     if(event.title == EnumMeetingTypes.applyVacation){
-      text = " von " +  this.authService.userData.name
+      text = " von " +  event.sender.name
     }
     else if(event.title == EnumMeetingTypes.practicalMeeting){
       text = " "
     }
     else if(event.title == EnumMeetingTypes.singleMeeting){
-      text = " mit " + this.authService.userData.name
+      let gg: any[] = [];
+      event.receiver.forEach((events: any) => {
+        gg.push(events.name)
+      });
+      text = " mit " + gg;
     }
     else if(event.title == EnumMeetingTypes.notificationOfIlness){
-      text = " von " + this.authService.userData.name
+      text = " von " + event.sender.name
     }
 
     if(this.authService.userData.role == "trainee")

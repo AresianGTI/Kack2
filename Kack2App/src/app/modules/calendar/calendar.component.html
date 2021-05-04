@@ -78,6 +78,17 @@
        </mat-select>
       
      </mat-form-field>
+     <mat-form-field appearance="fill">
+      <mat-label>EventFilter</mat-label>
+      <mat-select >
+        <mat-option *ngFor="let event of calendarService.allEventTypes" [value]="event.title" 
+        (click)="calendarService.getAllEventsTypes(event)">
+          {{event.title}}
+        </mat-option>
+        <!-- <mat-option value="option">{{facValues}}</mat-option> -->
+      </mat-select>
+     
+    </mat-form-field>
      <mat-dialog-content class="mat-typography">
   </mat-dialog-content>
   <button  mat-raised-button color="primary" class="btn btn-danger" (click)="calendarService.deleteAllEvents()"

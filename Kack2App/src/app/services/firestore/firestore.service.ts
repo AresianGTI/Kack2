@@ -176,6 +176,18 @@ export class FirestoreService {
         return arr;
       });
   }
+  getEventType(user: User): Promise<any> {
+    let arr: any = [];
+    return this.afs.collection("Test", ref => (ref
+      .where("", "==", user.homeFacility))
+      .where("role", "==", "trainee"))
+      .get().toPromise().then(snapshot => {
+        snapshot.docs.forEach(doc => {
+          arr.push(doc.data())
+        })
+        return arr;
+      });
+  }
   getCoordinatorsInFacility(user: User): Promise<any> {
     let arr: any = [];
     return this.afs.collection("usersCollection", ref => (ref

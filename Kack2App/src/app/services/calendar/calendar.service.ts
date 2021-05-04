@@ -93,6 +93,7 @@ export class CalendarService {
   }
   traineeEvents: CalendarEvent[] = []
   coordinatorEvents: CalendarEvent[] = []
+  allEventTypes: any[] = []
 setEvents(){
 this.traineeEvents= [
     this.predefinedEvents(EnumMeetingTypes.applyVacation, colors.red),
@@ -102,6 +103,8 @@ this.traineeEvents= [
     this.predefinedEvents(EnumMeetingTypes.practicalMeeting, colors.blue),
     this.predefinedEvents(EnumMeetingTypes.singleMeeting, colors.yellow)
   ]
+  this.allEventTypes = [...this.traineeEvents, ...this.coordinatorEvents]
+
 }
 
 deleteEvent(eventToDelete: any) {
@@ -113,13 +116,13 @@ deleteEvent(eventToDelete: any) {
       ...this.ownEvents,
       ...this.newEvents
     ];
+    
+       
 
     this.setEventData(this.ownEvents, this.authService.userData);
+    this.refresh.next();
     for( const event of this.newEvents)
     {
-
-    // }
-    // this.newEvents.filter(async (event) => {
       if (event.title != "") {
         if(this.eventReceiver.length != 0){
           console.log("TTTTEEEST:", this.eventReceiver)
@@ -163,28 +166,14 @@ deleteEvent(eventToDelete: any) {
             }
             })
           }
-
-          // event.receiver.forEach((element: any) => {
-
-          //   this.events = [...this.events, event];
-          // //  this.getEventData(event, element);
-          // //   console.log("WARUM IST DIESE SO KAKE LAN");
-          //   this.firestoreService.getData(element).then((val) =>{
-          //     console.log("VALUE: ", val)
-          //   })
-            
-           
-          //               //  this.updateEventData(event, element)
-            
-            
-          //     // this.setEventData(this.events, element);
-            
-          // });
         }
       } else {
         this.deleteEvent(event);
       }
     }
+    console.log("OWNEVENTS: ", this.ownEvents)
+    this.events = this.ownEvents;
+    this.refresh.next();
     this.firestoreEnty = [];
     this.eventReceiver = []
     this.newEvents = [];
@@ -306,7 +295,7 @@ deleteEvent(eventToDelete: any) {
     this.firestoreDocument.Name = user?.name;
     this.firestoreDocument.items = eve;
     this.firestoreService.updateDocument("Test", this.firestoreDocument);
-    this.events = this.ownEvents;
+    // this.events = this.ownEvents;
   }
   loadEvents(action: string) {
     this.events = [];
@@ -320,6 +309,19 @@ deleteEvent(eventToDelete: any) {
   addElementsToOwnEventList(val: any) {
     val.forEach((element: any) => {
       this.addOwnEvents(element[1]);
+    });
+    this.events = this.ownEvents
+    this.refresh.next();
+  }
+  addAllEventsFromType(val: any, eventType: any) {
+    val.forEach((element: any) => {
+      console.log("VAL Title: ", element[1].title)
+      console.log("eventtype Title: ", eventType.title)
+   
+      if(element[1].title == eventType.title)
+      {
+      this.addOwnEvents(element[1]);
+      }
     });
     this.events = this.ownEvents
     this.refresh.next();
@@ -347,6 +349,16 @@ deleteEvent(eventToDelete: any) {
     this.firestoreService.mapUserDataToObject(trainee, "Test", "items").then((val) => {
       this.addElementsToEventList(val)
     });
+  }
+  getAllEventsTypes(eventType: any){
+    this.ownEvents = [];
+    this.events = [];
+    this.firestoreService.mapUserDataToObject(this.authService.userData, "Test", "items").then((val) => {
+    
+        this.addAllEventsFromType(val, eventType)
+     
+    });
+
   }
   getOwnData() {
     this.ownEvents = [];

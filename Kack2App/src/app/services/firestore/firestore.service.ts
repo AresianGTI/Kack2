@@ -82,6 +82,13 @@ export class FirestoreService {
       console.log(error);
     });
   }
+  updateDocument1(collection: string, objData: any) {
+    console.log("OBJDATA: ", objData)
+    this.afs.collection(collection).doc(objData.UID).update(objData.notifications).then(res => {
+    }).catch(error => {
+      console.log(error);
+    });
+  }
   deleteFieldValue(collection: string, objData: any, itemToDelete : any) {
     this.afs.collection(collection).doc(objData.UID)
     .update({

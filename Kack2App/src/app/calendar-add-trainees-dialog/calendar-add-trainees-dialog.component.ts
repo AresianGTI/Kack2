@@ -20,10 +20,7 @@ export class CalendarAddTraineesDialogComponent implements OnInit {
     public dialogRef: MatDialogRef<CalendarAddTraineesDialogComponent>,
     public calendarService: CalendarService,
     public firestoreService: FirestoreService, 
-    @Optional() @Inject(MAT_DIALOG_DATA) public data: any) { 
-      
-
-      
+    @Optional() @Inject(MAT_DIALOG_DATA) public data: any) {     
   }
   selectedValues: any [] =[];
   
@@ -63,7 +60,11 @@ export class CalendarAddTraineesDialogComponent implements OnInit {
         console.log("selected Row", row)
       }
     })
+  
     console.log("DAS IST DAS UASGEWÄHLTE EVENT", this.data);
     this.dialogRef.close({data: this.data})
+  }
+  closeDialog(){
+      this.dialogRef.close({data: this.data})
   }
 }

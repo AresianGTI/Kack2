@@ -51,14 +51,14 @@
 
   <br /><br /><br />
 
-  <button class="l_btn" mat-mini-fab color="primary" (click)="openDialog()">
+  <button class="l_btn" mat-mini-fab color="primary" (click)="openDialog('Create')">
     <mat-icon>
       add
     </mat-icon>
   </button>
 
 
-  <div class="">
+  <div *ngIf="isVisible" class="">
     <button  mat-raised-button color="primary" class="btn btn-danger" (click)="calendarService.getAllEventsFromAllUser()"
     >
        GetDataFrom User
@@ -67,7 +67,10 @@
      >
         Own Events
       </button>
-   
+
+
+ 
+
      <mat-form-field appearance="fill">
        <mat-label>Azubi</mat-label>
        <mat-select >
@@ -96,4 +99,5 @@
      Delete All Events
    </button>
   </div>
+</div>
  

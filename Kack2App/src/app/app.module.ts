@@ -65,6 +65,7 @@ import {
   NgxMatNativeDateModule, 
   NgxMatTimepickerModule 
 } from '@angular-material-components/datetime-picker';
+import { NotificationSystemComponent } from './modules/notification/notification-system/notification-system.component';
 
 @NgModule({
   declarations: [
@@ -81,7 +82,8 @@ import {
     CalendarComponent,
     DialogBoxComponent,
     CalendarDialogComponent,
-    CalendarAddTraineesDialogComponent
+    CalendarAddTraineesDialogComponent,
+    NotificationSystemComponent
     
   ],
   imports: [

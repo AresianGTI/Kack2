@@ -163,7 +163,11 @@ export class AuthService {
       role: data?.role,
       homeFacility: data?.homeFacility.name || "No Homefacility",
       name: data?.name || "No Value",
-      firstName: data?.firstName || "No Value"
+      firstName: data?.firstName || "No Value",
+      // notifications: {
+      //   watched: true,
+      //   messaage : ""
+      // }
     }
     // Updates existing Documents in a non-destructive way
     return userFirebaseStructure;
@@ -180,17 +184,24 @@ export class AuthService {
       this.router.navigate(['/' + this.stringService.loginView]);
     })
   }
-  
+  private _isAuthorized = false;
+  public get isAuthorized() {
+    return this._isAuthorized;
+  }
+  public set isAuthorized(value) {
+    this._isAuthorized = value;
+  }
   private checkAuthorization(user: any, allowedRoles: string[]): boolean {
     if (!user) return false
-    let isAuthorized = false;
+    this.isAuthorized = false;
     allowedRoles.forEach(role => {
     if(user.role == role)
     {
-      isAuthorized = true;
+      this.isAuthorized = true;
+      
     }
   });
-  return isAuthorized;
+  return this.isAuthorized;
    }
      
   canRead(user: any): boolean {

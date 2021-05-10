@@ -3,7 +3,10 @@ import {
   ViewChild,
   TemplateRef,
   OnInit,
-  OnDestroy
+  OnDestroy,
+  Directive,
+  ElementRef,
+  Input
 } from '@angular/core';
 import {
   startOfDay,
@@ -33,7 +36,11 @@ import { User } from 'src/app/models/user';
 import { switchMap } from 'rxjs/operators';
 import { CustomEventTitleFormatter } from './custom-event-title-formatter.provider';
 
+export type AuthGroup = 'VIEW_ONLY' | 'UPDATE_FULL' | 'CREATE';
 // @Injectable()
+@Directive({
+  selector: '[myHideIfUnauthorized]'
+})
 @Component({
   selector: 'app-calendar',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -47,7 +54,7 @@ import { CustomEventTitleFormatter } from './custom-event-title-formatter.provid
   ],
 })
 export class CalendarComponent implements OnInit, OnDestroy {
-
+  @Input('myHideIfUnauthorized') permission!: AuthGroup; 
   @ViewChild('modalContent', { static: true })
   modalContent!: TemplateRef<any>;
   view: CalendarView = CalendarView.Month;
@@ -57,19 +64,27 @@ export class CalendarComponent implements OnInit, OnDestroy {
   constructor(private modal: NgbModal,
     public dialog: MatDialog,
     public calendarService: CalendarService,
-    public authService: AuthService) { }
+    public authService: AuthService,
+    private el: ElementRef) { }
   ngOnDestroy(): void {
     this.authService.getValue().subscribe().unsubscribe();
   }
+  isVisible = false;
   ngOnInit(): void {
+
     this.calendarService.events =[];
     this.calendarService.ownEvents =  [];
     this.authService.getValue().subscribe((value) =>{
       if(value){
         this.calendarService.loadEvents(value.role);
       }
+      if(value.role == "coordinator")
+      {
+        this.isVisible = true;
+      }
     })
   }
+ 
 
   eventTimesChanged({
     event,
@@ -89,11 +104,15 @@ export class CalendarComponent implements OnInit, OnDestroy {
     this.handleEvent('Dropped or resized', event);
   }
 
-  handleEvent(action: string, event: CalendarEvent): void {
+  handleEvent(action: string, event: any): void {
+    
+    if (event.sender.id == this.authService.userData.ID) {
     this.calendarService.modalData = { event, action };
     // console.log("was diesse kake lan: ", this.calendarService.modalData)
-    this.calendarService.deleteSingleEvent(event);
+    this.openDialog("Update", event)
+    // this.calendarService.deleteSingleEvent(event);
     this.modal.open(this.modalContent, { size: 'lg'});
+    }
   }
   dayClicked({ date, events }: { date: Date; events: CalendarEvent[] }): void {
     if (isSameMonth(date, this.viewDate)) {
@@ -115,7 +134,50 @@ export class CalendarComponent implements OnInit, OnDestroy {
   closeOpenMonthViewDay() {
     this.activeDayIsOpen = false;
   }
-  openDialog() {
-    this.dialog.open(CalendarDialogComponent);
+
+  openDialog(action: any, obj?: { action?: any; }) {
+    
+
+
+    if (action == "Update") {
+      this.dialog.open(CalendarDialogComponent, {data: obj});
+    }
+    else if (action == "Create") {
+      this.dialog.open(CalendarDialogComponent, {data: action});
+    }
+    // else if (action == "Delete") {
+    //   let dialogRef: any;
+    //   obj!.action = action;
+    //   dialogRef = this.dialog.open(DialogBoxComponent, { data: obj });
+    //   dialogRef.afterClosed()
+    //     .subscribe((result: { event: string; data: any; }) => {
+    //       this.firestoreService.deleteDocument(
+    //         result.data, "facilities")
+    //     });
+    // }
   }
+  // ChooseDialog(action: any, obj?: { action?: any; }) {
+  //   let dialogRef: any;
+  //   let data;
+  //   if (obj!) {
+  //     obj!.action = action;
+  //     data = obj;
+  //   }
+  //   else {
+  //     data = action;
+  //   }
+  //   switch (this.tab_selection) {
+  //     case ("Einrichtung"): {
+  //       dialogRef = this.dialog.open(FacilityDialogComponent, { data: data });
+  //       break;
+  //     }
+  //     case ("Auszubildender"): {
+  //       dialogRef = this.dialog.open(TraineeDialogComponent, { data: data });
+  //       break;
+  //     }
+  //     default: {
+  //       break;
+  //     }
+  //   }
+  // }
 }

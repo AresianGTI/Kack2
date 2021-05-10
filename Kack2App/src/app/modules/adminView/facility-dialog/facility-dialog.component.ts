@@ -33,7 +33,6 @@ export class FacilityDialogComponent implements OnInit {
       this.local_data = { ...data };
       this.action = this.local_data.action;
     }
-
   }
 
   //Mögliche Veränderung in der Zukunft... Klassen?

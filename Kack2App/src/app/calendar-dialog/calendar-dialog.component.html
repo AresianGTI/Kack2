@@ -4,10 +4,6 @@
         </thead>
         <tbody>
             <tr *ngFor="let event of calendarService.newEvents">
-
-
-
-
                 <mat-form-field appearance="fill">
                     <mat-label>Terminart auswählen</mat-label>
                     <mat-select [(ngModel)]="event.title">
@@ -28,38 +24,64 @@
 
                         <ngx-mat-datetime-picker #pickerFrom></ngx-mat-datetime-picker>
                     </mat-form-field>
-                   
+
                     <br>
+                    
                     <mat-form-field>
                         <input matInput [ngxMatDatetimePicker]="pickerTo" placeholder="To date & time"
                             [(ngModel)]="event.end" [min]="event.start" [value]="event.start">
+                        
+                            <mat-datepicker-toggle matSuffix [for]="pickerTo"></mat-datepicker-toggle>
 
-                        <mat-datepicker-toggle matSuffix [for]="pickerTo"></mat-datepicker-toggle>
+                            <ngx-mat-datetime-picker #pickerTo></ngx-mat-datetime-picker>
 
-                        <ngx-mat-datetime-picker #pickerTo ></ngx-mat-datetime-picker>
+                       
                     </mat-form-field>
                 </td>
-                <td>
-                    <button mat-raised-button color="primary" class="btn btn-danger"
-                        (click)="sendEventToTrainee(event)">
-                        Send to:
-                    </button>
-                </td>
-                <td>
+                <div *ngIf="isVisibile">
+                    <td *ngIf="action == 'Create'">
+                        <button mat-raised-button color="primary" class="btn btn-danger"
+                            (click)="sendEventToTrainee(event)">
+                            Send to:
+                        </button>
+                    </td>
+                </div>
+               
+                <td *ngIf="action == 'Update'; else updateBtn">
                     <button mat-raised-button color="primary" class="btn btn-danger"
                         (click)="calendarService.deleteSingleEvent(event)" (click)="calendarService.refresh.next()">
                         Delete
                     </button>
                 </td>
+                    <ng-template #updateBtn>
+                <td>
+                    <button mat-raised-button color="primary" class="btn btn-danger"
+                        (click)="calendarService.deleteEvent(event)" (click)="calendarService.refresh.next()">
+                        Delete
+                    </button>
+
+                </td>
+                </ng-template>
+               
             </tr>
         </tbody>
-        <button mat-raised-button color="primary" class="btn btn-danger" (click)="calendarService.addEvent()">
-            Add
-        </button>
-
-        <button mat-raised-button color="primary" class="btn btn-danger" (click)="calendarService.safeNewEvent()"
-            (click)="calendarService.refresh.next()" mat-dialog-close>
+        <div *ngIf="action == 'Create'; else other_content">
+            <button mat-raised-button color="primary" class="btn btn-danger" (click)="calendarService.addEvent()">
+                Add
+            </button>
+            <button mat-raised-button color="primary" class="btn btn-danger" (click)="calendarService.safeNewEvent()"
+                (click)="calendarService.refresh.next()" mat-dialog-close>
+                Close
+            </button>
+           
+        </div>
+        <ng-template #other_content><button mat-raised-button color="primary" class="btn btn-danger"
+            (click)="calendarService.updateEvent(local_data)" (click)="calendarService.refresh.next()" mat-dialog-close>
             Close
-        </button>
+        </button></ng-template>
+ 
+
+
+
     </table>
 </div>

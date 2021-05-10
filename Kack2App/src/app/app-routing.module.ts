@@ -21,6 +21,7 @@ import { DialogBoxComponent } from './modules/dialog-box/dialog-box.component';
 import { GlobalstringsService } from './services/globalstrings/globalstrings.service';
 import { CalendarDialogComponent } from './calendar-dialog/calendar-dialog.component';
 import { CalendarAddTraineesDialogComponent } from './calendar-add-trainees-dialog/calendar-add-trainees-dialog.component';
+import { NotificationSystemComponent } from './modules/notification/notification-system/notification-system.component';
 
 const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo(["loginView"]);
 const dd = () => redirectUnauthorizedTo(["single-trainee"]);
@@ -58,6 +59,7 @@ const routes: Routes = [
       {
         path: 'Calendar',
         component: CalendarComponent,
+        // canActivate:[AdminGuard]
         // canActivate: [AngularFireAuthGuard]
       },
       {
@@ -70,6 +72,11 @@ const routes: Routes = [
       {
         path: 'GoogleCharts/facility-chart/trainee-chart',
         component: TraineeChartComponent,
+        // canActivate: [AngularFireAuthGuard],
+      },
+      {
+        path: 'notification-system',
+        component: NotificationSystemComponent,
         // canActivate: [AngularFireAuthGuard],
       }
     ],

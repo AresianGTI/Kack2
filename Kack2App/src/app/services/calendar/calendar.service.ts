@@ -54,16 +54,16 @@ export class CalendarService {
   testEvent: any = [];
 
   eventFromCoordinator: CalendarEvent[] = [];
-  eventReceiver: Trainee[] = [];
   existingRoleEvents: CalendarEvent[] = [];
   newEvents: any[] = [];
   public traineesInFacility: any[] = [];
   public coordinatorsInFacility: any[] = [];
 
-
+  traineeEvents: CalendarEvent[] = []
+  coordinatorEvents: CalendarEvent[] = []
+  allEventTypes: any[] = []
   predefinedEvents(type: string, color: any) {
     let receiver: any[] = []
-    // console.log("LOGGGG ROLE: ", this.authService.userData.role )
     if (this.authService.userData.role == "coordinator") {
       receiver = this.traineesInFacility;
     }
@@ -90,9 +90,7 @@ export class CalendarService {
     }
     return event;
   }
-  traineeEvents: CalendarEvent[] = []
-  coordinatorEvents: CalendarEvent[] = []
-  allEventTypes: any[] = []
+
   setEvents() {
     this.traineeEvents = [
       this.predefinedEvents(EnumMeetingTypes.applyVacation, colors.red),
@@ -111,27 +109,23 @@ export class CalendarService {
   }
   async updateEvent(event: any) {
     if (event.sender.id == this.authService.userData.ID) {
-    console.log("EVENT: ", event)
-    for (const user of event.receiver) {
-      await this.firestoreService.getData(user).then(async (val) => {
-        console.log("VALUE: ", val)
-        if (val) {
-          let items: any[] = []
-          val.items.forEach((item: any) => {
+      for (const user of event.receiver) {
+        await this.firestoreService.getData(user).then(async (val) => {
+          if (val) {
+            let items: any[] = []
+            val.items.forEach((item: any) => {
 
-            if (item.id == event.id) {
+              if (item.id == event.id) {
+                item = event;
+              }
+              items.push(item)
+            });
+            this.setEventData(items, user)
 
-              item = event;
-            }
-            items.push(item)
-            console.log("ITEMSLAN: ", item)
-          });
-          this.setEventData(items, user)
-
-        }
-      })
+          }
+        })
+      }
     }
-  }
   }
 
   async safeNewEvent(action: string) {
@@ -144,39 +138,22 @@ export class CalendarService {
     this.refresh.next();
     for (const event of this.newEvents) {
       if (event.title != "") {
-        if (this.eventReceiver.length != 0) {
-          console.log("TTTTEEEST:", this.eventReceiver)
-          event.receiver = this.eventReceiver;
-          this.eventReceiver = []
-        }
         if (event.receiver) {
           this.events = [...this.events, event];
           for (const user of event.receiver) {
 
             await this.firestoreService.getData(user).then(async (val) => {
-              console.log("VALUE: ", val)
               if (val) {
                 let items = [];
                 items = [...val.items, event]
-
-                // let it= val.items.push(event)
                 this.setEventData(items, user)
-                // this.firestoreEnty.push(val);
               }
               else {
-                // this.setEventData([event], user);
-                // this.getEventData(event, user);
                 await this.firestoreService.getData(user).then((vall) => {
-                  console.log("VALUE: ", vall)
                   if (vall) {
                     let items = [];
                     items = [...vall.items, event]
-
-                    console.log("ITEMS: ", items);
-                    // let it = vall.items.push(event)
-                    // console.log("IT: ", it);
                     this.setEventData(items, user)
-                    // this.firestoreEnty.push(vall);
                   }
                   else {
                     this.setEventData([event], user);
@@ -190,22 +167,15 @@ export class CalendarService {
         this.deleteEvent(event);
       }
     }
-    console.log("OWNEVENTS: ", this.ownEvents)
     this.events = this.ownEvents;
     this.refresh.next();
-    this.firestoreEnty = [];
-    this.eventReceiver = []
     this.newEvents = [];
   }
-  globalEvent: any;
+  
   addEvent(): void {
     let ev = this.predefinedEvents("", colors.black);
-    // this.globalEvent = ev;
     this.newEvents = [...this.newEvents, ev];
-    ;
-
   }
-
 
   addOwnEvents(event: any) {
     event.start = new Date(event.start.seconds * 1000);
@@ -230,12 +200,6 @@ export class CalendarService {
     this.events = []
   }
   async deleteSingleEvent(eventToDelete: any) {
-    let fug: any[] = [];
-    let del: any[] = [];
-    let counter = 0;
-    console.log("Sender EVENT-ID: ", eventToDelete.sender.id);
-    console.log("LOGGED IN USER_ID", this.authService.userData.ID);
-
     if (eventToDelete.sender.id == this.authService.userData.ID) {
 
       eventToDelete.receiver.forEach((user: any) => {
@@ -245,13 +209,9 @@ export class CalendarService {
             if (item.id != eventToDelete.id) {
               d.push(item);
             }
-            counter++;
           });
           this.firestoreService.deleteFieldValue("Test", val, d)
-          console.log("ITEEEEM: ", d)
-          console.log("Value: ", val)
         });
-        console.log("USER: ", user)
       });
 
       this.firestoreService.getData(this.authService.userData).then((val) => {
@@ -260,7 +220,6 @@ export class CalendarService {
           if (item.id != eventToDelete.id) {
             d.push(item);
           }
-          counter++;
         });
         this.firestoreService.deleteFieldValue("Test", val, d)
         this.getOwnData();
@@ -276,50 +235,17 @@ export class CalendarService {
     items: {
     }
   }
-  firestoreEnty: any[] = [];
-  getEventData(event: any, user: any) {
-    this.firestoreService.getData(user).then((val) => {
-      console.log("VALUE: ", val)
-    })
-    // .then((val) => {
-    // if () {
-    //   this.firestoreEnty.push(t);
-    // }
-    // else {
-    //   this.setFirstData([event], user);
-    //   this.getEventData(event, user);
-    // }
-
-  }
-  updateEventData(ding: any, user?: any) {
-    this.firestoreEnty.forEach((element: { items: any; }) => {
-      this.firestoreDocument.UID = user?.ID;
-      this.firestoreDocument.Name = user?.name;
-      element.items.push(ding);
-      this.firestoreDocument.items = element.items;
-      this.firestoreService.updateDocument("Test", this.firestoreDocument);
-      this.events = this.ownEvents;
-    });
-    this.firestoreEnty = []
-  }
-
-  // setFirstData(ding: any, user?: any) {
-  //   this.firestoreDocument.UID = user?.ID;
-  //   this.firestoreDocument.Name = user?.name;
-  //   this.firestoreDocument.items = ding;
-  //   this.firestoreService.updateDocument("Test", this.firestoreDocument);
-  //   this.events = this.ownEvents;
+  // getEventData(event: any, user: any) {
+  //   this.firestoreService.getData(user).then((val) => {
+  //     console.log("VALUE: ", val)
+  //   })
   // }
+
   setEventData(eve: any[], user?: any) {
     this.firestoreDocument.UID = user?.ID;
     this.firestoreDocument.Name = user?.name;
     this.firestoreDocument.items = eve;
     this.firestoreService.updateDocument("Test", this.firestoreDocument);
-    // let test 
-    // this.firestoreService.updateDocument1("usersCollection", )
-    // user.notifications.
-
-    // this.events = this.ownEvents;
   }
   loadEvents(action: string) {
     this.events = [];
@@ -339,9 +265,6 @@ export class CalendarService {
   }
   addAllEventsFromType(val: any, eventType: any) {
     val.forEach((element: any) => {
-      console.log("VAL Title: ", element[1].title)
-      console.log("eventtype Title: ", eventType.title)
-
       if (element[1].title == eventType.title) {
         this.addOwnEvents(element[1]);
       }
@@ -356,33 +279,35 @@ export class CalendarService {
     this.refresh.next();
   }
   getCoordinators() {
-    this.firestoreService.getCoordinatorsInFacility(this.authService.userData).then((val) => {
+    this.firestoreService.getUserInFacility(this.authService.userData, "coordinators").then((val) => {
       this.coordinatorsInFacility = val;
     })
   }
   getTrainees() {
     this.events = [];
-    this.firestoreService.getTraineesInFacility(this.authService.userData).then((val) => {
+    this.firestoreService.getUserInFacility(this.authService.userData, "trainee").then((val) => {
       this.traineesInFacility = val;
     })
   }
 
   getTraineeEvents(trainee: any) {
-    this.events = [];
+    this.clearEventArrays();
     this.firestoreService.mapUserDataToObject(trainee, "Test", "items").then((val) => {
       this.addElementsToEventList(val)
     });
   }
   getAllEventsTypes(eventType: any) {
-    this.ownEvents = [];
-    this.events = [];
+    this.clearEventArrays()
     this.firestoreService.mapUserDataToObject(this.authService.userData, "Test", "items").then((val) => {
       this.addAllEventsFromType(val, eventType)
     });
   }
-  getOwnData() {
+  clearEventArrays(){
     this.ownEvents = [];
     this.events = [];
+  }
+  getOwnData() {
+    this.clearEventArrays()
     this.firestoreService.mapUserDataToObject(this.authService.userData, "Test", "items").then((val) => {
       this.addElementsToOwnEventList(val)
     });

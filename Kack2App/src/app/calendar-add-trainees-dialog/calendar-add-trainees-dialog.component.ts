@@ -11,22 +11,18 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
   templateUrl: './calendar-add-trainees-dialog.component.html',
   styleUrls: ['./calendar-add-trainees-dialog.component.scss']
 })
-export class CalendarAddTraineesDialogComponent implements OnInit {
+export class CalendarAddTraineesDialogComponent {
   selection = new SelectionModel<any>(true, []);
-  // displayedColumnsTrainee: string[] = ['name', 'firstName', 'homeFacility'];
   displayedColumns: string[] = ['select', 'name', 'firstName', 'homeFacility'];
   dataSource = new MatTableDataSource<any>(this.calendarService.traineesInFacility)
-  constructor( 
+  constructor(
     public dialogRef: MatDialogRef<CalendarAddTraineesDialogComponent>,
     public calendarService: CalendarService,
-    public firestoreService: FirestoreService, 
-    @Optional() @Inject(MAT_DIALOG_DATA) public data: any) {     
+    public firestoreService: FirestoreService,
+    @Optional() @Inject(MAT_DIALOG_DATA) public data: any) {
   }
-  selectedValues: any [] =[];
-  
-  ngOnInit(): void {
-    // this.calendarService.eventReceiver = [];
-  }
+  selectedValues: any[] = [];
+
   isAllSelected() {
     const numSelected = this.selection.selected.length;
     const numRows = this.dataSource.data.length;
@@ -34,10 +30,10 @@ export class CalendarAddTraineesDialogComponent implements OnInit {
   }
   masterToggle() {
     this.isAllSelected() ?
-        this.selection.clear() :
-        this.dataSource.data.forEach(row => {
-          this.selection.select(row)
-        });
+      this.selection.clear() :
+      this.dataSource.data.forEach(row => {
+        this.selection.select(row)
+      });
   }
   checkboxLabel(row?: any): string {
     if (!row) {
@@ -46,25 +42,18 @@ export class CalendarAddTraineesDialogComponent implements OnInit {
 
     return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row.position + 1}`;
   }
-  getSelectedTrainees(){
-    let selectedTrainees = []
+  getSelectedTrainees() {
     this.data.receiver = []
-    // Speichern in einem KEY, Value Pair
     this.dataSource.data.forEach(row => {
-   
-      if(this.selection.isSelected(row))
-      {
+
+      if (this.selection.isSelected(row)) {
         this.data.receiver = [...this.data.receiver, row]
-        // this.firestoreService.getFieldsFromCollection()
-        // this.calendarService.eventReceiver.push(row);
-        console.log("selected Row", row)
+
       }
     })
-  
-    console.log("DAS IST DAS UASGEWÄHLTE EVENT", this.data);
-    this.dialogRef.close({data: this.data})
+    this.closeDialog();
   }
-  closeDialog(){
-      this.dialogRef.close({data: this.data})
+  closeDialog() {
+    this.dialogRef.close({ data: this.data })
   }
 }
